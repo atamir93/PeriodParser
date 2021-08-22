@@ -55,7 +55,6 @@ namespace PeriodParser
             AssertDictionaryValue("EndingYear", 2020);
         }
 
-
         [TestCase("April 2018 - 2020 Yearly")]
         [TestCase("Apr 18 - 20 year")]
         [TestCase("04 2018-2020 years")]

@@ -148,7 +148,7 @@ namespace PeriodParser
             return true;
         }
 
-        private bool TryParseRangeWithMonthAndYear(string monthAndYearText)
+        bool TryParseRangeWithMonthAndYear(string monthAndYearText)
         {
             var withoutCharactersExceptPipe = ReplaceCharactersExceptPipeToEmptySpace(monthAndYearText);
             string[] items = withoutCharactersExceptPipe.Split(" ");
