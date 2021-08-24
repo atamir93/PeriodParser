@@ -26,9 +26,13 @@ namespace PeriodParser
         public static bool EndsWithAny(string[] items, string text) => items.Any(i => text.EndsWith(i));
         public static bool ContainsAny(string[] items, string text) => items.Any(text.Contains);
 
-        static string ReplaceCharactersExceptComaToEmptyEntry(string text)
+        static string ReplaceCharactersExceptPipeToEmptyEntry(string text)
         {
-            return Regex.Replace(text.Trim(), @"[^0-9a-zA-Z,]+", " ");
+            return Regex.Replace(text.Trim(), @"[^0-9a-zA-Z|]+", " ");
+        }
+        static string ReplaceCharactersExceptPipeAndDashToEmptyEntry(string text)
+        {
+            return Regex.Replace(text.Trim(), @"[^0-9a-zA-Z|-]+", " ");
         }
 
         static int GetMonthNumber(string text)
