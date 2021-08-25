@@ -22,8 +22,8 @@ namespace PeriodParser
         [Test]
         public void EntireYear_LastDefitinion_Parser()
         {
-            var text = "Last 2 years";
-            parser.Parse(text);
+            parser.PeriodText = "Last 2 years";
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Yearly");
@@ -44,7 +44,8 @@ namespace PeriodParser
         [TestCase("2018-20 years")]
         public void EntireYear_WithlDateRangeWithoutMonth_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Yearly");
@@ -65,7 +66,8 @@ namespace PeriodParser
         [TestCase("4.18-20 years")]
         public void EntireYear_WithFullDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Yearly");
