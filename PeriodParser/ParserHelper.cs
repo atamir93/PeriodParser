@@ -9,7 +9,6 @@ namespace PeriodParser
 {
     public static class ParserHelper
     {
-        public static string[] SplitByDash(string text) => text.Split("-");
 
         public static int GetFirstNumber(string text)
         {

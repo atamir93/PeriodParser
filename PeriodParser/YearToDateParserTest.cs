@@ -20,8 +20,8 @@ namespace PeriodParser
         [Test]
         public void YTD_LastDefitinion_Parser()
         {
-            var text = "Last 2 years YTD";
-            parser.Parse(text);
+            parser.PeriodText = "Last 2 years YTD";
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Yearly");
@@ -42,7 +42,8 @@ namespace PeriodParser
         [TestCase("4.18-20 YTD")]
         public void YTD_WithFullDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Yearly");
@@ -63,7 +64,8 @@ namespace PeriodParser
         [TestCase("2018-20 YTD")]
         public void YTD_WithlDateRangeWithoutMonth_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Yearly");
