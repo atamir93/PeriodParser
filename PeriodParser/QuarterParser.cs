@@ -1,49 +1,36 @@
-﻿using NUnit.Framework;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace PeriodParser
 {
-    public class QuarterParser
+    public class QuarterParser : ProfitAndLossParser
     {
-        const string LastDefinition = "last";
-        const string ThisDefinition = "this";
-        const string FiscalDefinition = "fiscal";
-        readonly string[] YearDefinitions = { "yearly", "years", "year" };
-        readonly string[] QuarterDefinitions = { "quarterly", "quarters", "quarter" };
-        readonly string[] QuarterNumbers = { "q1", "q2", "q3", "q4" };
+        public QuarterParser(string text = "") : base(text) { }
 
-        public Dictionary<string, object> Result { get; set; }
-        const int CurrentYear = 2021;
-        const int CurrentQuarter = 3;
-
-        public bool Parse(string periodText)
+        public override bool Parse()
         {
-            periodText = periodText.ToLower();
+            PeriodText = PeriodText.ToLower();
             Result = new Dictionary<string, object>();
-            if (QuarterDefinitions.Any(q => periodText.Contains(q)))
+            if (QuarterDefinitions.Any(q => PeriodText.Contains(q)))
             {
                 foreach (var quarterText in QuarterDefinitions)
                 {
-                    periodText = periodText.ToLower().Replace(quarterText, "");
+                    PeriodText = PeriodText.ToLower().Replace(quarterText, "");
                 }
             }
             Result.Add("Period", "Quarters");
-            if (periodText.Contains(LastDefinition))
+            if (PeriodText.Contains(LastDefinition))
             {
-                if (!TryParseWithLastDefinition(periodText))
+                if (!TryParseWithLastDefinition(PeriodText))
                     return false;
             }
             else
             {
-                var dateRanges = periodText.Split("-");
+                var dateRanges = SplitByDash(PeriodText);
                 if (dateRanges.Length == 2)
                 {
-                    if (!TryParseWitDateRange(periodText))
+                    if (!TryParseWitDateRange(PeriodText))
                         return false;
                 }
                 else
@@ -120,37 +107,18 @@ namespace PeriodParser
                     }
 
                     var yearText = items[1];
-                    if (IsNumeric(yearText) && yearText.Length <= 4)
-                    {
-                        string year;
-                        switch (yearText.Length)
-                        {
-                            case 1:
-                                year = $"200{yearText}";
-                                break;
-                            case 2:
-                                year = $"20{yearText}";
-                                break;
-                            case 3:
-                                year = $"2{yearText}";
-                                break;
-                            default:
-                                year = yearText;
-                                break;
-                        }
-                        if (Result.ContainsKey("BeginYear"))
-                        {
-                            Result.Add("EndingYear", year);
-                        }
-                        else
-                        {
-                            Result.Add("BeginYear", year);
-                        }
-                    }
-                    else
+                    string year = GetYear(yearText.Trim());
+                    if (string.IsNullOrEmpty(year))
                     {
                         Result.Add("Error", "");
                         return false;
+                    }
+                    else
+                    {
+                        if (Result.ContainsKey("BeginYear"))
+                            Result.Add("EndingYear", year);
+                        else
+                            Result.Add("BeginYear", year);
                     }
                 }
             }
@@ -211,12 +179,10 @@ namespace PeriodParser
                 return false;
             }
 
-            string[] numbers = Regex.Split(periodText, @"\D+").Where(n => !string.IsNullOrEmpty(n)).ToArray();  // get numbers from text
-            int yearDifference;
-
-            if (numbers.Length == 0 || !int.TryParse(numbers[0], out yearDifference))
+            int yearDifference = GetFirstNumber(periodText);
+            if (yearDifference == 0)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -231,12 +197,10 @@ namespace PeriodParser
         bool TryParseToConsecutiveQuartersWithLastDefinitions(string periodText)
         {
             Result.Add("Type", "Consecutive");
-            string[] numbers = Regex.Split(periodText, @"\D+").Where(n => !string.IsNullOrEmpty(n)).ToArray();  // get numbers from text
-            int quarterDifference;
-
-            if (numbers.Length == 0 || !int.TryParse(numbers[0], out quarterDifference))
+            int quarterDifference = GetFirstNumber(periodText);
+            if (quarterDifference == 0)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -265,54 +229,18 @@ namespace PeriodParser
             return (endingYear - yearDiff, beginQuarter);
         }
 
-
-
-        bool HasOnlyYear(string text)
-        {
-            var withoutCharactersExceptPipe = ReplaceCharactersExceptPipeToEmptySpace(text);
-            string[] dateRangeItems = withoutCharactersExceptPipe.Trim().Split(" ");
-            return dateRangeItems.Length == 1;
-        }
-
-        string ReplaceCharactersExceptPipeToEmptySpace(string text)
-        {
-            return Regex.Replace(text, @"[^0-9a-zA-Z|]+", " ");
-        }
-
-        bool IsNumeric(string text)
-        {
-            return Regex.IsMatch(text, @"^\d+$");
-        }
-
         private bool TryParseRangeWithYear(string yearText)
         {
             //TODO when year is 2100 or >
-            yearText = yearText.Trim();
-            if (IsNumeric(yearText) && yearText.Length <= 4)
-            {
-                string year;
-                switch (yearText.Length)
-                {
-                    case 1:
-                        year = $"200{yearText}";
-                        break;
-                    case 2:
-                        year = $"20{yearText}";
-                        break;
-                    case 3:
-                        year = $"2{yearText}";
-                        break;
-                    default:
-                        year = yearText;
-                        break;
-                }
-                Result.Add("EndingYear", year);
-
-            }
-            else
+            string year = GetYear(yearText.Trim());
+            if (string.IsNullOrEmpty(year))
             {
                 Result.Add("Error", "");
                 return false;
+            }
+            else
+            {
+                Result.Add("EndingYear", year);
             }
             return true;
         }

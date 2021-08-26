@@ -22,7 +22,8 @@ namespace PeriodParser
         [TestCase("Aug for last 2 years")]
         public void MonthsEachYearType_LastDefitinion_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Months");
@@ -40,7 +41,8 @@ namespace PeriodParser
         [TestCase("04/2018 - 2020")]
         public void MonthsEachYearType_WithDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Months");
@@ -60,7 +62,8 @@ namespace PeriodParser
         [TestCase("Last 36 months", CurrentYear - 3, CurrentMonth)]
         public void MonthsConsecutiveType_LastDefitinion_Parser(string text, int beginYear, int beginQuarter)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Months");
@@ -79,7 +82,8 @@ namespace PeriodParser
         [TestCase("04/2018 - 11/2020")]
         public void MonthsConsecutive_WithDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Months");

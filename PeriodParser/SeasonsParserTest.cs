@@ -22,7 +22,8 @@ namespace PeriodParser
         [TestCase("06-12 2018-20")]
         public void Seasons_WithDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Seasons");
@@ -40,7 +41,8 @@ namespace PeriodParser
         [TestCase("06-12 2018")]
         public void Seasons_WithSingleYear_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Seasons");

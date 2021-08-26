@@ -7,43 +7,33 @@ using System.Text.RegularExpressions;
 
 namespace PeriodParser
 {
-    public class TotalParser
+    public class TotalParser : ProfitAndLossParser
     {
-        readonly string[] TotalDefinitions = { "totals", "total" };
-        readonly string[] MonthsFullNames = { "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december" };
-        readonly string[] MonthsShortNames = { "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" };
-        readonly string[] MonthsNumbers = { "1","01", "2", "02", "3", "03", "4", "04", "5", "05", "6", "06",
-            "7", "07", "8", "08", "9", "09", "10", "11", "12" };
+        public TotalParser(string text = "") : base(text) { }
 
-        public Dictionary<string, object> Result { get; set; }
-        const int CurrentYear = 2021;
-        const int CurrentMonth = 8;
-        const int FirstMonth = 1;
-        const int LastMonth = 12;
-
-        public bool Parse(string periodText)
+        public override bool Parse()
         {
-            periodText = periodText.ToLower().Trim();
+            PeriodText = PeriodText.ToLower().Trim();
             Result = new Dictionary<string, object>();
-            if (TotalDefinitions.Any(q => periodText.Contains(q)))
+            if (TotalDefinitions.Any(q => PeriodText.Contains(q)))
             {
                 foreach (var seasonText in TotalDefinitions)
                 {
-                    periodText = periodText.ToLower().Replace(seasonText, "");
+                    PeriodText = PeriodText.ToLower().Replace(seasonText, "");
                 }
             }
 
             Result.Add("Period", "Total");
 
-            var dateRanges = periodText.Split("-");
+            var dateRanges = PeriodText.Split("-");
             if (dateRanges.Length == 2)
             {
-                if (!TryParseWitDateRange(periodText))
+                if (!TryParseWitDateRange(PeriodText))
                     return false;
             }
             else if (dateRanges.Length == 1)
             {
-                if (!TryParseWithoutRange(periodText))
+                if (!TryParseWithoutRange(PeriodText))
                     return false;
             }
             else
@@ -72,32 +62,6 @@ namespace PeriodParser
             }
 
             return true;
-        }
-
-        string GetYear(string yearText)
-        {
-            yearText = yearText.Trim();
-            if (IsNumeric(yearText) && yearText.Length <= 4)
-            {
-                string year;
-                switch (yearText.Length)
-                {
-                    case 1:
-                        year = $"200{yearText}";
-                        break;
-                    case 2:
-                        year = $"20{yearText}";
-                        break;
-                    case 3:
-                        year = $"2{yearText}";
-                        break;
-                    default:
-                        year = yearText;
-                        break;
-                }
-                return year;
-            }
-            return null;
         }
 
         bool TryParseWitDateRange(string periodText)
@@ -142,21 +106,6 @@ namespace PeriodParser
             return true;
         }
 
-        bool StartsWithMonth(string text)
-        {
-            var withoutCharactersExceptPipe = ReplaceCharactersExceptPipeToEmptySpace(text.Trim());
-            string[] items = withoutCharactersExceptPipe.Split(" ");
-            if (items.Length > 1)
-            {
-                var possibleMonth = items[0];
-                return MonthsFullNames.Any(m => m.Contains(possibleMonth)) || MonthsNumbers.Contains(possibleMonth);
-            }
-            else
-            {
-                return false;
-            }
-        }
-
         bool TryParseRangeWithMonthAndYear(string monthAndYearText)
         {
             var withoutCharactersExceptPipe = ReplaceCharactersExceptPipeToEmptySpace(monthAndYearText.Trim());
@@ -186,37 +135,18 @@ namespace PeriodParser
                         Result.Add("BeginMonth", monthNumber);
                     }
                     var yearText = items[1];
-                    if (IsNumeric(yearText) && yearText.Length <= 4)
-                    {
-                        string year;
-                        switch (yearText.Length)
-                        {
-                            case 1:
-                                year = $"200{yearText}";
-                                break;
-                            case 2:
-                                year = $"20{yearText}";
-                                break;
-                            case 3:
-                                year = $"2{yearText}";
-                                break;
-                            default:
-                                year = yearText;
-                                break;
-                        }
-                        if (Result.ContainsKey("BeginYear"))
-                        {
-                            Result.Add("EndingYear", year);
-                        }
-                        else
-                        {
-                            Result.Add("BeginYear", year);
-                        }
-                    }
-                    else
+                    string year = GetYear(yearText.Trim());
+                    if (string.IsNullOrEmpty(year))
                     {
                         Result.Add("Error", "");
                         return false;
+                    }
+                    else
+                    {
+                        if (Result.ContainsKey("BeginYear"))
+                            Result.Add("EndingYear", year);
+                        else
+                            Result.Add("BeginYear", year);
                     }
                 }
             }
@@ -226,24 +156,14 @@ namespace PeriodParser
         {
             //TODO when year is 2100 or >
             yearText = yearText.Trim();
-            if (IsNumeric(yearText) && yearText.Length <= 4)
+            string year = GetYear(yearText.Trim());
+            if (string.IsNullOrEmpty(year))
             {
-                string year;
-                switch (yearText.Length)
-                {
-                    case 1:
-                        year = $"200{yearText}";
-                        break;
-                    case 2:
-                        year = $"20{yearText}";
-                        break;
-                    case 3:
-                        year = $"2{yearText}";
-                        break;
-                    default:
-                        year = yearText;
-                        break;
-                }
+                Result.Add("Error", "");
+                return false;
+            }
+            else
+            {
                 if (Result.ContainsKey("BeginYear"))
                 {
                     Result.Add("EndingYear", year);
@@ -261,42 +181,8 @@ namespace PeriodParser
                     Result.Add("BeginMonth", 1);
                 }
             }
-            else
-            {
-                Result.Add("Error", "");
-                return false;
-            }
+            
             return true;
-        }
-        string ReplaceCharactersExceptPipeToEmptySpace(string text)
-        {
-            return Regex.Replace(text, @"[^0-9a-zA-Z|]+", " ");
-        }
-
-        bool IsNumeric(string text)
-        {
-            return Regex.IsMatch(text, @"^\d+$");
-        }
-
-        int GetMonthNumber(string text)
-        {
-            int monthNumber = 0;
-            if (int.TryParse(text, out monthNumber))
-            {
-                if (monthNumber < 1 || monthNumber > 12)
-                {
-                    Result.Add("Error", "");
-                    return 0;
-                }
-            }
-            else
-            {
-                var shortName = text.Substring(0, 3);
-                DateTime result;
-                if (DateTime.TryParseExact(shortName, "MMM", CultureInfo.CurrentCulture, DateTimeStyles.None, out result))
-                    monthNumber = result.Month;
-            }
-            return monthNumber;
         }
     }
 }
