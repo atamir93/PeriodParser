@@ -56,9 +56,9 @@ namespace PeriodParser
             var monthAndYearItems = dateRanges[1].Trim();
             if (TryParseRangeWithMonthAndYear(monthAndYearItems))
             {
-                if (Result.ContainsKey("BeginYear"))
+                if (Result.ContainsKey("Year1"))
                 {
-                    Result.Add("EndingYear", Result["BeginYear"]);
+                    Result.Add("Year2", Result["Year1"]);
                 }
                 else
                     return false;
@@ -100,13 +100,13 @@ namespace PeriodParser
             }
             else
             {
-                if (Result.ContainsKey("BeginMonth"))
+                if (Result.ContainsKey("Month1"))
                 {
-                    Result.Add("EndingMonth", monthNumber);
+                    Result.Add("Month2", monthNumber);
                 }
                 else
                 {
-                    Result.Add("BeginMonth", monthNumber);
+                    Result.Add("Month1", monthNumber);
                 }
             }
             return true;
@@ -132,13 +132,13 @@ namespace PeriodParser
                 }
                 else
                 {
-                    if (Result.ContainsKey("BeginMonth"))
+                    if (Result.ContainsKey("Month1"))
                     {
-                        Result.Add("EndingMonth", monthNumber);
+                        Result.Add("Month2", monthNumber);
                     }
                     else
                     {
-                        Result.Add("BeginMonth", monthNumber);
+                        Result.Add("Month1", monthNumber);
                     }
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
@@ -149,13 +149,13 @@ namespace PeriodParser
                     }
                     else
                     {
-                        if (Result.ContainsKey("BeginYear"))
+                        if (Result.ContainsKey("Year1"))
                         {
-                            Result.Add("EndingYear", year);
+                            Result.Add("Year2", year);
                         }
                         else
                         {
-                            Result.Add("BeginYear", year);
+                            Result.Add("Year1", year);
                         }
                     }
 
@@ -175,7 +175,7 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("EndingYear", year);
+                Result.Add("Year2", year);
             }
             return true;
         }

@@ -54,9 +54,9 @@ namespace PeriodParser
             else
             {
                 Result.Add("YearlyPeriod", "Calendar");
-                Result.Add("EndingMonth", CurrentMonth);
-                Result.Add("BeginYear", CurrentYear - yearDifference);
-                Result.Add("EndingYear", CurrentYear);
+                Result.Add("Month2", CurrentMonth);
+                Result.Add("Year1", CurrentYear - yearDifference);
+                Result.Add("Year2", CurrentYear);
             }
             return true;
         }
@@ -69,7 +69,7 @@ namespace PeriodParser
 
             if (HasOnlyYear(rangeFirst))
             {
-                Result.Add("EndingMonth", CurrentMonth);
+                Result.Add("Month2", CurrentMonth);
                 if (!TryParseRangeWithYear(rangeFirst))
                     return false;
             }
@@ -96,10 +96,10 @@ namespace PeriodParser
             }
             else
             {
-                if (Result.ContainsKey("BeginYear"))
-                    Result.Add("EndingYear", year);
+                if (Result.ContainsKey("Year1"))
+                    Result.Add("Year2", year);
                 else
-                    Result.Add("BeginYear", year);
+                    Result.Add("Year1", year);
             }
             return true;
         }
@@ -124,7 +124,7 @@ namespace PeriodParser
                 }
                 else
                 {
-                    Result.Add("EndingMonth", monthNumber);
+                    Result.Add("Month2", monthNumber);
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
@@ -134,7 +134,7 @@ namespace PeriodParser
                     }
                     else
                     {
-                        Result.Add("BeginYear", year);
+                        Result.Add("Year1", year);
                     }
                 }
             }

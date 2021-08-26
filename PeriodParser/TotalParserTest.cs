@@ -33,10 +33,10 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", "Total");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginMonth", 4);
-            AssertDictionaryValue("EndingMonth", 11);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month1", 4);
+            AssertDictionaryValue("Month2", 11);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         [TestCase("April 2018 - 2020 totals")]
@@ -52,10 +52,10 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", "Total");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginMonth", 4);
-            AssertDictionaryValue("EndingMonth", 12);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month1", 4);
+            AssertDictionaryValue("Month2", 12);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         [TestCase(" 2018 - November 2020 totals")]
@@ -70,10 +70,10 @@ namespace PeriodParser
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Total");
-            AssertDictionaryValue("BeginMonth", 1);
-            AssertDictionaryValue("EndingMonth", 11);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month1", 1);
+            AssertDictionaryValue("Month2", 11);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         [TestCase(" 2018 - 2020 totals")]
@@ -88,10 +88,10 @@ namespace PeriodParser
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Total");
-            AssertDictionaryValue("BeginMonth", 1);
-            AssertDictionaryValue("EndingMonth", 12);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month1", 1);
+            AssertDictionaryValue("Month2", 12);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         [TestCase(" 2018 totals")]
@@ -103,10 +103,10 @@ namespace PeriodParser
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Total");
-            AssertDictionaryValue("BeginMonth", 1);
-            AssertDictionaryValue("EndingMonth", 12);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2018);
+            AssertDictionaryValue("Month1", 1);
+            AssertDictionaryValue("Month2", 12);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2018);
         }
 
         void AssertDictionaryValue(string key, object value)

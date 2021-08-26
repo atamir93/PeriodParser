@@ -1,7 +1,5 @@
 ﻿using NUnit.Framework;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PeriodParser
 {
@@ -28,7 +26,7 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Dimension");
             AssertDictionaryValue("DimensionName", "location");
             AssertDictionaryValue("DimensionPeriod", "EntireYear");
-            AssertDictionaryValue("BeginYear", 2018);
+            AssertDictionaryValue("Year1", 2018);
         }
 
         [TestCase("june 2018 YTD by location")]
@@ -45,8 +43,8 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Dimension");
             AssertDictionaryValue("DimensionName", "location");
             AssertDictionaryValue("DimensionPeriod", "YearToDate");
-            AssertDictionaryValue("BeginMonth", 6);
-            AssertDictionaryValue("BeginYear", 2018);
+            AssertDictionaryValue("Month1", 6);
+            AssertDictionaryValue("Year1", 2018);
         }
 
         [TestCase("june 2018 by Location")]
@@ -63,8 +61,8 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Dimension");
             AssertDictionaryValue("DimensionName", "location");
             AssertDictionaryValue("DimensionPeriod", "Month");
-            AssertDictionaryValue("BeginMonth", 6);
-            AssertDictionaryValue("BeginYear", 2018);
+            AssertDictionaryValue("Month1", 6);
+            AssertDictionaryValue("Year1", 2018);
         }
 
         [TestCase("Q2 2018 by Location")]
@@ -79,8 +77,8 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Dimension");
             AssertDictionaryValue("DimensionName", "location");
             AssertDictionaryValue("DimensionPeriod", "Quarter");
-            AssertDictionaryValue("BeginQuarter", 2);
-            AssertDictionaryValue("BeginYear", 2018);
+            AssertDictionaryValue("Quarter", 2);
+            AssertDictionaryValue("Year1", 2018);
         }
 
         [TestCase("April 2018 - November 2020 by location")]
@@ -97,10 +95,10 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Dimension");
             AssertDictionaryValue("DimensionName", "location");
             AssertDictionaryValue("DimensionPeriod", "Range");
-            AssertDictionaryValue("BeginMonth", 4);
-            AssertDictionaryValue("EndingMonth", 11);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month1", 4);
+            AssertDictionaryValue("Month2", 11);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         void AssertDictionaryValue(string key, object value)

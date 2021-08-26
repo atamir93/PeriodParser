@@ -28,9 +28,9 @@ namespace PeriodParser
         public const string Type = "YearlyType";
         public const string Error = "Error";
         public const string YearlyPeriod = "YearlyPeriod";
-        public const string EndingMonth = "EndingMonth";
-        public const string BeginYear = "BeginYear";
-        public const string EndingYear = "EndingYear";
+        public const string Month2 = "Month2";
+        public const string Year1 = "Year1";
+        public const string Year2 = "Year2";
 
         public const int CurrentYear = 2021;
         public const int CurrentMonth = 8;

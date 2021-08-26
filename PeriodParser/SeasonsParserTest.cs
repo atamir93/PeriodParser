@@ -28,10 +28,10 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", "Seasons");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginMonth", 6);
-            AssertDictionaryValue("EndingMonth", 12);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month1", 6);
+            AssertDictionaryValue("Month2", 12);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         [TestCase("June-December 2018 Season")]
@@ -47,10 +47,10 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", "Seasons");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginMonth", 6);
-            AssertDictionaryValue("EndingMonth", 12);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2018);
+            AssertDictionaryValue("Month1", 6);
+            AssertDictionaryValue("Month2", 12);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2018);
         }
 
         void AssertDictionaryValue(string key, object value)
