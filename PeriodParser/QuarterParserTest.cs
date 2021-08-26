@@ -21,7 +21,8 @@ namespace PeriodParser
         [TestCase("Q3 for last 2 years")]
         public void QuartersEachYearType_LastDefitinion_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Quarters");
@@ -39,7 +40,8 @@ namespace PeriodParser
         [TestCase("Q2/2018 - 2020")]
         public void QuartersEachYearType_WithDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Quarters");
@@ -58,7 +60,8 @@ namespace PeriodParser
         [TestCase("Last 19 quarters", CurrentYear - 5, 4)]
         public void QuartersConsecutiveType_LastDefitinion_Parser(string text, int beginYear, int beginQuarter)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Quarters");
@@ -70,7 +73,6 @@ namespace PeriodParser
             AssertDictionaryValue("EndingYear", CurrentYear);
         }
 
-
         [TestCase("Q2 2018 - Q1 2020")]
         [TestCase("q2 18- q1 20")]
         [TestCase("Q2,2018-Q1,2020")]
@@ -78,7 +80,8 @@ namespace PeriodParser
         [TestCase("Q2/2018 - Q1/2020")]
         public void QuartersConsecutive_WithDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Quarters");

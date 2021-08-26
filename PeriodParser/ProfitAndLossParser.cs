@@ -8,6 +8,7 @@ namespace PeriodParser
 {
     public abstract class ProfitAndLossParser
     {
+        public const string ThisDefinition = "this";
         public const string DimensionDefinition = " by ";
         public const string YearToDateDefinition = "ytd";
         public const string LastDefinition = "last";
@@ -16,8 +17,8 @@ namespace PeriodParser
         public readonly string[] QuarterDefinitions = { "quarterly", "quarters", "quarter" };
         public readonly string[] QuarterNumbers = { "q1", "q2", "q3", "q4" };
         public readonly string[] MonthDefinitions = { "monthly", "months", "month" };
-        public readonly string[] TotalDefinitions = { "total", "totals" };
-        readonly string[] SeasonsDefinitions = { "seasons", "season" };
+        public readonly string[] TotalDefinitions = { "totals", "total" };
+        public readonly string[] SeasonsDefinitions = { "seasons", "season" };
         public readonly string[] MonthsFullNames = { "january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december" };
         public readonly string[] MonthsShortNames = { "jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec" };
         public readonly string[] MonthsNumbers = { "1","01", "2", "02", "3", "03", "4", "04", "5", "05", "6", "06",
@@ -34,11 +35,12 @@ namespace PeriodParser
         public const int CurrentYear = 2021;
         public const int CurrentMonth = 8;
         public const int CurrentQuarter = 3;
+        public const int FirstMonth = 1;
+        public const int LastMonth = 12;
+
 
         public string CurrentPeriod { get; set; }
-
         public Dictionary<string, object> Result { get; set; }
-
         public string PeriodText { get; set; }
 
         public ProfitAndLossParser(string text)
@@ -67,6 +69,7 @@ namespace PeriodParser
         protected string GetYear(string text)
         {
             string year = "";
+            text = text.Trim();
             if (IsNumeric(text) && text.Length <= 4)
             {
                 switch (text.Length)
@@ -124,6 +127,39 @@ namespace PeriodParser
         protected string ReplaceCharactersExceptPipeToEmptySpace(string text)
         {
             return Regex.Replace(text, @"[^0-9a-zA-Z|]+", " ");
+        }
+        protected string ReplaceCharactersExceptPipeAndDashToEmptySpace(string text)
+        {
+            return Regex.Replace(text, @"[^0-9a-zA-Z|-]+", " ");
+        }
+
+        protected bool StartsWithMonth(string text)
+        {
+            var withoutCharactersExceptPipe = ReplaceCharactersExceptPipeToEmptySpace(text.Trim());
+            string[] items = withoutCharactersExceptPipe.Split(" ");
+            if (items.Length > 1)
+            {
+                var possibleMonth = items[0];
+                return MonthsFullNames.Any(m => m.Contains(possibleMonth)) || MonthsNumbers.Contains(possibleMonth);
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        protected  (int year, int month) GetBeginMonthAndYearFromDifference(int endingMonth, int endingYear, int monthlyPeriodDifference)
+        {
+            var yearDiff = monthlyPeriodDifference / 12;
+            var difference = monthlyPeriodDifference % 12;
+            var beginMonth = endingMonth - difference;
+            if (beginMonth <= 0)
+            {
+                yearDiff++;
+                beginMonth += 12;
+            }
+
+            return (endingYear - yearDiff, beginMonth);
         }
     }
 }

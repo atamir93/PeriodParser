@@ -27,7 +27,8 @@ namespace PeriodParser
         [TestCase("04/2018 - 11/2020")]
         public void Total_WithFullDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Total");
@@ -45,7 +46,8 @@ namespace PeriodParser
         [TestCase("04/2018 - 2020")]
         public void Total_WithBeginMonthDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Total");
@@ -63,7 +65,8 @@ namespace PeriodParser
         [TestCase("2018 - 11/2020")]
         public void Total_WithEndingMonthFullDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Total");
@@ -80,7 +83,8 @@ namespace PeriodParser
         [TestCase("2018 - 2020")]
         public void Total_WithoutMonthsFullDateRange_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Total");
@@ -94,7 +98,8 @@ namespace PeriodParser
         [TestCase("2018")]
         public void Total_SingleYear_Parser(string text)
         {
-            parser.Parse(text);
+            parser.PeriodText = text;
+            parser.Parse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Total");
