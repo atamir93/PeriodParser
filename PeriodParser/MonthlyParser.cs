@@ -96,13 +96,13 @@ namespace PeriodParser
                 }
                 else
                 {
-                    if (Result.ContainsKey("BeginMonth"))
+                    if (Result.ContainsKey("Month1"))
                     {
-                        Result.Add("EndingMonth", monthNumber);
+                        Result.Add("Month2", monthNumber);
                     }
                     else
                     {
-                        Result.Add("BeginMonth", monthNumber);
+                        Result.Add("Month1", monthNumber);
                     }
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
@@ -113,10 +113,10 @@ namespace PeriodParser
                     }
                     else
                     {
-                        if (Result.ContainsKey("BeginYear"))
-                            Result.Add("EndingYear", year);
+                        if (Result.ContainsKey("Year1"))
+                            Result.Add("Year2", year);
                         else
-                            Result.Add("BeginYear", year);
+                            Result.Add("Year1", year);
                     }
                 }
             }
@@ -144,7 +144,7 @@ namespace PeriodParser
             Result.Add("Type", "EachYear");
             if (periodText.Contains(ThisDefinition))
             {
-                Result.Add("BeginMonth", CurrentMonth);
+                Result.Add("Month1", CurrentMonth);
             }
             else
             {
@@ -159,13 +159,13 @@ namespace PeriodParser
                     }
                     else
                     {
-                        Result.Add("BeginMonth", monthNumber);
+                        Result.Add("Month1", monthNumber);
                         periodText = periodText.Replace(possibleMonth, "");
                     }
                 }
             }
 
-            if (!Result.ContainsKey("BeginMonth"))
+            if (!Result.ContainsKey("Month1"))
             {
                 Result.Add("Error", "");
                 return false;
@@ -179,8 +179,8 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("BeginYear", CurrentYear - yearDifference);
-                Result.Add("EndingYear", CurrentYear);
+                Result.Add("Year1", CurrentYear - yearDifference);
+                Result.Add("Year2", CurrentYear);
             }
 
             return true;
@@ -198,10 +198,10 @@ namespace PeriodParser
             else
             {
                 var beginMonthAndYear = GetBeginMonthAndYearFromDifference(CurrentMonth, CurrentYear, monthDifference);
-                Result.Add("BeginMonth", beginMonthAndYear.month);
-                Result.Add("BeginYear", beginMonthAndYear.year);
-                Result.Add("EndingMonth", CurrentMonth);
-                Result.Add("EndingYear", CurrentYear);
+                Result.Add("Month1", beginMonthAndYear.month);
+                Result.Add("Year1", beginMonthAndYear.year);
+                Result.Add("Month2", CurrentMonth);
+                Result.Add("Year2", CurrentYear);
             }
 
             return true;
@@ -218,7 +218,7 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("EndingYear", year);
+                Result.Add("Year2", year);
             }
             return true;
         }

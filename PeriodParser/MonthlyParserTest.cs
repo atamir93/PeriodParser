@@ -29,9 +29,9 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Months");
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginMonth", CurrentMonth);
-            AssertDictionaryValue("BeginYear", CurrentYear - 2);
-            AssertDictionaryValue("EndingYear", CurrentYear);
+            AssertDictionaryValue("Month1", CurrentMonth);
+            AssertDictionaryValue("Year1", CurrentYear - 2);
+            AssertDictionaryValue("Year2", CurrentYear);
         }
 
         [TestCase("april 2018 - 2020")]
@@ -48,9 +48,9 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Months");
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginMonth", 4);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month1", 4);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         [TestCase("Last 2 months", CurrentYear, CurrentMonth-2)]
@@ -69,10 +69,10 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Months");
             AssertDictionaryValue("Type", "Consecutive");
             //AssertDictionaryValue("YearlyPeriod", "beginQuarter");
-            AssertDictionaryValue("BeginMonth", beginQuarter);
-            AssertDictionaryValue("BeginYear", beginYear);
-            AssertDictionaryValue("EndingMonth", CurrentMonth);
-            AssertDictionaryValue("EndingYear", CurrentYear);
+            AssertDictionaryValue("Month1", beginQuarter);
+            AssertDictionaryValue("Year1", beginYear);
+            AssertDictionaryValue("Month2", CurrentMonth);
+            AssertDictionaryValue("Year2", CurrentYear);
         }
 
         [TestCase("April 2018 - November 2020 monthly")]
@@ -89,10 +89,10 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Months");
             AssertDictionaryValue("Type", "Consecutive");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginMonth", 4);
-            AssertDictionaryValue("EndingMonth", 11);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month1", 4);
+            AssertDictionaryValue("Month2", 11);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         void AssertDictionaryValue(string key, object value)

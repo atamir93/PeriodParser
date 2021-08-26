@@ -97,13 +97,13 @@ namespace PeriodParser
                 }
                 else
                 {
-                    if (Result.ContainsKey("BeginQuarter"))
+                    if (Result.ContainsKey("Quarter"))
                     {
                         Result.Add("EndingQuarter", quarterNumber);
                     }
                     else
                     {
-                        Result.Add("BeginQuarter", quarterNumber);
+                        Result.Add("Quarter", quarterNumber);
                     }
 
                     var yearText = items[1];
@@ -115,10 +115,10 @@ namespace PeriodParser
                     }
                     else
                     {
-                        if (Result.ContainsKey("BeginYear"))
-                            Result.Add("EndingYear", year);
+                        if (Result.ContainsKey("Year1"))
+                            Result.Add("Year2", year);
                         else
-                            Result.Add("BeginYear", year);
+                            Result.Add("Year1", year);
                     }
                 }
             }
@@ -161,19 +161,19 @@ namespace PeriodParser
             Result.Add("Type", "EachYear");
             if (periodText.Contains(ThisDefinition))
             {
-                Result.Add("BeginQuarter", CurrentQuarter);
+                Result.Add("Quarter", CurrentQuarter);
             }
             else
             {
                 var quarter = QuarterNumbers.Where(q => periodText.Contains(q)).FirstOrDefault();
                 if (quarter != null)
                 {
-                    Result.Add("BeginQuarter", quarter.Substring(1));
+                    Result.Add("Quarter", quarter.Substring(1));
                     periodText = periodText.Replace(quarter, "");
                 }
             }
 
-            if (!Result.ContainsKey("BeginQuarter"))
+            if (!Result.ContainsKey("Quarter"))
             {
                 Result.Add("Error", "");
                 return false;
@@ -187,8 +187,8 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("BeginYear", CurrentYear - yearDifference);
-                Result.Add("EndingYear", CurrentYear);
+                Result.Add("Year1", CurrentYear - yearDifference);
+                Result.Add("Year2", CurrentYear);
             }
 
             return true;
@@ -206,10 +206,10 @@ namespace PeriodParser
             else
             {
                 var beginQuarterAndYear = GetBeginQuarterAndYearFromDifference(CurrentQuarter, CurrentYear, quarterDifference);
-                Result.Add("BeginQuarter", beginQuarterAndYear.quarter);
-                Result.Add("BeginYear", beginQuarterAndYear.year);
+                Result.Add("Quarter", beginQuarterAndYear.quarter);
+                Result.Add("Year1", beginQuarterAndYear.year);
                 Result.Add("EndingQuarter", CurrentQuarter);
-                Result.Add("EndingYear", CurrentYear);
+                Result.Add("Year2", CurrentYear);
             }
 
             return true;
@@ -240,7 +240,7 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("EndingYear", year);
+                Result.Add("Year2", year);
             }
             return true;
         }

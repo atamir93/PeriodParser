@@ -29,9 +29,9 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Yearly");
             AssertDictionaryValue("YearlyType", "EntireYear");
             AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("EndingMonth", CurrentMonth);
-            AssertDictionaryValue("BeginYear", CurrentYear - 2);
-            AssertDictionaryValue("EndingYear", CurrentYear);
+            AssertDictionaryValue("Month2", CurrentMonth);
+            AssertDictionaryValue("Year1", CurrentYear - 2);
+            AssertDictionaryValue("Year2", CurrentYear);
         }
 
         [TestCase("2018 - 2020 yearly")]
@@ -51,9 +51,9 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Yearly");
             AssertDictionaryValue("YearlyType", "EntireYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("EndingMonth", CurrentMonth);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month2", CurrentMonth);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         [TestCase("April 2018 - 2020 Yearly")]
@@ -73,9 +73,9 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Yearly");
             AssertDictionaryValue("YearlyType", "EntireYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("EndingMonth", 4);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Month2", 4);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         void AssertDictionaryValue(string key, object value)

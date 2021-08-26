@@ -28,9 +28,9 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Quarters");
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginQuarter", CurrentQuarter);
-            AssertDictionaryValue("BeginYear", CurrentYear - 2);
-            AssertDictionaryValue("EndingYear", CurrentYear);
+            AssertDictionaryValue("Quarter", CurrentQuarter);
+            AssertDictionaryValue("Year1", CurrentYear - 2);
+            AssertDictionaryValue("Year2", CurrentYear);
         }
 
         [TestCase("Q2 2018 - 2020")]
@@ -47,9 +47,9 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Quarters");
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginQuarter", 2);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Quarter", 2);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         [TestCase("Last 2 quarters", CurrentYear, 1)]
@@ -67,10 +67,10 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Quarters");
             AssertDictionaryValue("Type", "Consecutive");
             //AssertDictionaryValue("YearlyPeriod", "beginQuarter");
-            AssertDictionaryValue("BeginQuarter", beginQuarter);
-            AssertDictionaryValue("BeginYear", beginYear);
+            AssertDictionaryValue("Quarter", beginQuarter);
+            AssertDictionaryValue("Year1", beginYear);
             AssertDictionaryValue("EndingQuarter", CurrentQuarter);
-            AssertDictionaryValue("EndingYear", CurrentYear);
+            AssertDictionaryValue("Year2", CurrentYear);
         }
 
         [TestCase("Q2 2018 - Q1 2020")]
@@ -87,10 +87,10 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Quarters");
             AssertDictionaryValue("Type", "Consecutive");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("BeginQuarter", 2);
+            AssertDictionaryValue("Quarter", 2);
             AssertDictionaryValue("EndingQuarter", 1);
-            AssertDictionaryValue("BeginYear", 2018);
-            AssertDictionaryValue("EndingYear", 2020);
+            AssertDictionaryValue("Year1", 2018);
+            AssertDictionaryValue("Year2", 2020);
         }
 
         void AssertDictionaryValue(string key, object value)
