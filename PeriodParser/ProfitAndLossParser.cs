@@ -9,7 +9,7 @@ namespace PeriodParser
     public abstract class ProfitAndLossParser
     {
         public const string ThisDefinition = "this";
-        public const string DimensionDefinition = " by ";
+        public const string DimensionDefinition = "by";
         public const string YearToDateDefinition = "ytd";
         public const string LastDefinition = "last";
         public const string FiscalDefinition = "fiscal";
@@ -121,7 +121,7 @@ namespace PeriodParser
         {
             var withoutCharactersExceptPipe = ReplaceCharactersExceptPipeToEmptySpace(text);
             string[] dateRangeItems = withoutCharactersExceptPipe.Trim().Split(" ");
-            return dateRangeItems.Length == 1;
+            return dateRangeItems.Length == 1 && IsNumeric(dateRangeItems[0]);
         }
 
         protected string ReplaceCharactersExceptPipeToEmptySpace(string text)
@@ -148,7 +148,7 @@ namespace PeriodParser
             }
         }
 
-        protected  (int year, int month) GetBeginMonthAndYearFromDifference(int endingMonth, int endingYear, int monthlyPeriodDifference)
+        protected (int year, int month) GetBeginMonthAndYearFromDifference(int endingMonth, int endingYear, int monthlyPeriodDifference)
         {
             var yearDiff = monthlyPeriodDifference / 12;
             var difference = monthlyPeriodDifference % 12;
@@ -161,5 +161,8 @@ namespace PeriodParser
 
             return (endingYear - yearDiff, beginMonth);
         }
+
+        public static bool EndsWithAny(string[] items, string text) => items.Any(i => text.EndsWith(i));
+        public static bool ContainsAny(string[] items, string text) => items.Any(text.Contains);
     }
 }
