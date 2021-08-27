@@ -23,7 +23,7 @@ namespace PeriodParser
                 }
             }
 
-            Result.Add("Period", "Total");
+            Result.Add(Period, "Total");
 
             var dateRanges = PeriodText.Split("-");
             if (dateRanges.Length == 2)
@@ -38,7 +38,7 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
 
@@ -50,15 +50,15 @@ namespace PeriodParser
             var year = GetYear(yearText);
             if (string.IsNullOrEmpty(year))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
             {
-                Result.Add("Month1", FirstMonth);
-                Result.Add("Month2", LastMonth);
-                Result.Add("Year1", year);
-                Result.Add("Year2", year);
+                Result.Add(Month1, FirstMonth);
+                Result.Add(Month2, LastMonth);
+                Result.Add(Year1, year);
+                Result.Add(Year2, year);
             }
 
             return true;
@@ -112,7 +112,7 @@ namespace PeriodParser
             string[] items = withoutCharactersExceptPipe.Split(" ");
             if (items.Length < 2)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -121,32 +121,32 @@ namespace PeriodParser
                 int monthNumber = GetMonthNumber(month);
                 if (monthNumber == 0)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
                 else
                 {
-                    if (Result.ContainsKey("Month1"))
+                    if (Result.ContainsKey(Month1))
                     {
-                        Result.Add("Month2", monthNumber);
+                        Result.Add(Month2, monthNumber);
                     }
                     else
                     {
-                        Result.Add("Month1", monthNumber);
+                        Result.Add(Month1, monthNumber);
                     }
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
                     {
-                        Result.Add("Error", "");
+                        Result.Add(Error, "");
                         return false;
                     }
                     else
                     {
-                        if (Result.ContainsKey("Year1"))
-                            Result.Add("Year2", year);
+                        if (Result.ContainsKey(Year1))
+                            Result.Add(Year2, year);
                         else
-                            Result.Add("Year1", year);
+                            Result.Add(Year1, year);
                     }
                 }
             }
@@ -159,26 +159,26 @@ namespace PeriodParser
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
             {
-                if (Result.ContainsKey("Year1"))
+                if (Result.ContainsKey(Year1))
                 {
-                    Result.Add("Year2", year);
+                    Result.Add(Year2, year);
                 }
                 else
                 {
-                    Result.Add("Year1", year);
+                    Result.Add(Year1, year);
                 }
-                if (Result.ContainsKey("Month1"))
+                if (Result.ContainsKey(Month1))
                 {
-                    Result.Add("Month2", 12);
+                    Result.Add(Month2, 12);
                 }
                 else
                 {
-                    Result.Add("Month1", 1);
+                    Result.Add(Month1, 1);
                 }
             }
             

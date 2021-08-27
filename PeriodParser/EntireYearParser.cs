@@ -51,12 +51,12 @@ namespace PeriodParser
             }
             if (periodText.Contains(FiscalDefinition))
             {
-                Result.Add(YearlyPeriod, "Fiscal");
+                //Result.Add(YearlyPeriod, "Fiscal");
                 // to-do for fiscal years
             }
             else
             {
-                Result.Add(YearlyPeriod, "Calendar");
+                //Result.Add(YearlyPeriod, "Calendar");
                 Result.Add(Month2, CurrentMonth);
                 Result.Add(Year1, CurrentYear - yearDifference);
                 Result.Add(Year2, CurrentYear);
@@ -94,15 +94,15 @@ namespace PeriodParser
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
             {
-                if (Result.ContainsKey("Year1"))
-                    Result.Add("Year2", year);
+                if (Result.ContainsKey(Year1))
+                    Result.Add(Year2, year);
                 else
-                    Result.Add("Year1", year);
+                    Result.Add(Year1, year);
             }
 
             return true;
@@ -114,7 +114,7 @@ namespace PeriodParser
             string[] items = SplitByEmptySpace(withoutCharactersExceptPipe);
             if (items.Length < 2)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -123,22 +123,22 @@ namespace PeriodParser
                 int monthNumber = GetMonthNumber(month);
                 if (monthNumber == 0)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
                 else
                 {
-                    Result.Add("Month2", monthNumber);
+                    Result.Add(Month2, monthNumber);
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
                     {
-                        Result.Add("Error", "");
+                        Result.Add(Error, "");
                         return false;
                     }
                     else
                     {
-                        Result.Add("Year1", year);
+                        Result.Add(Year1, year);
                     }
                 }
             }

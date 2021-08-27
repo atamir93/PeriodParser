@@ -19,7 +19,7 @@ namespace PeriodParser
                     PeriodText = PeriodText.ToLower().Replace(quarterText, "");
                 }
             }
-            Result.Add("Period", "Quarters");
+            Result.Add(Period, "Quarters");
             if (PeriodText.Contains(LastDefinition))
             {
                 if (!TryParseWithLastDefinition(PeriodText))
@@ -35,7 +35,7 @@ namespace PeriodParser
                 }
                 else
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
             }
@@ -53,7 +53,7 @@ namespace PeriodParser
 
             if (hasFirstRangeQuarter && hasSecondRangeQuarter)
             {
-                Result.Add("Type", "Consecutive");
+                Result.Add(Type, "Consecutive");
                 if (!TryParseRangeWithQuarterAndYear(rangeFirst))
                     return false;
                 if (!TryParseRangeWithQuarterAndYear(rangeSecond))
@@ -62,7 +62,7 @@ namespace PeriodParser
             }
             else if (hasFirstRangeQuarter)
             {
-                Result.Add("Type", "EachYear");
+                Result.Add(Type, "EachYear");
                 if (!TryParseRangeWithQuarterAndYear(rangeFirst))
                     return false;
                 if (!TryParseRangeWithYear(rangeSecond))
@@ -71,7 +71,7 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
 
@@ -83,7 +83,7 @@ namespace PeriodParser
             string[] items = withoutCharactersExceptPipe.Split(" ");
             if (items.Length < 2)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -92,33 +92,33 @@ namespace PeriodParser
                 int quarterNumber = GetQuarterNumber(quarterText);
                 if (quarterNumber == 0)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
                 else
                 {
-                    if (Result.ContainsKey("Quarter"))
+                    if (Result.ContainsKey(Quarter1))
                     {
-                        Result.Add("EndingQuarter", quarterNumber);
+                        Result.Add(Quarter2, quarterNumber);
                     }
                     else
                     {
-                        Result.Add("Quarter", quarterNumber);
+                        Result.Add(Quarter1, quarterNumber);
                     }
 
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
                     {
-                        Result.Add("Error", "");
+                        Result.Add(Error, "");
                         return false;
                     }
                     else
                     {
-                        if (Result.ContainsKey("Year1"))
-                            Result.Add("Year2", year);
+                        if (Result.ContainsKey(Year1))
+                            Result.Add(Year2, year);
                         else
-                            Result.Add("Year1", year);
+                            Result.Add(Year1, year);
                     }
                 }
             }
@@ -133,7 +133,7 @@ namespace PeriodParser
             {
                 if (quarterNumber < 1 || quarterNumber > 4)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return 0;
                 }
             }
@@ -158,24 +158,24 @@ namespace PeriodParser
 
         bool TryParseToEachYearQuartersWithLastDefinitions(string periodText)
         {
-            Result.Add("Type", "EachYear");
+            Result.Add(Type, "EachYear");
             if (periodText.Contains(ThisDefinition))
             {
-                Result.Add("Quarter", CurrentQuarter);
+                Result.Add(Quarter1, CurrentQuarter);
             }
             else
             {
                 var quarter = QuarterNumbers.Where(q => periodText.Contains(q)).FirstOrDefault();
                 if (quarter != null)
                 {
-                    Result.Add("Quarter", quarter.Substring(1));
+                    Result.Add(Quarter1, quarter.Substring(1));
                     periodText = periodText.Replace(quarter, "");
                 }
             }
 
-            if (!Result.ContainsKey("Quarter"))
+            if (!Result.ContainsKey(Quarter1))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
 
@@ -187,8 +187,8 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("Year1", CurrentYear - yearDifference);
-                Result.Add("Year2", CurrentYear);
+                Result.Add(Year1, CurrentYear - yearDifference);
+                Result.Add(Year2, CurrentYear);
             }
 
             return true;
@@ -196,7 +196,7 @@ namespace PeriodParser
 
         bool TryParseToConsecutiveQuartersWithLastDefinitions(string periodText)
         {
-            Result.Add("Type", "Consecutive");
+            Result.Add(Type, "Consecutive");
             int quarterDifference = GetFirstNumber(periodText);
             if (quarterDifference == 0)
             {
@@ -206,10 +206,10 @@ namespace PeriodParser
             else
             {
                 var beginQuarterAndYear = GetBeginQuarterAndYearFromDifference(CurrentQuarter, CurrentYear, quarterDifference);
-                Result.Add("Quarter", beginQuarterAndYear.quarter);
-                Result.Add("Year1", beginQuarterAndYear.year);
-                Result.Add("EndingQuarter", CurrentQuarter);
-                Result.Add("Year2", CurrentYear);
+                Result.Add(Quarter1, beginQuarterAndYear.quarter);
+                Result.Add(Year1, beginQuarterAndYear.year);
+                Result.Add(Quarter2, CurrentQuarter);
+                Result.Add(Year2, CurrentYear);
             }
 
             return true;
@@ -235,12 +235,12 @@ namespace PeriodParser
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
             {
-                Result.Add("Year2", year);
+                Result.Add(Year2, year);
             }
             return true;
         }

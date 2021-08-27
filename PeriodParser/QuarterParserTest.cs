@@ -28,7 +28,7 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Quarters");
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("Quarter", CurrentQuarter);
+            AssertDictionaryValue("Quarter1", CurrentQuarter);
             AssertDictionaryValue("Year1", CurrentYear - 2);
             AssertDictionaryValue("Year2", CurrentYear);
         }
@@ -47,7 +47,7 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Quarters");
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("Quarter", 2);
+            AssertDictionaryValue("Quarter1", 2);
             AssertDictionaryValue("Year1", 2018);
             AssertDictionaryValue("Year2", 2020);
         }
@@ -67,9 +67,9 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Quarters");
             AssertDictionaryValue("Type", "Consecutive");
             //AssertDictionaryValue("YearlyPeriod", "beginQuarter");
-            AssertDictionaryValue("Quarter", beginQuarter);
+            AssertDictionaryValue("Quarter1", beginQuarter);
             AssertDictionaryValue("Year1", beginYear);
-            AssertDictionaryValue("EndingQuarter", CurrentQuarter);
+            AssertDictionaryValue("Quarter2", CurrentQuarter);
             AssertDictionaryValue("Year2", CurrentYear);
         }
 
@@ -87,8 +87,8 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Quarters");
             AssertDictionaryValue("Type", "Consecutive");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
-            AssertDictionaryValue("Quarter", 2);
-            AssertDictionaryValue("EndingQuarter", 1);
+            AssertDictionaryValue("Quarter1", 2);
+            AssertDictionaryValue("Quarter2", 1);
             AssertDictionaryValue("Year1", 2018);
             AssertDictionaryValue("Year2", 2020);
         }

@@ -10,8 +10,8 @@ namespace PeriodParser
         {
             Result = new Dictionary<string, object>();
             PeriodText = PeriodText.ToLower().Replace(YearToDateDefinition, "");
-            Result.Add("Period", "Yearly");
-            Result.Add("YearlyType", "YTD");
+            Result.Add(Period, "Yearly");
+            Result.Add(Type, "YTD");
             if (PeriodText.Contains(LastDefinition))
             {
                 if (!TryParseToYTDWithLastDefinition(PeriodText))
@@ -31,7 +31,7 @@ namespace PeriodParser
                 }
                 else
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
             }
@@ -48,15 +48,15 @@ namespace PeriodParser
             }
             if (periodText.Contains(FiscalDefinition))
             {
-                Result.Add("YearlyPeriod", "Fiscal");
+                //Result.Add("YearlyPeriod", "Fiscal");
                 // to-do for fiscal years
             }
             else
             {
-                Result.Add("YearlyPeriod", "Calendar");
-                Result.Add("Month2", CurrentMonth);
-                Result.Add("Year1", CurrentYear - yearDifference);
-                Result.Add("Year2", CurrentYear);
+                //Result.Add("YearlyPeriod", "Calendar");
+                Result.Add(Month2, CurrentMonth);
+                Result.Add(Year1, CurrentYear - yearDifference);
+                Result.Add(Year2, CurrentYear);
             }
             return true;
         }
@@ -69,7 +69,7 @@ namespace PeriodParser
 
             if (HasOnlyYear(rangeFirst))
             {
-                Result.Add("Month2", CurrentMonth);
+                Result.Add(Month2, CurrentMonth);
                 if (!TryParseRangeWithYear(rangeFirst))
                     return false;
             }
@@ -91,15 +91,15 @@ namespace PeriodParser
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
             {
-                if (Result.ContainsKey("Year1"))
-                    Result.Add("Year2", year);
+                if (Result.ContainsKey(Year1))
+                    Result.Add(Year2, year);
                 else
-                    Result.Add("Year1", year);
+                    Result.Add(Year1, year);
             }
             return true;
         }
@@ -110,7 +110,7 @@ namespace PeriodParser
             string[] items = SplitByEmptySpace(withoutCharactersExceptPipe);
             if (items.Length < 2)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -119,22 +119,22 @@ namespace PeriodParser
                 int monthNumber = GetMonthNumber(month);
                 if (monthNumber == 0)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
                 else
                 {
-                    Result.Add("Month2", monthNumber);
+                    Result.Add(Month2, monthNumber);
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
                     {
-                        Result.Add("Error", "");
+                        Result.Add(Error, "");
                         return false;
                     }
                     else
                     {
-                        Result.Add("Year1", year);
+                        Result.Add(Year1, year);
                     }
                 }
             }
