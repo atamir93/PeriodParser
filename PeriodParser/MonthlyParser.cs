@@ -18,7 +18,7 @@ namespace PeriodParser
                     PeriodText = PeriodText.ToLower().Replace(quarterText, "");
                 }
             }
-            Result.Add("Period", "Months");
+            Result.Add(Period, "Months");
             if (PeriodText.Contains(LastDefinition))
             {
                 if (!TryParseWithLastDefinition(PeriodText))
@@ -34,7 +34,7 @@ namespace PeriodParser
                 }
                 else
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
             }
@@ -52,7 +52,7 @@ namespace PeriodParser
 
             if (hasFirstRangeMonth && hasSecondRangeMonth)
             {
-                Result.Add("Type", "Consecutive");
+                Result.Add(Type, "Consecutive");
                 if (!TryParseRangeWithMonthAndYear(rangeFirst))
                     return false;
                 if (!TryParseRangeWithMonthAndYear(rangeSecond))
@@ -61,7 +61,7 @@ namespace PeriodParser
             }
             else if (hasFirstRangeMonth)
             {
-                Result.Add("Type", "EachYear");
+                Result.Add(Type, "EachYear");
                 if (!TryParseRangeWithMonthAndYear(rangeFirst))
                     return false;
                 if (!TryParseRangeWithYear(rangeSecond))
@@ -70,7 +70,7 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
 
@@ -82,7 +82,7 @@ namespace PeriodParser
             string[] items = withoutCharactersExceptPipe.Split(" ");
             if (items.Length < 2)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -91,32 +91,32 @@ namespace PeriodParser
                 int monthNumber = GetMonthNumber(month);
                 if (monthNumber == 0)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
                 else
                 {
-                    if (Result.ContainsKey("Month1"))
+                    if (Result.ContainsKey(Month1))
                     {
-                        Result.Add("Month2", monthNumber);
+                        Result.Add(Month2, monthNumber);
                     }
                     else
                     {
-                        Result.Add("Month1", monthNumber);
+                        Result.Add(Month1, monthNumber);
                     }
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
                     {
-                        Result.Add("Error", "");
+                        Result.Add(Error, "");
                         return false;
                     }
                     else
                     {
-                        if (Result.ContainsKey("Year1"))
-                            Result.Add("Year2", year);
+                        if (Result.ContainsKey(Year1))
+                            Result.Add(Year2, year);
                         else
-                            Result.Add("Year1", year);
+                            Result.Add(Year1, year);
                     }
                 }
             }
@@ -141,10 +141,10 @@ namespace PeriodParser
 
         bool TryParseToEachYearMonthlyWithLastDefinitions(string periodText)
         {
-            Result.Add("Type", "EachYear");
+            Result.Add(Type, "EachYear");
             if (periodText.Contains(ThisDefinition))
             {
-                Result.Add("Month1", CurrentMonth);
+                Result.Add(Month1, CurrentMonth);
             }
             else
             {
@@ -154,20 +154,20 @@ namespace PeriodParser
                     int monthNumber = GetMonthNumber(possibleMonth);
                     if (monthNumber == 0)
                     {
-                        Result.Add("Error", "");
+                        Result.Add(Error, "");
                         return false;
                     }
                     else
                     {
-                        Result.Add("Month1", monthNumber);
+                        Result.Add(Month1, monthNumber);
                         periodText = periodText.Replace(possibleMonth, "");
                     }
                 }
             }
 
-            if (!Result.ContainsKey("Month1"))
+            if (!Result.ContainsKey(Month1))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
 
@@ -179,8 +179,8 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("Year1", CurrentYear - yearDifference);
-                Result.Add("Year2", CurrentYear);
+                Result.Add(Year1, CurrentYear - yearDifference);
+                Result.Add(Year2, CurrentYear);
             }
 
             return true;
@@ -188,7 +188,7 @@ namespace PeriodParser
 
         bool TryParseToConsecutiveMonthlyWithLastDefinitions(string periodText)
         {
-            Result.Add("Type", "Consecutive");
+            Result.Add(Type, "Consecutive");
             int monthDifference = GetFirstNumber(periodText);
             if (monthDifference == 0)
             {
@@ -198,10 +198,10 @@ namespace PeriodParser
             else
             {
                 var beginMonthAndYear = GetBeginMonthAndYearFromDifference(CurrentMonth, CurrentYear, monthDifference);
-                Result.Add("Month1", beginMonthAndYear.month);
-                Result.Add("Year1", beginMonthAndYear.year);
-                Result.Add("Month2", CurrentMonth);
-                Result.Add("Year2", CurrentYear);
+                Result.Add(Month1, beginMonthAndYear.month);
+                Result.Add(Year1, beginMonthAndYear.year);
+                Result.Add(Month2, CurrentMonth);
+                Result.Add(Year2, CurrentYear);
             }
 
             return true;
@@ -213,12 +213,12 @@ namespace PeriodParser
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
             {
-                Result.Add("Year2", year);
+                Result.Add(Year2, year);
             }
             return true;
         }

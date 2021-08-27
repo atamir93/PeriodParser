@@ -25,10 +25,14 @@ namespace PeriodParser
             "7", "07", "8", "08", "9", "09", "10", "11", "12" };
 
         public const string Period = "Period";
-        public const string Type = "YearlyType";
+        public const string Type = "Type";
         public const string Error = "Error";
-        public const string YearlyPeriod = "YearlyPeriod";
+        public const string DimensionName = "DimensionName";
+        public const string DimensionPeriod = "DimensionPeriod";
+        public const string Month1 = "Month1";
         public const string Month2 = "Month2";
+        public const string Quarter1 = "Quarter1";
+        public const string Quarter2 = "Quarter2";
         public const string Year1 = "Year1";
         public const string Year2 = "Year2";
 
@@ -37,7 +41,6 @@ namespace PeriodParser
         public const int CurrentQuarter = 3;
         public const int FirstMonth = 1;
         public const int LastMonth = 12;
-
 
         public string CurrentPeriod { get; set; }
         public Dictionary<string, object> Result { get; set; }
@@ -103,7 +106,7 @@ namespace PeriodParser
             {
                 if (monthNumber < 1 || monthNumber > 12)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return 0;
                 }
             }

@@ -23,7 +23,7 @@ namespace PeriodParser
                 }
             }
 
-            Result.Add("Period", "Seasons");
+            Result.Add(Period, "Seasons");
             PeriodText = ReplaceCharactersExceptPipeAndDashToEmptySpace(PeriodText.Trim());
             var dateRanges = SplitByDash(PeriodText);
             if (dateRanges.Length == 3)
@@ -38,7 +38,7 @@ namespace PeriodParser
             }
             else
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
 
@@ -56,9 +56,9 @@ namespace PeriodParser
             var monthAndYearItems = dateRanges[1].Trim();
             if (TryParseRangeWithMonthAndYear(monthAndYearItems))
             {
-                if (Result.ContainsKey("Year1"))
+                if (Result.ContainsKey(Year1))
                 {
-                    Result.Add("Year2", Result["Year1"]);
+                    Result.Add(Year2, Result["Year1"]);
                 }
                 else
                     return false;
@@ -95,18 +95,18 @@ namespace PeriodParser
             int monthNumber = GetMonthNumber(monthText);
             if (monthNumber == 0)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
             {
-                if (Result.ContainsKey("Month1"))
+                if (Result.ContainsKey(Month1))
                 {
-                    Result.Add("Month2", monthNumber);
+                    Result.Add(Month2, monthNumber);
                 }
                 else
                 {
-                    Result.Add("Month1", monthNumber);
+                    Result.Add(Month1, monthNumber);
                 }
             }
             return true;
@@ -118,7 +118,7 @@ namespace PeriodParser
             string[] items = withoutCharactersExceptPipe.Split(" ");
             if (items.Length < 2)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -127,35 +127,35 @@ namespace PeriodParser
                 int monthNumber = GetMonthNumber(month);
                 if (monthNumber == 0)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
                 else
                 {
-                    if (Result.ContainsKey("Month1"))
+                    if (Result.ContainsKey(Month1))
                     {
-                        Result.Add("Month2", monthNumber);
+                        Result.Add(Month2, monthNumber);
                     }
                     else
                     {
-                        Result.Add("Month1", monthNumber);
+                        Result.Add(Month1, monthNumber);
                     }
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
                     {
-                        Result.Add("Error", "");
+                        Result.Add(Error, "");
                         return false;
                     }
                     else
                     {
-                        if (Result.ContainsKey("Year1"))
+                        if (Result.ContainsKey(Year1))
                         {
-                            Result.Add("Year2", year);
+                            Result.Add(Year2, year);
                         }
                         else
                         {
-                            Result.Add("Year1", year);
+                            Result.Add(Year1, year);
                         }
                     }
 
@@ -170,12 +170,12 @@ namespace PeriodParser
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
             {
-                Result.Add("Year2", year);
+                Result.Add(Year2, year);
             }
             return true;
         }

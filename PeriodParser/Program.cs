@@ -54,7 +54,7 @@ namespace PeriodParser
             {
                 if (monthNumber < 1 || monthNumber > 12)
                 {
-                    //Result.Add("Error", "");
+                    //Result.Add(Error, "");
                     return 0;
                 }
             }

@@ -27,8 +27,7 @@ namespace PeriodParser
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Yearly");
-            AssertDictionaryValue("YearlyType", "EntireYear");
-            AssertDictionaryValue("YearlyPeriod", "Calendar");
+            AssertDictionaryValue("Type", "EntireYear");
             AssertDictionaryValue("Month2", CurrentMonth);
             AssertDictionaryValue("Year1", CurrentYear - 2);
             AssertDictionaryValue("Year2", CurrentYear);
@@ -49,8 +48,7 @@ namespace PeriodParser
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Yearly");
-            AssertDictionaryValue("YearlyType", "EntireYear");
-            //AssertDictionaryValue("YearlyPeriod", "Calendar");
+            AssertDictionaryValue("Type", "EntireYear");
             AssertDictionaryValue("Month2", CurrentMonth);
             AssertDictionaryValue("Year1", 2018);
             AssertDictionaryValue("Year2", 2020);
@@ -71,8 +69,7 @@ namespace PeriodParser
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Yearly");
-            AssertDictionaryValue("YearlyType", "EntireYear");
-            //AssertDictionaryValue("YearlyPeriod", "Calendar");
+            AssertDictionaryValue("Type", "EntireYear");
             AssertDictionaryValue("Month2", 4);
             AssertDictionaryValue("Year1", 2018);
             AssertDictionaryValue("Year2", 2020);

@@ -77,7 +77,7 @@ namespace PeriodParser
             AssertDictionaryValue("Period", "Dimension");
             AssertDictionaryValue("DimensionName", "location");
             AssertDictionaryValue("DimensionPeriod", "Quarter");
-            AssertDictionaryValue("Quarter", 2);
+            AssertDictionaryValue("Quarter1", 2);
             AssertDictionaryValue("Year1", 2018);
         }
 

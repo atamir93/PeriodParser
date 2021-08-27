@@ -13,7 +13,7 @@ namespace PeriodParser
             var dimensionName = words[words.Length - 1];
 
             Result.Add(Period, "Dimension");
-            Result.Add("DimensionName", dimensionName.ToLower());
+            Result.Add(DimensionName, dimensionName.ToLower());
 
             PeriodText = PeriodText.Replace(DimensionDefinition, "");
             PeriodText = PeriodText.Replace(dimensionName, "");
@@ -21,18 +21,18 @@ namespace PeriodParser
             var dateRanges = SplitByDash(PeriodText);
             if (PeriodText.Contains(YearToDateDefinition))
             {
-                Result.Add("DimensionPeriod", "YearToDate");
+                Result.Add(DimensionPeriod, "YearToDate");
                 PeriodText = PeriodText.Replace(YearToDateDefinition, "");
                 return TryParseRangeWithMonthAndYear(PeriodText);
             }
             else if (HasOnlyYear(PeriodText))
             {
-                Result.Add("DimensionPeriod", "EntireYear");
+                Result.Add(DimensionPeriod, "EntireYear");
                 return TryParseRangeWithYear(PeriodText);
             }
             else if (dateRanges.Length == 2)
             {
-                Result.Add("DimensionPeriod", "Range");
+                Result.Add(DimensionPeriod, "Range");
                 if (!TryParseRangeWithMonthAndYear(dateRanges[0]))
                 {
                     return false;
@@ -41,16 +41,14 @@ namespace PeriodParser
             }
             else if (ContainsAny(QuarterNumbers, PeriodText))
             {
-                Result.Add("DimensionPeriod", "Quarter");
+                Result.Add(DimensionPeriod, "Quarter");
                 return TryParseRangeWithQuarterAndYear(PeriodText);
             }
             else
             {
-                Result.Add("DimensionPeriod", "Month");
+                Result.Add(DimensionPeriod, "Month");
                 return TryParseRangeWithMonthAndYear(PeriodText);
             }
-
-            return true;
         }
 
         bool TryParseRangeWithMonthAndYear(string monthAndYearText)
@@ -59,7 +57,7 @@ namespace PeriodParser
             string[] items = SplitByEmptySpace(withoutCharactersExceptPipe);
             if (items.Length < 2)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -68,29 +66,29 @@ namespace PeriodParser
                 int monthNumber = GetMonthNumber(month);
                 if (monthNumber == 0)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
                 else
                 {
-                    if (Result.ContainsKey("Month1"))
-                        Result.Add("Month2", monthNumber);
+                    if (Result.ContainsKey(Month1))
+                        Result.Add(Month2, monthNumber);
                     else
-                        Result.Add("Month1", monthNumber);
+                        Result.Add(Month1, monthNumber);
 
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
                     {
-                        Result.Add("Error", "");
+                        Result.Add(Error, "");
                         return false;
                     }
                     else
                     {
-                        if (Result.ContainsKey("Year1"))
-                            Result.Add("Year2", year);
+                        if (Result.ContainsKey(Year1))
+                            Result.Add(Year2, year);
                         else
-                            Result.Add("Year1", year);
+                            Result.Add(Year1, year);
                     }
                 }
             }
@@ -104,15 +102,15 @@ namespace PeriodParser
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
             {
-                if (Result.ContainsKey("Year1"))
-                    Result.Add("Year2", year);
+                if (Result.ContainsKey(Year1))
+                    Result.Add(Year2, year);
                 else
-                    Result.Add("Year1", year);
+                    Result.Add(Year1, year);
             }
 
             return true;
@@ -124,7 +122,7 @@ namespace PeriodParser
             string[] items = withoutCharactersExceptPipe.Split(" ");
             if (items.Length < 2)
             {
-                Result.Add("Error", "");
+                Result.Add(Error, "");
                 return false;
             }
             else
@@ -133,33 +131,33 @@ namespace PeriodParser
                 int quarterNumber = GetQuarterNumber(quarterText);
                 if (quarterNumber == 0)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return false;
                 }
                 else
                 {
-                    if (Result.ContainsKey("Quarter"))
+                    if (Result.ContainsKey(Quarter1))
                     {
-                        Result.Add("EndingQuarter", quarterNumber);
+                        Result.Add(Quarter2, quarterNumber);
                     }
                     else
                     {
-                        Result.Add("Quarter", quarterNumber);
+                        Result.Add(Quarter1, quarterNumber);
                     }
 
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
                     {
-                        Result.Add("Error", "");
+                        Result.Add(Error, "");
                         return false;
                     }
                     else
                     {
-                        if (Result.ContainsKey("Year1"))
-                            Result.Add("Year2", year);
+                        if (Result.ContainsKey(Year1))
+                            Result.Add(Year2, year);
                         else
-                            Result.Add("Year1", year);
+                            Result.Add(Year1, year);
                     }
                 }
             }
@@ -174,7 +172,7 @@ namespace PeriodParser
             {
                 if (quarterNumber < 1 || quarterNumber > 4)
                 {
-                    Result.Add("Error", "");
+                    Result.Add(Error, "");
                     return 0;
                 }
             }
