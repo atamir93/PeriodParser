@@ -32,7 +32,7 @@ namespace PeriodParser
                 }
             }
 
-            Result.Add(Period, "Total");
+            Result.Add(Period, ProfitAndLossPeriod.Single);
 
             var dateRanges = PeriodText.Split("-");
             if (dateRanges.Length == 2)
@@ -190,7 +190,7 @@ namespace PeriodParser
                     Result.Add(Month1, 1);
                 }
             }
-            
+
             return true;
         }
     }

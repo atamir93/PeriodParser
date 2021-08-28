@@ -28,7 +28,7 @@ namespace PeriodParser
         public const string Type = "Type";
         public const string Error = "Error";
         public const string DimensionName = "DimensionName";
-        public const string DimensionPeriod = "DimensionPeriod";
+        public const string DimensionPeriod = "DimensionCompareType";
         public const string Month1 = "Month1";
         public const string Month2 = "Month2";
         public const string Quarter1 = "Quarter1";

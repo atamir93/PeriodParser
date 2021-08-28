@@ -26,7 +26,7 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Seasons");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.MonthRange);
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
             AssertDictionaryValue("Month1", 6);
             AssertDictionaryValue("Month2", 12);
@@ -45,7 +45,7 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Seasons");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.MonthRange);
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
             AssertDictionaryValue("Month1", 6);
             AssertDictionaryValue("Month2", 12);

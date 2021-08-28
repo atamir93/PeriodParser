@@ -28,7 +28,7 @@ namespace PeriodParser
                     PeriodText = PeriodText.ToLower().Replace(quarterText, "");
                 }
             }
-            Result.Add(Period, "Months");
+            Result.Add(Period, ProfitAndLossPeriod.Monthly);
             if (PeriodText.Contains(LastDefinition))
             {
                 if (!TryParseWithLastDefinition(PeriodText))
