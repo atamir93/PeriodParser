@@ -4,10 +4,20 @@ using System.Text.RegularExpressions;
 
 namespace PeriodParser
 {
-    public class QuarterParser : ProfitAndLossParser
+    public class QuarterParser : PeriodParser
     {
         public QuarterParser(string text = "") : base(text) { }
 
+        private static QuarterParser instance = null;
+        public static QuarterParser GetInstance(string text)
+        {
+            if (instance == null)
+            {
+                instance = new QuarterParser();
+            }
+            instance.SetPeriodText(text);
+            return instance;
+        }
         public override bool Parse()
         {
             PeriodText = PeriodText.ToLower();

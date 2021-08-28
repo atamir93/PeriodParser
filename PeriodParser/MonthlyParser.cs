@@ -3,10 +3,20 @@ using System.Linq;
 
 namespace PeriodParser
 {
-    public class MonthlyParser : ProfitAndLossParser
+    public class MonthlyParser : PeriodParser
     {
         public MonthlyParser(string text = "") : base(text) { }
 
+        private static MonthlyParser instance = null;
+        public static MonthlyParser GetInstance(string text)
+        {
+            if (instance == null)
+            {
+                instance = new MonthlyParser();
+            }
+            instance.SetPeriodText(text);
+            return instance;
+        }
         public override bool Parse()
         {
             PeriodText = PeriodText.ToLower();

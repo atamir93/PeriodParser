@@ -2,10 +2,19 @@
 
 namespace PeriodParser
 {
-    public class YearToDateParser : ProfitAndLossParser
+    public class YearToDateParser : PeriodParser
     {
         public YearToDateParser(string text = "") : base(text) { }
-
+        private static YearToDateParser instance = null;
+        public static YearToDateParser GetInstance(string text)
+        {
+            if (instance == null)
+            {
+                instance = new YearToDateParser();
+            }
+            instance.SetPeriodText(text);
+            return instance;
+        }
         public override bool Parse()
         {
             Result = new Dictionary<string, object>();
@@ -54,7 +63,10 @@ namespace PeriodParser
             else
             {
                 //Result.Add("YearlyPeriod", "Calendar");
-                Result.Add(Month2, CurrentMonth);
+                if (Result.ContainsKey(Month1))
+                    Result.Add(Month2, CurrentMonth);
+                else
+                    Result.Add(Month1, CurrentMonth);
                 Result.Add(Year1, CurrentYear - yearDifference);
                 Result.Add(Year2, CurrentYear);
             }
@@ -69,7 +81,10 @@ namespace PeriodParser
 
             if (HasOnlyYear(rangeFirst))
             {
-                Result.Add(Month2, CurrentMonth);
+                if (Result.ContainsKey(Month1))
+                    Result.Add(Month2, CurrentMonth);
+                else
+                    Result.Add(Month1, CurrentMonth);
                 if (!TryParseRangeWithYear(rangeFirst))
                     return false;
             }
@@ -124,7 +139,10 @@ namespace PeriodParser
                 }
                 else
                 {
-                    Result.Add(Month2, monthNumber);
+                    if (Result.ContainsKey(Month1))
+                        Result.Add(Month2, monthNumber);
+                    else
+                        Result.Add(Month1, monthNumber);
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))

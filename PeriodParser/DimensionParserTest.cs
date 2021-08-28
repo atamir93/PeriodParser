@@ -29,11 +29,11 @@ namespace PeriodParser
             AssertDictionaryValue("Year1", 2018);
         }
 
-        [TestCase("june 2018 YTD by location")]
-        [TestCase("06.18  YTD by location ")]
-        [TestCase("06/18 YTD by location ")]
-        [TestCase("june, 2018 YTD by  location ")]
-        [TestCase("06.18 by YTD location ")]
+        [TestCase("june 2018 YTD by some location")]
+        [TestCase("06.18  YTD by Some Location ")]
+        [TestCase("06/18 YTD by Some Location ")]
+        [TestCase("june, 2018 YTD by some location ")]
+        [TestCase("06.18 YTD by some location ")]
         public void DimensionParser_YearToDate_Parser(string text)
         {
             parser.PeriodText = text;
@@ -41,7 +41,7 @@ namespace PeriodParser
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", "Dimension");
-            AssertDictionaryValue("DimensionName", "location");
+            AssertDictionaryValue("DimensionName", "some location");
             AssertDictionaryValue("DimensionPeriod", "YearToDate");
             AssertDictionaryValue("Month1", 6);
             AssertDictionaryValue("Year1", 2018);

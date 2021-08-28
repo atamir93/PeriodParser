@@ -2,10 +2,20 @@
 
 namespace PeriodParser
 {
-    public class EntireYearParser : ProfitAndLossParser
+    public class EntireYearParser : PeriodParser
     {
         public EntireYearParser(string text = "") : base(text) { }
 
+        private static EntireYearParser instance = null;
+        public static EntireYearParser GetInstance(string text)
+        {
+            if (instance == null)
+            {
+                instance = new EntireYearParser();
+            }
+            instance.SetPeriodText(text);
+            return instance;
+        }
         public override bool Parse()
         {
             Result = new Dictionary<string, object>();
@@ -57,7 +67,10 @@ namespace PeriodParser
             else
             {
                 //Result.Add(YearlyPeriod, "Calendar");
-                Result.Add(Month2, CurrentMonth);
+                if (Result.ContainsKey(Month1))
+                    Result.Add(Month2, CurrentMonth);
+                else
+                    Result.Add(Month1, CurrentMonth);
                 Result.Add(Year1, CurrentYear - yearDifference);
                 Result.Add(Year2, CurrentYear);
             }
@@ -72,7 +85,10 @@ namespace PeriodParser
 
             if (HasOnlyYear(rangeFirst))
             {
-                Result.Add(Month2, CurrentMonth);
+                if (Result.ContainsKey(Month1))
+                    Result.Add(Month2, CurrentMonth);
+                else
+                    Result.Add(Month1, CurrentMonth);
                 if (!TryParseRangeWithYear(rangeFirst))
                     return false;
             }
@@ -128,7 +144,10 @@ namespace PeriodParser
                 }
                 else
                 {
-                    Result.Add(Month2, monthNumber);
+                    if (Result.ContainsKey(Month1))
+                        Result.Add(Month2, monthNumber);
+                    else
+                        Result.Add(Month1, monthNumber);
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
