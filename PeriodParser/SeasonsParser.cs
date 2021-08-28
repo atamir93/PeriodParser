@@ -7,10 +7,19 @@ using System.Text.RegularExpressions;
 
 namespace PeriodParser
 {
-    public class SeasonsParser : ProfitAndLossParser
+    public class SeasonsParser : PeriodParser
     {
         public SeasonsParser(string text = "") : base(text) { }
-
+        private static SeasonsParser instance = null;
+        public static SeasonsParser GetInstance(string text)
+        {
+            if (instance == null)
+            {
+                instance = new SeasonsParser();
+            }
+            instance.SetPeriodText(text);
+            return instance;
+        }
         public override bool Parse()
         {
             PeriodText = PeriodText.ToLower().Trim();

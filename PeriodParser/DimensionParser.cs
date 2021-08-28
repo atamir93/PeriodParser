@@ -2,15 +2,26 @@
 
 namespace PeriodParser
 {
-    public class DimensionParser : ProfitAndLossParser
+    public class DimensionParser : PeriodParser
     {
         public DimensionParser(string text = "") : base(text) { }
+        
+        private static DimensionParser instance = null;
+        public static DimensionParser GetInstance(string text)
+        {
+            if (instance == null)
+            {
+                instance = new DimensionParser();
+            }
+            instance.SetPeriodText(text);
+            return instance;
+        }
+
         public override bool Parse()
         {
             PeriodText = PeriodText.Trim();
             PeriodText = ReplaceCharactersExceptPipeAndDashToEmptySpace(PeriodText);
-            var words = SplitByEmptySpace(PeriodText);
-            var dimensionName = words[words.Length - 1];
+            var dimensionName = PeriodText.Substring(PeriodText.IndexOf(DimensionDefinition) + DimensionDefinition.Length).Trim().ToLower();
 
             Result.Add(Period, "Dimension");
             Result.Add(DimensionName, dimensionName.ToLower());

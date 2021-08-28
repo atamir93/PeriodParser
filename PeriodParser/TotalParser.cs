@@ -7,10 +7,19 @@ using System.Text.RegularExpressions;
 
 namespace PeriodParser
 {
-    public class TotalParser : ProfitAndLossParser
+    public class TotalParser : PeriodParser
     {
         public TotalParser(string text = "") : base(text) { }
-
+        private static TotalParser instance = null;
+        public static TotalParser GetInstance(string text)
+        {
+            if (instance == null)
+            {
+                instance = new TotalParser();
+            }
+            instance.SetPeriodText(text);
+            return instance;
+        }
         public override bool Parse()
         {
             PeriodText = PeriodText.ToLower().Trim();
