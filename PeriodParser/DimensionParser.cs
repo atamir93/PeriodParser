@@ -23,7 +23,7 @@ namespace PeriodParser
             PeriodText = ReplaceCharactersExceptPipeAndDashToEmptySpace(PeriodText);
             var dimensionName = PeriodText.Substring(PeriodText.IndexOf(DimensionDefinition) + DimensionDefinition.Length).Trim().ToLower();
 
-            Result.Add(Period, "Dimension");
+            Result.Add(Period, ProfitAndLossPeriod.Dimension);
             Result.Add(DimensionName, dimensionName.ToLower());
 
             PeriodText = PeriodText.Replace(DimensionDefinition, "");
@@ -32,18 +32,18 @@ namespace PeriodParser
             var dateRanges = SplitByDash(PeriodText);
             if (PeriodText.Contains(YearToDateDefinition))
             {
-                Result.Add(DimensionPeriod, "YearToDate");
+                Result.Add(DimensionPeriod, DimensionCompareType.YearToDate);
                 PeriodText = PeriodText.Replace(YearToDateDefinition, "");
                 return TryParseRangeWithMonthAndYear(PeriodText);
             }
             else if (HasOnlyYear(PeriodText))
             {
-                Result.Add(DimensionPeriod, "EntireYear");
+                Result.Add(DimensionPeriod, DimensionCompareType.EntireYear);
                 return TryParseRangeWithYear(PeriodText);
             }
             else if (dateRanges.Length == 2)
             {
-                Result.Add(DimensionPeriod, "Range");
+                Result.Add(DimensionPeriod, DimensionCompareType.Range);
                 if (!TryParseRangeWithMonthAndYear(dateRanges[0]))
                 {
                     return false;
@@ -52,12 +52,12 @@ namespace PeriodParser
             }
             else if (ContainsAny(QuarterNumbers, PeriodText))
             {
-                Result.Add(DimensionPeriod, "Quarter");
+                Result.Add(DimensionPeriod, DimensionCompareType.Quarter);
                 return TryParseRangeWithQuarterAndYear(PeriodText);
             }
             else
             {
-                Result.Add(DimensionPeriod, "Month");
+                Result.Add(DimensionPeriod, DimensionCompareType.Month);
                 return TryParseRangeWithMonthAndYear(PeriodText);
             }
         }

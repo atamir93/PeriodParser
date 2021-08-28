@@ -6,8 +6,16 @@ namespace PeriodParser
     {
         public string PeriodText { get; set; }
         public int BeginMonth { get; set; }
+        public int BeginningMonthSingle { get; set; }
+        public int BeginningMonthRange { get; set; }
         public int EndingMonth { get; set; }
         public int BeginYear { get; set; }
+        public int BeginningYearSingle { get; set; }
+        public int BeginningYearYtd { get; set; }
+        public int BeginningYearMonthRange { get; set; }
+        public int BeginningYearYearly { get; set; }
+        public int BeginningYearQuarterly { get; set; }
+        public int BeginningYearMonthly { get; set; }
         public int EndingYear { get; set; }
         public Quarter Quarter { get; set; }
         public int MonthlyPeriodDifference { get; set; }

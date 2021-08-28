@@ -26,7 +26,7 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Months");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
             AssertDictionaryValue("Month1", CurrentMonth);
@@ -45,7 +45,7 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Months");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
             AssertDictionaryValue("Month1", 4);
@@ -66,7 +66,7 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Months");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
             AssertDictionaryValue("Type", "Consecutive");
             //AssertDictionaryValue("YearlyPeriod", "beginQuarter");
             AssertDictionaryValue("Month1", beginQuarter);
@@ -86,7 +86,7 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Months");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
             AssertDictionaryValue("Type", "Consecutive");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
             AssertDictionaryValue("Month1", 4);

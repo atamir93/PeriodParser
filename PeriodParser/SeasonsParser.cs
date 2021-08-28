@@ -32,7 +32,7 @@ namespace PeriodParser
                 }
             }
 
-            Result.Add(Period, "Seasons");
+            Result.Add(Period, ProfitAndLossPeriod.MonthRange);
             PeriodText = ReplaceCharactersExceptPipeAndDashToEmptySpace(PeriodText.Trim());
             var dateRanges = SplitByDash(PeriodText);
             if (dateRanges.Length == 3)

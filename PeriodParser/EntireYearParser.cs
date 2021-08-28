@@ -23,7 +23,7 @@ namespace PeriodParser
             {
                 PeriodText = PeriodText.ToLower().Replace(yearText, "");
             }
-            Result.Add(Period, "Yearly");
+            Result.Add(Period, ProfitAndLossPeriod.Yearly);
             Result.Add(Type, "EntireYear");
             if (PeriodText.Contains(LastDefinition))
             {

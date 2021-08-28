@@ -19,7 +19,7 @@ namespace PeriodParser
         {
             Result = new Dictionary<string, object>();
             PeriodText = PeriodText.ToLower().Replace(YearToDateDefinition, "");
-            Result.Add(Period, "Yearly");
+            Result.Add(Period, ProfitAndLossPeriod.Yearly);
             Result.Add(Type, "YTD");
             if (PeriodText.Contains(LastDefinition))
             {

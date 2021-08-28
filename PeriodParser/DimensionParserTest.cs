@@ -23,9 +23,9 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Dimension");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);
             AssertDictionaryValue("DimensionName", "location");
-            AssertDictionaryValue("DimensionPeriod", "EntireYear");
+            AssertDictionaryValue("DimensionCompareType", DimensionCompareType.EntireYear);
             AssertDictionaryValue("Year1", 2018);
         }
 
@@ -40,9 +40,9 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Dimension");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);
             AssertDictionaryValue("DimensionName", "some location");
-            AssertDictionaryValue("DimensionPeriod", "YearToDate");
+            AssertDictionaryValue("DimensionCompareType", DimensionCompareType.YearToDate);
             AssertDictionaryValue("Month1", 6);
             AssertDictionaryValue("Year1", 2018);
         }
@@ -58,9 +58,9 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Dimension");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);
             AssertDictionaryValue("DimensionName", "location");
-            AssertDictionaryValue("DimensionPeriod", "Month");
+            AssertDictionaryValue("DimensionCompareType", DimensionCompareType.Month);
             AssertDictionaryValue("Month1", 6);
             AssertDictionaryValue("Year1", 2018);
         }
@@ -74,9 +74,9 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Dimension");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);
             AssertDictionaryValue("DimensionName", "location");
-            AssertDictionaryValue("DimensionPeriod", "Quarter");
+            AssertDictionaryValue("DimensionCompareType", DimensionCompareType.Quarter);
             AssertDictionaryValue("Quarter1", 2);
             AssertDictionaryValue("Year1", 2018);
         }
@@ -92,9 +92,9 @@ namespace PeriodParser
             parser.Parse();
             parserResult = parser.Result;
 
-            AssertDictionaryValue("Period", "Dimension");
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);
             AssertDictionaryValue("DimensionName", "location");
-            AssertDictionaryValue("DimensionPeriod", "Range");
+            AssertDictionaryValue("DimensionCompareType", DimensionCompareType.Range);
             AssertDictionaryValue("Month1", 4);
             AssertDictionaryValue("Month2", 11);
             AssertDictionaryValue("Year1", 2018);
