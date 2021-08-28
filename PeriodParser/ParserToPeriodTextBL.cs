@@ -85,7 +85,12 @@ namespace PeriodParser
 
         public static string GetEntireYearDimensionPeriodText(string year, string dimensionName) => $"{year} by {dimensionName}";
         public static string GetYearToDateDimensionPeriodText(string month, string year, string dimensionName) => $"{month} {year} YTD by {dimensionName}";
-        public static string GetQuarterDimensionPeriodText(string quarter, string year, string dimensionName) => $"Q{quarter} {year} by {dimensionName}";
+        public static string GetQuarterDimensionPeriodText(string quarter, string year, string dimensionName)
+        {
+            if (IsNumeric(quarter))
+                quarter = $"Q{quarter}";
+            return $"{quarter} {year} by {dimensionName}";
+        }
         public static string GetMonthDimensionPeriodText(string month, string year, string dimensionName) => $"{month} {year} by {dimensionName}";
         public static string GetRangeDimensionPeriodText(string beginMonth, string endingMonth, string beginYear, string endingYear, string dimensionName) => $"{beginMonth} {beginYear} - {endingMonth} {endingYear} by {dimensionName}";
     }
