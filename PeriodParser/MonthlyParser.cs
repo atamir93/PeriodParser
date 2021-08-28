@@ -8,13 +8,12 @@ namespace PeriodParser
         public MonthlyParser(string text = "") : base(text) { }
 
         private static MonthlyParser instance = null;
-        public static MonthlyParser GetInstance(string text)
+        public static MonthlyParser GetInstance()
         {
             if (instance == null)
             {
                 instance = new MonthlyParser();
             }
-            instance.SetPeriodText(text);
             return instance;
         }
         public override bool Parse()
@@ -27,6 +26,10 @@ namespace PeriodParser
                 {
                     PeriodText = PeriodText.ToLower().Replace(quarterText, "");
                 }
+            }
+            else if (PeriodText.EndsWith(" m"))
+            {
+                PeriodText = PeriodText.Remove(PeriodText.Length - 2);
             }
             Result.Add(Period, ProfitAndLossPeriod.Monthly);
             if (PeriodText.Contains(LastDefinition))
@@ -219,7 +222,7 @@ namespace PeriodParser
 
         private bool TryParseRangeWithYear(string yearText)
         {
-            //TODO when year is 2100 or >
+            //what if year is 2100 or >
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {

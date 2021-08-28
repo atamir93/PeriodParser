@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace PeriodParser
 {
@@ -9,13 +8,12 @@ namespace PeriodParser
         public QuarterParser(string text = "") : base(text) { }
 
         private static QuarterParser instance = null;
-        public static QuarterParser GetInstance(string text)
+        public static QuarterParser GetInstance()
         {
             if (instance == null)
             {
                 instance = new QuarterParser();
             }
-            instance.SetPeriodText(text);
             return instance;
         }
         public override bool Parse()
@@ -229,7 +227,7 @@ namespace PeriodParser
         {
             var yearDiff = quarterlyPeriodDifference / 4;
             var difference = quarterlyPeriodDifference % 4;
-            var beginQuarter = endingQuarter - difference;
+            var beginQuarter = endingQuarter - difference + 1;
             if (beginQuarter <= 0)
             {
                 yearDiff++;
@@ -241,7 +239,7 @@ namespace PeriodParser
 
         private bool TryParseRangeWithYear(string yearText)
         {
-            //TODO when year is 2100 or >
+            //what if year is 2100 or >
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {
