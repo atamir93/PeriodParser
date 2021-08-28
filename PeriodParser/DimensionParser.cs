@@ -1,19 +1,16 @@
-﻿using System.Collections.Generic;
-
-namespace PeriodParser
+﻿namespace PeriodParser
 {
     public class DimensionParser : PeriodParser
     {
         public DimensionParser(string text = "") : base(text) { }
-        
+
         private static DimensionParser instance = null;
-        public static DimensionParser GetInstance(string text)
+        public static DimensionParser GetInstance()
         {
             if (instance == null)
             {
                 instance = new DimensionParser();
             }
-            instance.SetPeriodText(text);
             return instance;
         }
 
@@ -109,7 +106,7 @@ namespace PeriodParser
 
         bool TryParseRangeWithYear(string yearText)
         {
-            //TODO when year is 2100 or >
+            //what if year is 2100 or >
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {

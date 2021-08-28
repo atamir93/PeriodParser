@@ -8,8 +8,8 @@ namespace PeriodParser
     {
         private MonthlyParser parser;
         Dictionary<string, object> parserResult;
-        const int CurrentYear = 2021;
-        const int CurrentMonth = 8;
+        const int CurrentYear = 2020;
+        const int CurrentMonth = 5;
 
         [SetUp]
         public void SetUp()
@@ -18,8 +18,8 @@ namespace PeriodParser
         }
 
         [TestCase("This month for last 2 years")]
-        [TestCase("August for last 2 years")]
-        [TestCase("Aug for last 2 years")]
+        [TestCase("May for last 2 years")]
+        [TestCase("May for last 2 years")]
         public void MonthsEachYearType_LastDefitinion_Parser(string text)
         {
             parser.PeriodText = text;
@@ -47,20 +47,19 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
             AssertDictionaryValue("Type", "EachYear");
-            //AssertDictionaryValue("YearlyPeriod", "Calendar");
             AssertDictionaryValue("Month1", 4);
             AssertDictionaryValue("Year1", 2018);
             AssertDictionaryValue("Year2", 2020);
         }
 
-        [TestCase("Last 2 months", CurrentYear, CurrentMonth-2)]
-        [TestCase("Last 7 months", CurrentYear, CurrentMonth-7)]
-        [TestCase("Last 8 months", CurrentYear - 1, 12)]
-        [TestCase("Last 16 months", CurrentYear - 1, CurrentMonth-4)]
-        [TestCase("Last 20 months", CurrentYear - 2, 12)]
-        [TestCase("Last 25 months", CurrentYear - 2, CurrentMonth-1)]
-        [TestCase("Last 36 months", CurrentYear - 3, CurrentMonth)]
-        public void MonthsConsecutiveType_LastDefitinion_Parser(string text, int beginYear, int beginQuarter)
+        [TestCase("Last 2 months", CurrentYear, 4)]
+        [TestCase("Last 7 months", CurrentYear - 1, 11)]
+        [TestCase("Last 8 months", CurrentYear - 1, 10)]
+        [TestCase("Last 16 months", CurrentYear - 1, 2)]
+        [TestCase("Last 20 months", CurrentYear - 2, 10)]
+        [TestCase("Last 25 months", CurrentYear - 2, 5)]
+        [TestCase("Last 36 months", CurrentYear - 3, 6)]
+        public void MonthsConsecutiveType_LastDefitinion_Parser(string text, int beginYear, int beginMonth)
         {
             parser.PeriodText = text;
             parser.Parse();
@@ -68,8 +67,7 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
             AssertDictionaryValue("Type", "Consecutive");
-            //AssertDictionaryValue("YearlyPeriod", "beginQuarter");
-            AssertDictionaryValue("Month1", beginQuarter);
+            AssertDictionaryValue("Month1", beginMonth);
             AssertDictionaryValue("Year1", beginYear);
             AssertDictionaryValue("Month2", CurrentMonth);
             AssertDictionaryValue("Year2", CurrentYear);

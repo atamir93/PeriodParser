@@ -14,6 +14,8 @@ namespace PeriodParser
             return periodText;
         }
 
+
+
         public static string GetConsecutiveQuarterlyPeriodText(string beginQuarter, string endingQuarter, string beginYear, string endingYear)
         {
             if (IsNumeric(beginQuarter))
@@ -54,7 +56,7 @@ namespace PeriodParser
                 periodText = $"{beginMonth} - {endingMonth} {beginYear}";
             else
                 periodText = $"{beginMonth}, {beginYear} - {endingMonth}, {endingYear}";
-            return periodText;
+            return $"{periodText} Monthly";
         }
 
         public static string GetEachYearMonthlyPeriodText(string beginMonth, string beginYear, string endingYear)
@@ -64,7 +66,7 @@ namespace PeriodParser
                 periodText = $"{beginMonth} {beginYear}";
             else
                 periodText = $"{beginMonth} {beginYear} - {endingYear}";
-            return periodText;
+            return $"{periodText} Monthly";
         }
 
         public static string GetMonthRangePeriodText(string beginMonth, string endingMonth, string beginYear, string endingYear)
@@ -72,7 +74,7 @@ namespace PeriodParser
             string months = beginMonth == endingMonth ? endingMonth : $"{beginMonth} - {endingMonth}";
             string years = beginYear == endingYear ? beginYear : $"{beginYear} - {endingYear}";
 
-            return $"{months} {years}";
+            return $"{months} {years} Seasons";
         }
 
         public static string GetSinglePeriodText(string beginMonth, string endingMonth, string beginYear, string endingYear)
@@ -83,11 +85,8 @@ namespace PeriodParser
 
         public static string GetEntireYearDimensionPeriodText(string year, string dimensionName) => $"{year} by {dimensionName}";
         public static string GetYearToDateDimensionPeriodText(string month, string year, string dimensionName) => $"{month} {year} YTD by {dimensionName}";
-        public static string GetQuarterDimensionPeriodText(string quarter, string year, string dimensionName) => $"{quarter} {year} by {dimensionName}";
+        public static string GetQuarterDimensionPeriodText(string quarter, string year, string dimensionName) => $"Q{quarter} {year} by {dimensionName}";
         public static string GetMonthDimensionPeriodText(string month, string year, string dimensionName) => $"{month} {year} by {dimensionName}";
         public static string GetRangeDimensionPeriodText(string beginMonth, string endingMonth, string beginYear, string endingYear, string dimensionName) => $"{beginMonth} {beginYear} - {endingMonth} {endingYear} by {dimensionName}";
-
-
-
     }
 }

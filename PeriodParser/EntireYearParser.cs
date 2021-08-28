@@ -7,13 +7,12 @@ namespace PeriodParser
         public EntireYearParser(string text = "") : base(text) { }
 
         private static EntireYearParser instance = null;
-        public static EntireYearParser GetInstance(string text)
+        public static EntireYearParser GetInstance()
         {
             if (instance == null)
             {
                 instance = new EntireYearParser();
             }
-            instance.SetPeriodText(text);
             return instance;
         }
         public override bool Parse()
@@ -106,7 +105,7 @@ namespace PeriodParser
 
         private bool TryParseRangeWithYear(string yearText)
         {
-            //TODO when year is 2100 or >
+            //what if year is 2100 or >
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {

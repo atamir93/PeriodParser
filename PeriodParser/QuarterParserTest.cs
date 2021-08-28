@@ -8,8 +8,8 @@ namespace PeriodParser
     {
         private QuarterParser parser;
         Dictionary<string, object> parserResult;
-        const int CurrentYear = 2021;
-        const int CurrentQuarter = 3;
+        const int CurrentYear = 2020;
+        const int CurrentQuarter = 2;
 
         [SetUp]
         public void SetUp()
@@ -18,7 +18,7 @@ namespace PeriodParser
         }
 
         [TestCase("This quarter for last 2 years")]
-        [TestCase("Q3 for last 2 years")]
+        [TestCase("Q2 for last 2 years")]
         public void QuartersEachYearType_LastDefitinion_Parser(string text)
         {
             parser.PeriodText = text;

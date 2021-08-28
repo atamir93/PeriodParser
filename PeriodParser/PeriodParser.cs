@@ -36,11 +36,11 @@ namespace PeriodParser
         public const string Year1 = "Year1";
         public const string Year2 = "Year2";
 
-        public const int CurrentYear = 2021;
-        public const int CurrentMonth = 8;
-        public const int CurrentQuarter = 3;
-        public const int FirstMonth = 1;
-        public const int LastMonth = 12;
+        public int CurrentYear = 2020;
+        public int CurrentMonth = 5;
+        public int CurrentQuarter = 2;
+        public readonly int FirstMonth = 1;
+        public readonly int LastMonth = 12;
 
         public string CurrentPeriod { get; set; }
         public Dictionary<string, object> Result { get; set; }
@@ -48,15 +48,29 @@ namespace PeriodParser
 
         private static HashSet<object> registeredTypes = new HashSet<object>();
 
-        protected PeriodParser(string text)
+        protected PeriodParser(string text = "", DateTime? dateTime = null)
         {
             PeriodText = text.ToLower().Trim();
             Result = new Dictionary<string, object>();
+            if (dateTime.HasValue)
+            {
+                CurrentYear = dateTime.Value.Year;
+                CurrentMonth = dateTime.Value.Month;
+                CurrentQuarter = (int)Math.Ceiling(CurrentMonth / 3.0);
+            }
         }
 
         public void SetPeriodText(string text)
         {
+            Result = new Dictionary<string, object>();
             PeriodText = text.ToLower().Trim();
+        }
+
+        public void SetCurrentDate(DateTime dateTime)
+        {
+            CurrentYear = dateTime.Year;
+            CurrentMonth = dateTime.Month;
+            CurrentQuarter = (int)Math.Ceiling(CurrentMonth / 3.0);
         }
 
         public abstract bool Parse();
@@ -162,7 +176,7 @@ namespace PeriodParser
         {
             var yearDiff = monthlyPeriodDifference / 12;
             var difference = monthlyPeriodDifference % 12;
-            var beginMonth = endingMonth - difference;
+            var beginMonth = endingMonth - difference + 1;
             if (beginMonth <= 0)
             {
                 yearDiff++;

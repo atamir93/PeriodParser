@@ -8,8 +8,8 @@ namespace PeriodParser
     {
         private YearToDateParser parser;
         Dictionary<string, object> parserResult;
-        const int CurrentYear = 2021;
-        const int CurrentMonth = 8;
+        const int CurrentYear = 2020;
+        const int CurrentMonth = 5;
 
         [SetUp]
         public void SetUp()

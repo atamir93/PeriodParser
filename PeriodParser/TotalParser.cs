@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace PeriodParser
 {
@@ -11,13 +7,12 @@ namespace PeriodParser
     {
         public TotalParser(string text = "") : base(text) { }
         private static TotalParser instance = null;
-        public static TotalParser GetInstance(string text)
+        public static TotalParser GetInstance()
         {
             if (instance == null)
             {
                 instance = new TotalParser();
             }
-            instance.SetPeriodText(text);
             return instance;
         }
         public override bool Parse()
@@ -30,6 +25,10 @@ namespace PeriodParser
                 {
                     PeriodText = PeriodText.ToLower().Replace(seasonText, "");
                 }
+            }
+            else if (PeriodText.EndsWith(" t"))
+            {
+                PeriodText = PeriodText.Remove(PeriodText.Length - 2);
             }
 
             Result.Add(Period, ProfitAndLossPeriod.Single);
@@ -163,7 +162,7 @@ namespace PeriodParser
         }
         private bool TryParseRangeWithYear(string yearText)
         {
-            //TODO when year is 2100 or >
+            //what if year is 2100 or >
             yearText = yearText.Trim();
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
