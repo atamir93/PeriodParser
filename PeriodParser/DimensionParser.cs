@@ -1,8 +1,10 @@
-﻿namespace PeriodParser
+﻿using System.Collections.Generic;
+
+namespace PeriodParser
 {
     public class DimensionParser : PeriodParser
     {
-        public DimensionParser(string text = "") : base(text) { }
+        private DimensionParser() : base() { }
 
         private static DimensionParser instance = null;
         public static DimensionParser GetInstance()
@@ -16,6 +18,7 @@
 
         public override bool Parse()
         {
+            Result = new Dictionary<string, object>();
             PeriodText = PeriodText.Trim();
             PeriodText = ReplaceCharactersExceptPipeAndDashToEmptySpace(PeriodText);
             var dimensionName = PeriodText.Substring(PeriodText.IndexOf(DimensionDefinition) + DimensionDefinition.Length).Trim().ToLower();

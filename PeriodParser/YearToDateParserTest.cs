@@ -14,7 +14,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = new YearToDateParser();
+            parser = YearToDateParser.GetInstance();
         }
 
         [Test]

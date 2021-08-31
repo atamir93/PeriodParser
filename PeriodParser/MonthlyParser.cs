@@ -5,7 +5,7 @@ namespace PeriodParser
 {
     public class MonthlyParser : PeriodParser
     {
-        public MonthlyParser(string text = "") : base(text) { }
+        private MonthlyParser() : base() { }
 
         private static MonthlyParser instance = null;
         public static MonthlyParser GetInstance()

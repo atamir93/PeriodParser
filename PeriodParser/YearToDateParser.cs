@@ -4,7 +4,7 @@ namespace PeriodParser
 {
     public class YearToDateParser : PeriodParser
     {
-        public YearToDateParser(string text = "") : base(text) { }
+        private YearToDateParser() : base() { }
         private static YearToDateParser instance = null;
         public static YearToDateParser GetInstance()
         {

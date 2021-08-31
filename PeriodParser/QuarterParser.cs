@@ -5,7 +5,7 @@ namespace PeriodParser
 {
     public class QuarterParser : PeriodParser
     {
-        public QuarterParser(string text = "") : base(text) { }
+        private QuarterParser() : base() { }
 
         private static QuarterParser instance = null;
         public static QuarterParser GetInstance()

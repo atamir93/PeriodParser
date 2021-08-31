@@ -14,7 +14,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = new MonthlyParser();
+            parser = MonthlyParser.GetInstance();
         }
 
         [TestCase("This month for last 2 years")]

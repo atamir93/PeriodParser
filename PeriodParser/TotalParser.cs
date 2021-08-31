@@ -5,7 +5,7 @@ namespace PeriodParser
 {
     public class TotalParser : PeriodParser
     {
-        public TotalParser(string text = "") : base(text) { }
+        private TotalParser() : base() { }
         private static TotalParser instance = null;
         public static TotalParser GetInstance()
         {

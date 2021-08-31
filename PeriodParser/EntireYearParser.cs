@@ -4,8 +4,7 @@ namespace PeriodParser
 {
     public class EntireYearParser : PeriodParser
     {
-        public EntireYearParser(string text = "") : base(text) { }
-
+        private EntireYearParser() : base() { }
         private static EntireYearParser instance = null;
         public static EntireYearParser GetInstance()
         {

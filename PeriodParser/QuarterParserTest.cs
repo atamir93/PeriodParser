@@ -14,7 +14,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = new QuarterParser();
+            parser = QuarterParser.GetInstance();
         }
 
         [TestCase("This quarter for last 2 years")]

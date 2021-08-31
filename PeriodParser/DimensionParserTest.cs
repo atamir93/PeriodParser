@@ -12,7 +12,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = new DimensionParser();
+            parser = DimensionParser.GetInstance();
         }
 
         [TestCase("2018 by location")]

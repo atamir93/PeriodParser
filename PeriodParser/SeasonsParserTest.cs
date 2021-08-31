@@ -12,7 +12,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = new SeasonsParser();
+            parser = SeasonsParser.GetInstance();
         }
 
         [TestCase("June-December 2018-2020 Season")]

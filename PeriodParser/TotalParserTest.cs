@@ -17,7 +17,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = new TotalParser();
+            parser = TotalParser.GetInstance();
         }
 
         [TestCase("April 2018 - November 2020 totals")]
