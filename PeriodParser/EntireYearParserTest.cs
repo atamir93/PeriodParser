@@ -8,7 +8,7 @@ namespace PeriodParser
     [TestFixture]
     public class EntireYearParserTest
     {
-        private EntireYearParser parser;
+        private PeriodParser parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;

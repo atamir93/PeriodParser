@@ -44,7 +44,13 @@ namespace PeriodParser
 
         public string CurrentPeriod { get; set; }
         public Dictionary<string, object> Result { get; set; }
-        public string PeriodText { get; set; }
+        private string periodText;
+
+        public string PeriodText
+        {
+            get { return periodText; }
+            set { periodText = value.Trim().ToLower(); }
+        }
 
         protected Regex GetRegexForMonthNameAndYear()
         {
