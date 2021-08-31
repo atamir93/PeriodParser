@@ -54,10 +54,7 @@ namespace PeriodParser
 
         public void SetAllEndingFields()
         {
-            if (!Result.ContainsKey(Month1))
-                Result.Add(Month1, CurrentMonth);
-
-            if (!Result.ContainsKey(Month2))
+            if (Result.ContainsKey(Month1) && !Result.ContainsKey(Month2))
             {
                 Result.Add(Month2, Result[Month1]);
             }

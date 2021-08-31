@@ -121,8 +121,13 @@ namespace PeriodParser
                         if (type == "YTD" || type == "EntireYear")
                         {
                             if (type == "EntireYear")
-                                type = "Yearly";
-                            return ParserToPeriodTextBL.GetYearlyPeriodText(monthName1, type, year1, year2);
+                            {
+                                return ParserToPeriodTextBL.GetEntireYearYearlyPeriodText(year1, year2);
+                            }
+                            else
+                            {
+                                return ParserToPeriodTextBL.GetYearToDateYearlyPeriodText(monthName1, year1, year2);
+                            }
                         }
                         break;
                     case ProfitAndLossPeriod.MonthRange:
@@ -197,6 +202,8 @@ namespace PeriodParser
                 if (parserResult.TryGetValue("Period", out period) && period is ProfitAndLossPeriod plPeriod)
                 {
                     var month1 = GetIntValue(parserResult, "Month1");
+                    if (month1 == 0)
+                        month1 = view.EndingMonth;
                     var month2 = GetIntValue(parserResult, "Month2");
                     var year1 = GetIntValue(parserResult, "Year1");
                     var year2 = GetIntValue(parserResult, "Year2");

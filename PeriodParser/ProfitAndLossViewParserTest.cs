@@ -10,12 +10,14 @@ namespace PeriodParser
     {
         ProfitAndLossViewParser parser;
         ProfitAndLossView TestEntity;
+        const int CurrentYear = 2020;
+        const int CurrentMonth = 5;
 
         [SetUp]
         public void SetUp()
         {
             parser = new ProfitAndLossViewParser();
-            TestEntity = new ProfitAndLossView();
+            TestEntity = new ProfitAndLossView() { EndingMonth = CurrentMonth, EndingYear = CurrentYear };
         }
 
         [Test]
@@ -23,17 +25,17 @@ namespace PeriodParser
         {
             TestEntity.PeriodText = "18-20 yearly";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("May 2018 - 2020 Yearly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2018 - 2020 Yearly"));
             AssertEntireYearPeriod(5, 2018, 2020);
 
             TestEntity.PeriodText = "last 3 years";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("May 2017 - 2020 Yearly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2017 - 2020 Yearly"));
             AssertEntireYearPeriod(5, 2017, 2020);
 
             TestEntity.PeriodText = "June, 2016-2021";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("June 2016 - 2021 Yearly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2016 - 2021 Yearly"));
             AssertEntireYearPeriod(6, 2016, 2021);
         }
 
@@ -51,17 +53,17 @@ namespace PeriodParser
         {
             TestEntity.PeriodText = "18-20 ytd";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("May 2018 - 2020 YTD"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2018 - 2020 YTD"));
             AssertYearToDatePeriod(5, 2018, 2020);
 
             TestEntity.PeriodText = "last 3 years YTD";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("May 2017 - 2020 YTD"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2017 - 2020 YTD"));
             AssertYearToDatePeriod(5, 2017, 2020);
 
             TestEntity.PeriodText = "06, 2016-2021";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("June 2016 - 2021 YTD"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2016 - 2021 June YTD"));
             AssertYearToDatePeriod(6, 2016, 2021);
         }
 
@@ -347,9 +349,9 @@ namespace PeriodParser
             AssertMonthlyConsecutivePeriod(4, 5, 2020, 2020);
 
             //Yearly - Year to date
-            TestEntity.PeriodText = "June 16-21 ytd";
+            TestEntity.PeriodText = "Jun 16-21 ytd";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("June 2016 - 2021 YTD"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2016 - 2021 June YTD"));
             AssertYearToDatePeriod(6, 2016, 2021);
 
             //Season
@@ -371,10 +373,11 @@ namespace PeriodParser
             AssertMonthlyEachYearPeriod(4, 2018, 2020);
 
             //Yearly - Entire year
+            var endingMonthBefore = TestEntity.EndingMonth;
             TestEntity.PeriodText = "last 3 years";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("May 2017 - 2020 Yearly"));
-            AssertEntireYearPeriod(5, 2017, 2020);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2017 - 2020 Yearly"));
+            AssertEntireYearPeriod(endingMonthBefore, 2017, 2020);
 
             //Quarterly - Each year
             TestEntity.PeriodText = "Q3 for last 3 years";
