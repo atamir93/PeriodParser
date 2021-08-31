@@ -22,67 +22,67 @@ namespace PeriodParser
             text = text.ToLower().Trim();
             var lastPeriod = view.Period;
             view.FiltersFromParser.Clear();
-            PeriodParser parser = null;
+            PeriodParserRegex parser = null;
             if (text.Contains(DimensionDefinition))
             {
-                parser = DimensionParser.GetInstance();
+                parser = DimensionParserRegex.GetInstance();
             }
             else if (text.Contains(YearToDateDefinition))
             {
-                parser = YearToDateParser.GetInstance();
+                parser = YearToDateParserRegex.GetInstance();
             }
             else if (ContainsAny(QuarterDefinitions, text) || ContainsAny(QuarterNumbers, text))
             {
-                parser = QuarterParser.GetInstance();
+                parser = QuarterParserRegex.GetInstance();
             }
             else if (EndsWithAny(SeasonsDefinitions, text))
             {
-                parser = SeasonsParser.GetInstance();
+                parser = SeasonsParserRegex.GetInstance();
             }
             else if (EndsWithAny(TotalDefinitions, text))
             {
-                parser = TotalParser.GetInstance();
+                parser = TotalParserRegex.GetInstance();
             }
             else if (ContainsAny(MonthDefinitions, text) || text.EndsWith(" m") || text.Contains("for last"))
             {
-                parser = MonthlyParser.GetInstance();
+                parser = MonthlyParserRegex.GetInstance();
             }
             else if (ContainsAny(YearDefinitions, text))
             {
-                parser = EntireYearParser.GetInstance();
+                parser = EntireYearParserRegex.GetInstance();
             }
             else if (text.EndsWith(" t"))
             {
-                parser = TotalParser.GetInstance();
+                parser = TotalParserRegex.GetInstance();
             }
             else if (text.EndsWith(" s"))
             {
-                parser = SeasonsParser.GetInstance();
+                parser = SeasonsParserRegex.GetInstance();
             }
             else
             {
                 switch (lastPeriod)
                 {
                     case ProfitAndLossPeriod.Single:
-                        parser = TotalParser.GetInstance();
+                        parser = TotalParserRegex.GetInstance();
                         break;
                     case ProfitAndLossPeriod.Yearly:
                         if (view.YearlyType == YearlySwitch.EntireYear)
-                            parser = EntireYearParser.GetInstance();
+                            parser = EntireYearParserRegex.GetInstance();
                         else
-                            parser = YearToDateParser.GetInstance();
+                            parser = YearToDateParserRegex.GetInstance();
                         break;
                     case ProfitAndLossPeriod.MonthRange:
-                        parser = SeasonsParser.GetInstance();
+                        parser = SeasonsParserRegex.GetInstance();
                         break;
                     case ProfitAndLossPeriod.Quarterly:
-                        parser = QuarterParser.GetInstance();
+                        parser = QuarterParserRegex.GetInstance();
                         break;
                     case ProfitAndLossPeriod.Dimension:
-                        parser = DimensionParser.GetInstance();
+                        parser = DimensionParserRegex.GetInstance();
                         break;
                     case ProfitAndLossPeriod.Monthly:
-                        parser = MonthlyParser.GetInstance();
+                        parser = MonthlyParserRegex.GetInstance();
                         break;
                     default:
                         break;
@@ -91,6 +91,7 @@ namespace PeriodParser
             parser.SetCurrentDate(new DateTime(2020, 5, 1));
             parser.SetPeriodText(text);
             var parseSucceeded = parser.Parse();
+            parser.SetAllEndingFields();
             if (parseSucceeded && parser?.Result != null && !parser.Result.ContainsKey("Error") && parser.Result.ContainsKey("Period"))
                 return parser.Result;
 

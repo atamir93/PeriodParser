@@ -52,6 +52,27 @@ namespace PeriodParser
             set { periodText = value.Trim().ToLower(); }
         }
 
+        public void SetAllEndingFields()
+        {
+            if (!Result.ContainsKey(Month1))
+                Result.Add(Month1, CurrentMonth);
+
+            if (!Result.ContainsKey(Month2))
+            {
+                Result.Add(Month2, Result[Month1]);
+            }
+
+            if (Result.ContainsKey(Quarter1) && !Result.ContainsKey(Quarter2))
+            {
+                Result.Add(Quarter2, Result[Quarter1]);
+            }
+
+            if (Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                Result.Add(Year2, Result[Year1]);
+            }
+        }
+
         protected Regex GetRegexForMonthNameAndYear()
         {
             return new Regex(@"\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\D*(\d+)");
@@ -269,6 +290,7 @@ namespace PeriodParser
 
         protected int GetQuarterNumber(string text)
         {
+            text = text.Replace("q", "");
             int quarterNumber = 0;
             if (int.TryParse(text, out quarterNumber))
             {
@@ -418,7 +440,7 @@ namespace PeriodParser
             return (endingYear - yearDiff, beginMonth);
         }
 
-        protected  (int year, int quarter) GetBeginQuarterAndYearFromDifference(int endingQuarter, int endingYear, int quarterlyPeriodDifference)
+        protected (int year, int quarter) GetBeginQuarterAndYearFromDifference(int endingQuarter, int endingYear, int quarterlyPeriodDifference)
         {
             var yearDiff = quarterlyPeriodDifference / 4;
             var difference = quarterlyPeriodDifference % 4;

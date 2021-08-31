@@ -84,7 +84,7 @@ namespace PeriodParser
 
         bool TryParseEachYearLastDefinition(string periodText)
         {
-            Regex rgx = new Regex(@"^(q1|q2|q3|q4|this\s*quarter)\w*\s*for\s*last\s*(\d+)\s*year");
+            Regex rgx = new Regex(@"^(q[1-4]|this\s*quarter)\w*\s*for\s*last\s*(\d+)\s*year");
             Match match = rgx.Match(periodText);
             if (match.Success)
             {
