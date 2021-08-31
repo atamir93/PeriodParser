@@ -1,24 +1,24 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace PeriodParser
+namespace PeriodParser.RegexParser
 {
-    public class QuarterParserRegex : PeriodParserRegex
+    public class MonthlyParserRegex : PeriodParserRegex
     {
-        private QuarterParserRegex() : base() { }
-        private static QuarterParserRegex instance = null;
-        public static QuarterParserRegex GetInstance()
+        private MonthlyParserRegex() : base() { }
+        private static MonthlyParserRegex instance = null;
+        public static MonthlyParserRegex GetInstance()
         {
             if (instance == null)
             {
-                instance = new QuarterParserRegex();
+                instance = new MonthlyParserRegex();
             }
             return instance;
         }
         public override bool Parse()
         {
             Result = new Dictionary<string, object>();
-            Result.Add(Period, ProfitAndLossPeriod.Quarterly);
+            Result.Add(Period, ProfitAndLossPeriod.Monthly);
 
             bool isValid = false;
             if (TryParseLastDefinition(PeriodText))
@@ -42,7 +42,7 @@ namespace PeriodParser
 
                 if (isValid)
                 {
-                    if (Result.ContainsKey(Quarter2))
+                    if (Result.ContainsKey(Month2))
                         Result.Add(Type, "Consecutive");
                     else
                         Result.Add(Type, "EachYear");
@@ -54,7 +54,7 @@ namespace PeriodParser
 
         bool TryParse(string text)
         {
-            if (TryParseQuarterAndYear(text))
+            if (TryParseMonthAndYear(text))
             {
                 return true;
             }
@@ -62,7 +62,7 @@ namespace PeriodParser
             {
                 return true;
             }
-            else if (TryParseQuarter(text))
+            else if (TryParseMonth(text))
             {
                 return true;
             }
@@ -84,18 +84,18 @@ namespace PeriodParser
 
         bool TryParseEachYearLastDefinition(string periodText)
         {
-            Regex rgx = new Regex(@"^(q[1-4]|this\s*quarter)\w*\s*for\s*last\s*(\d+)\s*year");
+            Regex rgx = new Regex(@"^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec|this\s*month)\w*\s*for\s*last\s*(\d+)\s*year");
             Match match = rgx.Match(periodText);
             if (match.Success)
             {
                 int yearlyDifference;
                 if (int.TryParse(match.Groups[2].Value, out yearlyDifference))
                 {
-                    var quarterText = match.Groups[1].Value;
-                    var quarterNumber = GetQuarterNumber(quarterText);
-                    if (quarterNumber == 0)
-                        quarterNumber = CurrentQuarter;
-                    Result.Add(Quarter1, quarterNumber);
+                    var month = match.Groups[1].Value;
+                    var monthNumber = GetMonthNumber(month);
+                    if (monthNumber == 0)
+                        monthNumber = CurrentMonth;
+                    Result.Add(Month1, monthNumber);
                     Result.Add(Year1, CurrentYear - yearlyDifference);
                     Result.Add(Year2, CurrentYear);
                     Result.Add(Type, "EachYear");
@@ -107,17 +107,17 @@ namespace PeriodParser
 
         bool TryParseConsecutiveLastDefinition(string periodText)
         {
-            Regex rgx = new Regex(@"last\s*(\d+)\s*quarter");
+            Regex rgx = new Regex(@"last\s*(\d+)\s*month");
             Match match = rgx.Match(periodText);
             if (match.Success)
             {
-                int quarterlyDifference;
-                if (int.TryParse(match.Groups[1].Value, out quarterlyDifference))
+                int monthlyDifference;
+                if (int.TryParse(match.Groups[1].Value, out monthlyDifference))
                 {
-                    var beginQuarterAndYear = GetBeginQuarterAndYearFromDifference(CurrentQuarter, CurrentYear, quarterlyDifference);
-                    Result.Add(Quarter1, beginQuarterAndYear.quarter);
-                    Result.Add(Year1, beginQuarterAndYear.year);
-                    Result.Add(Quarter2, CurrentQuarter);
+                    var beginMonthAndYear = GetBeginMonthAndYearFromDifference(CurrentMonth, CurrentYear, monthlyDifference);
+                    Result.Add(Month1, beginMonthAndYear.month);
+                    Result.Add(Year1, beginMonthAndYear.year);
+                    Result.Add(Month2, CurrentMonth);
                     Result.Add(Year2, CurrentYear);
                     Result.Add(Type, "Consecutive");
                     return true;

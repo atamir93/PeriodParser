@@ -1,9 +1,10 @@
 ﻿using NUnit.Framework;
+using PeriodParser.RegexParser;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PeriodParser
+namespace PeriodParser.Tests
 {
     [TestFixture]
     public class EntireYearParserTest

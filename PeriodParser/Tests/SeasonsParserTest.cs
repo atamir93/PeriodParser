@@ -1,7 +1,8 @@
 ﻿using NUnit.Framework;
+using PeriodParser.RegexParser;
 using System.Collections.Generic;
 
-namespace PeriodParser
+namespace PeriodParser.Tests
 {
     [TestFixture]
     public class SeasonsParserTest
@@ -15,8 +16,8 @@ namespace PeriodParser
             parser = SeasonsParserRegex.GetInstance();
         }
 
-        //[TestCase("June-December 2018-2020 Season")]
-        //[TestCase("jun- dec, 18- 20")]
+        [TestCase("June-December 2018-2020 Season")]
+        [TestCase("jun- dec, 18- 20")]
         [TestCase("06-12,2018-2020 seasons")]
         [TestCase("6-12 18 -20")]
         [TestCase("06-12 2018-20")]

@@ -1,7 +1,8 @@
 ﻿using NUnit.Framework;
+using PeriodParser.RegexParser;
 using System.Collections.Generic;
 
-namespace PeriodParser
+namespace PeriodParser.Tests
 {
     [TestFixture]
     public class DimensionParserTest

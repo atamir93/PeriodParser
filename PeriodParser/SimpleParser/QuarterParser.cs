@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace PeriodParser
+namespace PeriodParser.SimpleParser
 {
-    public class MonthlyParser : PeriodParser
+    public class QuarterParser : PeriodParser
     {
-        private MonthlyParser() : base() { }
+        private QuarterParser() : base() { }
 
-        private static MonthlyParser instance = null;
-        public static MonthlyParser GetInstance()
+        private static QuarterParser instance = null;
+        public static QuarterParser GetInstance()
         {
             if (instance == null)
             {
-                instance = new MonthlyParser();
+                instance = new QuarterParser();
             }
             return instance;
         }
@@ -20,18 +20,14 @@ namespace PeriodParser
         {
             PeriodText = PeriodText.ToLower();
             Result = new Dictionary<string, object>();
-            if (MonthDefinitions.Any(q => PeriodText.Contains(q)))
+            if (QuarterDefinitions.Any(q => PeriodText.Contains(q)))
             {
-                foreach (var quarterText in MonthDefinitions)
+                foreach (var quarterText in QuarterDefinitions)
                 {
                     PeriodText = PeriodText.ToLower().Replace(quarterText, "");
                 }
             }
-            else if (PeriodText.EndsWith(" m"))
-            {
-                PeriodText = PeriodText.Remove(PeriodText.Length - 2);
-            }
-            Result.Add(Period, ProfitAndLossPeriod.Monthly);
+            Result.Add(Period, ProfitAndLossPeriod.Quarterly);
             if (PeriodText.Contains(LastDefinition))
             {
                 if (!TryParseWithLastDefinition(PeriodText))
@@ -56,26 +52,26 @@ namespace PeriodParser
 
         bool TryParseWitDateRange(string periodText)
         {
-            var dateRanges = SplitByDash(periodText);
+            var dateRanges = periodText.Split("-");
             var rangeFirst = dateRanges[0];
             var rangeSecond = dateRanges[1];
 
-            bool hasFirstRangeMonth = StartsWithMonth(rangeFirst);
-            bool hasSecondRangeMonth = StartsWithMonth(rangeSecond);
+            bool hasFirstRangeQuarter = QuarterNumbers.Any(q => rangeFirst.Contains(q));
+            bool hasSecondRangeQuarter = QuarterNumbers.Any(q => rangeSecond.Contains(q));
 
-            if (hasFirstRangeMonth && hasSecondRangeMonth)
+            if (hasFirstRangeQuarter && hasSecondRangeQuarter)
             {
                 Result.Add(Type, "Consecutive");
-                if (!TryParseRangeWithMonthAndYear(rangeFirst))
+                if (!TryParseRangeWithQuarterAndYear(rangeFirst))
                     return false;
-                if (!TryParseRangeWithMonthAndYear(rangeSecond))
+                if (!TryParseRangeWithQuarterAndYear(rangeSecond))
                     return false;
 
             }
-            else if (hasFirstRangeMonth)
+            else if (hasFirstRangeQuarter)
             {
                 Result.Add(Type, "EachYear");
-                if (!TryParseRangeWithMonthAndYear(rangeFirst))
+                if (!TryParseRangeWithQuarterAndYear(rangeFirst))
                     return false;
                 if (!TryParseRangeWithYear(rangeSecond))
                     return false;
@@ -89,7 +85,7 @@ namespace PeriodParser
 
             return true;
         }
-        bool TryParseRangeWithMonthAndYear(string monthAndYearText)
+        bool TryParseRangeWithQuarterAndYear(string monthAndYearText)
         {
             var withoutCharactersExceptPipe = ReplaceCharactersExceptPipeToEmptySpace(monthAndYearText.Trim());
             string[] items = withoutCharactersExceptPipe.Split(" ");
@@ -100,23 +96,24 @@ namespace PeriodParser
             }
             else
             {
-                var month = items[0];
-                int monthNumber = GetMonthNumber(month);
-                if (monthNumber == 0)
+                var quarterText = items[0];
+                int quarterNumber = GetQuarterNumber(quarterText);
+                if (quarterNumber == 0)
                 {
                     Result.Add(Error, "");
                     return false;
                 }
                 else
                 {
-                    if (Result.ContainsKey(Month1))
+                    if (Result.ContainsKey(Quarter1))
                     {
-                        Result.Add(Month2, monthNumber);
+                        Result.Add(Quarter2, quarterNumber);
                     }
                     else
                     {
-                        Result.Add(Month1, monthNumber);
+                        Result.Add(Quarter1, quarterNumber);
                     }
+
                     var yearText = items[1];
                     string year = GetYear(yearText.Trim());
                     if (string.IsNullOrEmpty(year))
@@ -136,49 +133,55 @@ namespace PeriodParser
             return true;
         }
 
+        int GetQuarterNumber(string text)
+        {
+            text = text.Replace("q", "");
+            int quarterNumber = 0;
+            if (int.TryParse(text, out quarterNumber))
+            {
+                if (quarterNumber < 1 || quarterNumber > 4)
+                {
+                    Result.Add(Error, "");
+                    return 0;
+                }
+            }
+            return quarterNumber;
+        }
+
         bool TryParseWithLastDefinition(string periodText)
         {
             if (YearDefinitions.Any(y => periodText.Contains(y)))
             {
-                if (!TryParseToEachYearMonthlyWithLastDefinitions(periodText))
+                if (!TryParseToEachYearQuartersWithLastDefinitions(periodText))
                     return false;
             }
             else
             {
-                if (!TryParseToConsecutiveMonthlyWithLastDefinitions(periodText))
+                if (!TryParseToConsecutiveQuartersWithLastDefinitions(periodText))
                     return false;
             }
 
             return true;
         }
 
-        bool TryParseToEachYearMonthlyWithLastDefinitions(string periodText)
+        bool TryParseToEachYearQuartersWithLastDefinitions(string periodText)
         {
             Result.Add(Type, "EachYear");
             if (periodText.Contains(ThisDefinition))
             {
-                Result.Add(Month1, CurrentMonth);
+                Result.Add(Quarter1, CurrentQuarter);
             }
             else
             {
-                var possibleMonth = periodText.Trim().Split(" ").FirstOrDefault();
-                if (possibleMonth != null)
+                var quarter = QuarterNumbers.Where(q => periodText.Contains(q)).FirstOrDefault();
+                if (quarter != null)
                 {
-                    int monthNumber = GetMonthNumber(possibleMonth);
-                    if (monthNumber == 0)
-                    {
-                        Result.Add(Error, "");
-                        return false;
-                    }
-                    else
-                    {
-                        Result.Add(Month1, monthNumber);
-                        periodText = periodText.Replace(possibleMonth, "");
-                    }
+                    Result.Add(Quarter1, quarter.Substring(1));
+                    periodText = periodText.Replace(quarter, "");
                 }
             }
 
-            if (!Result.ContainsKey(Month1))
+            if (!Result.ContainsKey(Quarter1))
             {
                 Result.Add(Error, "");
                 return false;
@@ -199,25 +202,39 @@ namespace PeriodParser
             return true;
         }
 
-        bool TryParseToConsecutiveMonthlyWithLastDefinitions(string periodText)
+        bool TryParseToConsecutiveQuartersWithLastDefinitions(string periodText)
         {
             Result.Add(Type, "Consecutive");
-            int monthDifference = GetFirstNumber(periodText);
-            if (monthDifference == 0)
+            int quarterDifference = GetFirstNumber(periodText);
+            if (quarterDifference == 0)
             {
                 Result.Add(Error, "");
                 return false;
             }
             else
             {
-                var beginMonthAndYear = GetBeginMonthAndYearFromDifference(CurrentMonth, CurrentYear, monthDifference);
-                Result.Add(Month1, beginMonthAndYear.month);
-                Result.Add(Year1, beginMonthAndYear.year);
-                Result.Add(Month2, CurrentMonth);
+                var beginQuarterAndYear = GetBeginQuarterAndYearFromDifference(CurrentQuarter, CurrentYear, quarterDifference);
+                Result.Add(Quarter1, beginQuarterAndYear.quarter);
+                Result.Add(Year1, beginQuarterAndYear.year);
+                Result.Add(Quarter2, CurrentQuarter);
                 Result.Add(Year2, CurrentYear);
             }
 
             return true;
+        }
+
+        (int year, int quarter) GetBeginQuarterAndYearFromDifference(int endingQuarter, int endingYear, int quarterlyPeriodDifference)
+        {
+            var yearDiff = quarterlyPeriodDifference / 4;
+            var difference = quarterlyPeriodDifference % 4;
+            var beginQuarter = endingQuarter - difference + 1;
+            if (beginQuarter <= 0)
+            {
+                yearDiff++;
+                beginQuarter += 4;
+            }
+
+            return (endingYear - yearDiff, beginQuarter);
         }
 
         private bool TryParseRangeWithYear(string yearText)

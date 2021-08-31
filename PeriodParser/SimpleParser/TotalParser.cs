@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace PeriodParser
+namespace PeriodParser.SimpleParser
 {
     public class TotalParser : PeriodParser
     {

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace PeriodParser
+namespace PeriodParser.RegexParser
 {
     public class YearToDateParserRegex : PeriodParserRegex
     {
@@ -47,11 +47,7 @@ namespace PeriodParser
 
         bool TryParse(string text)
         {
-            if (TryParseMonthNameAndYear(text))
-            {
-                return true;
-            }
-            else if (TryParseMonthNumberAndYear(text))
+            if (TryParseMonthAndYear(text))
             {
                 return true;
             }

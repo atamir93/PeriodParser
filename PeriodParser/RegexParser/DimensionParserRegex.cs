@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace PeriodParser
+namespace PeriodParser.RegexParser
 {
     public class DimensionParserRegex : PeriodParserRegex
     {
+        public const string YearToDateDefinition = "ytd";
         private DimensionParserRegex() : base() { }
 
         private static DimensionParserRegex instance = null;
@@ -102,11 +103,7 @@ namespace PeriodParser
 
         bool TryParse(string text, bool isEndRange = false)
         {
-            if (TryParseMonthNameAndYear(text, isEndRange))
-            {
-                return true;
-            }
-            else if (TryParseMonthNumberAndYear(text, isEndRange))
+            if (TryParseMonthAndYear(text, isEndRange))
             {
                 return true;
             }
