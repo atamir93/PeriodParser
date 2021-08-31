@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace PeriodParser
 {
@@ -13,8 +10,6 @@ namespace PeriodParser
             string periodText = $"{month} {years} {type}";
             return periodText;
         }
-
-
 
         public static string GetConsecutiveQuarterlyPeriodText(string beginQuarter, string endingQuarter, string beginYear, string endingYear)
         {
