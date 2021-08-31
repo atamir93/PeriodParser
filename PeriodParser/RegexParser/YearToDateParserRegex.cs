@@ -55,10 +55,7 @@ namespace PeriodParser.RegexParser
             {
                 return true;
             }
-            //else if (TryParseMonth(text))
-            //{
-            //    return true;
-            //}
+            
             return false;
         }
 

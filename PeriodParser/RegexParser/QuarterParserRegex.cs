@@ -17,8 +17,10 @@ namespace PeriodParser.RegexParser
         }
         public override bool Parse()
         {
-            Result = new Dictionary<string, object>();
-            Result.Add(Period, ProfitAndLossPeriod.Quarterly);
+            Result = new Dictionary<string, object>
+            {
+                { Period, ProfitAndLossPeriod.Quarterly }
+            };
 
             bool isValid = false;
             if (TryParseLastDefinition(PeriodText))

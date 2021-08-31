@@ -30,7 +30,7 @@ namespace PeriodParser
             }
             else if (text.Contains(YearToDateDefinition))
             {
-                parser = YearToDateParserRegex.GetInstance();
+                parser = YearlyParserRegex.GetInstance("YTD");
             }
             else if (ContainsAny(QuarterDefinitions, text) || ContainsAny(QuarterNumbers, text))
             {
@@ -50,7 +50,7 @@ namespace PeriodParser
             }
             else if (ContainsAny(YearDefinitions, text))
             {
-                parser = EntireYearParserRegex.GetInstance();
+                parser = YearlyParserRegex.GetInstance("EntireYear");
             }
             else if (text.EndsWith(" t"))
             {
@@ -69,9 +69,9 @@ namespace PeriodParser
                         break;
                     case ProfitAndLossPeriod.Yearly:
                         if (view.YearlyType == YearlySwitch.EntireYear)
-                            parser = EntireYearParserRegex.GetInstance();
+                            parser = YearlyParserRegex.GetInstance("EntireYear");
                         else
-                            parser = YearToDateParserRegex.GetInstance();
+                            parser = YearlyParserRegex.GetInstance("YTD");
                         break;
                     case ProfitAndLossPeriod.MonthRange:
                         parser = SeasonsParserRegex.GetInstance();

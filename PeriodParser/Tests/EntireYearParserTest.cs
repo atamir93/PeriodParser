@@ -1,15 +1,13 @@
 ﻿using NUnit.Framework;
 using PeriodParser.RegexParser;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PeriodParser.Tests
 {
     [TestFixture]
     public class EntireYearParserTest
     {
-        private PeriodParserRegex parser;
+        private YearlyParserRegex parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;
@@ -17,7 +15,7 @@ namespace PeriodParser.Tests
         [SetUp]
         public void SetUp()
         {
-            parser = EntireYearParserRegex.GetInstance();
+            parser = YearlyParserRegex.GetInstance("EntireYear");
         }
 
         [Test]
