@@ -6,7 +6,7 @@ namespace PeriodParser
     [TestFixture]
     public class YearToDateParserTest
     {
-        private YearToDateParser parser;
+        private YearToDateParserRegex parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;
@@ -14,7 +14,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = YearToDateParser.GetInstance();
+            parser = YearToDateParserRegex.GetInstance();
         }
 
         [Test]
@@ -26,7 +26,6 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
             AssertDictionaryValue("Type", "YTD");
-            AssertDictionaryValue("Month1", CurrentMonth);
             AssertDictionaryValue("Year1", CurrentYear-2);
             AssertDictionaryValue("Year2", CurrentYear);
         }
@@ -68,7 +67,6 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
             AssertDictionaryValue("Type", "YTD");
-            AssertDictionaryValue("Month1", CurrentMonth);
             AssertDictionaryValue("Year1", 2018);
             AssertDictionaryValue("Year2", 2020);
         }

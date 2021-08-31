@@ -7,7 +7,7 @@ namespace PeriodParser
 {
     public class TotalParserTest
     {
-        private TotalParser parser;
+        private TotalParserRegex parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;
@@ -17,7 +17,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = TotalParser.GetInstance();
+            parser = TotalParserRegex.GetInstance();
         }
 
         [TestCase("April 2018 - November 2020 totals")]
@@ -106,7 +106,6 @@ namespace PeriodParser
             AssertDictionaryValue("Month1", 1);
             AssertDictionaryValue("Month2", 12);
             AssertDictionaryValue("Year1", 2018);
-            AssertDictionaryValue("Year2", 2018);
         }
 
         void AssertDictionaryValue(string key, object value)

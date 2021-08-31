@@ -8,7 +8,7 @@ namespace PeriodParser
     [TestFixture]
     public class EntireYearParserTest
     {
-        private PeriodParser parser;
+        private PeriodParserRegex parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;
@@ -16,7 +16,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = EntireYearParser.GetInstance();
+            parser = EntireYearParserRegex.GetInstance();
         }
 
         [Test]
@@ -28,7 +28,6 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
             AssertDictionaryValue("Type", "EntireYear");
-            AssertDictionaryValue("Month1", CurrentMonth);
             AssertDictionaryValue("Year1", CurrentYear - 2);
             AssertDictionaryValue("Year2", CurrentYear);
         }
@@ -49,7 +48,6 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
             AssertDictionaryValue("Type", "EntireYear");
-            AssertDictionaryValue("Month1", CurrentMonth);
             AssertDictionaryValue("Year1", 2018);
             AssertDictionaryValue("Year2", 2020);
         }
@@ -73,6 +71,42 @@ namespace PeriodParser
             AssertDictionaryValue("Month1", 4);
             AssertDictionaryValue("Year1", 2018);
             AssertDictionaryValue("Year2", 2020);
+        }
+
+        [TestCase("April 2018 Yearly")]
+        [TestCase("Apr 18")]
+        [TestCase("04 2018 years")]
+        [TestCase("4 18")]
+        [TestCase("April,2018")]
+        [TestCase("Apr.18 yearly")]
+        [TestCase("04/2018 yearly")]
+        [TestCase("4.18")]
+        public void EntireYear_WithMonthAndYear_Parser(string text)
+        {
+            parser.PeriodText = text;
+            parser.Parse();
+            parserResult = parser.Result;
+
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
+            AssertDictionaryValue("Type", "EntireYear");
+            AssertDictionaryValue("Month1", 4);
+            AssertDictionaryValue("Year1", 2018);
+        }
+
+        [TestCase(" 2018 Yearly")]
+        [TestCase("18")]
+        [TestCase("2018 years")]
+        [TestCase(" 18 ")]
+        [TestCase(" 2018  yearly")]
+        public void EntireYear_WithYear_Parser(string text)
+        {
+            parser.PeriodText = text;
+            parser.Parse();
+            parserResult = parser.Result;
+
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
+            AssertDictionaryValue("Type", "EntireYear");
+            AssertDictionaryValue("Year1", 2018);
         }
 
         void AssertDictionaryValue(string key, object value)
