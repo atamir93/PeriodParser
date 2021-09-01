@@ -9,6 +9,7 @@ namespace PeriodParser
             string text = entity.PeriodText;
             if (!string.IsNullOrEmpty(text))
             {
+                entity.FiltersFromParser.Clear();
                 var parserResult = ParserFromPeriodTextBL.Parse(text, entity);
                 if (parserResult == null || !parserResult.Any())
                     entity.PeriodText = "";
@@ -36,5 +37,4 @@ namespace PeriodParser
             ParserFromPeriodTextBL.DistributeToProfitAndLossPeriod(entity);
         }
     }
-
 }

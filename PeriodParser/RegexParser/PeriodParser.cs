@@ -10,7 +10,6 @@ namespace PeriodParser.RegexParser
         public const string YearToDateDefinition = "ytd";
         public const string Period = "Period";
         public const string Type = "Type";
-        public const string Error = "Error";
         public const string DimensionName = "DimensionName";
         public const string DimensionPeriod = "DimensionCompareType";
         public const string Month1 = "Month1";
@@ -81,7 +80,6 @@ namespace PeriodParser.RegexParser
             }
             return isValid;
         }
-
         internal bool TryParseDateRangesConsideringEndingRange(int maxRanges = 2)
         {
             bool isValid = false;
@@ -106,10 +104,6 @@ namespace PeriodParser.RegexParser
         Regex GetRegexForMonthNumberAndYear() => new Regex(@"(\d+)\D+(\d+)");
         Regex GetRegexForQuarterNumberAndYear() => new Regex(@"\s*q([1-4])\D*(\d+)");
 
-        public static bool IsMatch(string text)
-        {
-            return false;
-        }
         #endregion
 
         #region Parsers to year, month and quarter
@@ -250,39 +244,33 @@ namespace PeriodParser.RegexParser
         internal int GetQuarterNumber(string text)
         {
             text = text.Replace("q", "");
-            int quarterNumber = 0;
-            if (int.TryParse(text, out quarterNumber))
-            {
-                if (quarterNumber < 1 || quarterNumber > 4)
-                {
-                    Result.Add(Error, "");
-                    return 0;
-                }
-            }
-            return quarterNumber;
+            if (!string.IsNullOrEmpty(text) && int.TryParse(text, out int quarterNumber) && isValidQuarterNumber(quarterNumber))
+                return quarterNumber;
+            return 0;
         }
 
-        internal int GetMonthNumber(string text)
+        internal int GetMonthNumber(string monthText)
         {
-            if (string.IsNullOrEmpty(text)) return 0;
-
             int monthNumber = 0;
-            if (int.TryParse(text, out monthNumber))
+            if (!string.IsNullOrEmpty(monthText) && (!int.TryParse(monthText, out monthNumber) || !isValidMonthNumber(monthNumber)))
             {
-                if (monthNumber < 1 || monthNumber > 12)
-                {
-                    Result.Add(Error, "");
-                    return 0;
-                }
-            }
-            else
-            {
-                var shortName = text.Substring(0, 3);
-                DateTime result;
-                if (DateTime.TryParseExact(shortName, "MMM", CultureInfo.CurrentCulture, DateTimeStyles.None, out result))
-                    monthNumber = result.Month;
+                monthNumber = ParseFromMonthName(monthText);
             }
             return monthNumber;
+        }
+
+        int ParseFromMonthNumber(string monthText)
+        {
+            if (int.TryParse(monthText, out int monthNumber) && isValidMonthNumber(monthNumber))
+                return monthNumber;
+            return 0;
+        }
+        int ParseFromMonthName(string monthText)
+        {
+            var shortName = monthText.Substring(0, 3);
+            if (DateTime.TryParseExact(shortName, "MMM", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime result))
+                return result.Month;
+            return 0;
         }
 
         internal string[] GetDateRanges(string text) => text.Split("-");
@@ -325,6 +313,9 @@ namespace PeriodParser.RegexParser
 
             return (endingYear - yearDiff, beginQuarter);
         }
+
+        bool isValidMonthNumber(int monthNumber) => monthNumber >= 1 && monthNumber <= 12;
+        bool isValidQuarterNumber(int quarterNumber) => quarterNumber >= 1 && quarterNumber <= 4;
 
         #endregion
     }
