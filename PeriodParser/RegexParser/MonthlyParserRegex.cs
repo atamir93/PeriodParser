@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
@@ -17,29 +18,17 @@ namespace PeriodParser.RegexParser
         }
         public override bool Parse()
         {
-            Result = new Dictionary<string, object>();
-            Result.Add(Period, ProfitAndLossPeriod.Monthly);
+            Result = new Dictionary<string, object>
+            {
+                { Period, ProfitAndLossPeriod.Monthly }
+            };
 
-            bool isValid = false;
+            bool isValid;
             if (TryParseLastDefinition(PeriodText))
                 isValid = true;
             else
             {
-                var dateRanges = SplitByDash(PeriodText);
-                if (dateRanges.Length == 1)
-                {
-                    if (TryParse(PeriodText))
-                        isValid = true;
-                }
-                else if (dateRanges.Length == 2)
-                {
-                    if (TryParse(dateRanges[0]))
-                    {
-                        if (TryParse(dateRanges[1]))
-                            isValid = true;
-                    }
-                }
-
+                isValid = TryParseDateRanges();
                 if (isValid)
                 {
                     if (Result.ContainsKey(Month2))
@@ -52,34 +41,25 @@ namespace PeriodParser.RegexParser
             return isValid;
         }
 
+        private bool TryParseDateRanges()
+        {
+            bool isValid = false;
+            var dateRanges = SplitByDash(PeriodText);
+            for (int i = 0; i < Math.Min(2, dateRanges.Length); i++)
+            {
+                isValid = TryParse(dateRanges[i]);
+            }
+            return isValid;
+        }
+
         bool TryParse(string text)
         {
-            if (TryParseMonthAndYear(text))
-            {
-                return true;
-            }
-            else if (TryParseYear(text))
-            {
-                return true;
-            }
-            else if (TryParseMonth(text))
-            {
-                return true;
-            }
-            return false;
+            return TryParseMonthAndYear(text) || TryParseYear(text) || TryParseMonth(text);
         }
 
         bool TryParseLastDefinition(string text)
         {
-            if (TryParseEachYearLastDefinition(text))
-            {
-                return true;
-            }
-            else if (TryParseConsecutiveLastDefinition(text))
-            {
-                return true;
-            }
-            return false;
+            return TryParseEachYearLastDefinition(text) || TryParseConsecutiveLastDefinition(text);
         }
 
         bool TryParseEachYearLastDefinition(string periodText)

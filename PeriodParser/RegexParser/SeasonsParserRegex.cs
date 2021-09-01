@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
 
 namespace PeriodParser.RegexParser
 {
@@ -18,34 +18,24 @@ namespace PeriodParser.RegexParser
 
         public override bool Parse()
         {
-            bool isValid = false;
-            Result = new Dictionary<string, object>();
-            Result.Add(Period, ProfitAndLossPeriod.MonthRange);
+            Result = new Dictionary<string, object>
+            {
+                { Period, ProfitAndLossPeriod.MonthRange }
+            };
 
+            return TryParseDataRanges();
+        }
+
+        private bool TryParseDataRanges()
+        {
+            bool isValid = false;
             var dateRanges = SplitByDash(PeriodText);
-            if (dateRanges.Length == 1)
+            bool isEndingRange = false;
+            for (int i = 0; i < Math.Min(3, dateRanges.Length); i++)
             {
-                if (TryParse(PeriodText))
-                    isValid = true;
-            }
-            else if (dateRanges.Length == 2)
-            {
-                if (TryParse(dateRanges[0]))
-                {
-                    if (TryParse(dateRanges[1], true))
-                        isValid = true;
-                }
-            }
-            else if (dateRanges.Length == 3)
-            {
-                if (TryParse(dateRanges[0]))
-                {
-                    if (TryParse(dateRanges[1]))
-                    {
-                        if (TryParse(dateRanges[2], true))
-                            isValid = true;
-                    }
-                }
+                if (i > 0)
+                    isEndingRange = true;
+                isValid = TryParse(dateRanges[i], isEndingRange);
             }
 
             return isValid;
@@ -53,19 +43,7 @@ namespace PeriodParser.RegexParser
 
         bool TryParse(string text, bool isEndRange = false)
         {
-            if (TryParseMonthAndYear(text, isEndRange))
-            {
-                return true;
-            }
-            else if (TryParseMonth(text, isEndRange))
-            {
-                return true;
-            }
-            else if (TryParseYear(text))
-            {
-                return true;
-            }
-            return false;
+            return TryParseMonthAndYear(text, isEndRange) || TryParseMonth(text, isEndRange) || TryParseYear(text);
         }
     }
 }
