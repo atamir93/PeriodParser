@@ -1,18 +1,19 @@
 ﻿using NUnit.Framework;
+using PeriodParser.RegexParser;
 using System.Collections.Generic;
 
-namespace PeriodParser
+namespace PeriodParser.Tests
 {
     [TestFixture]
     public class SeasonsParserTest
     {
-        private SeasonsParser parser;
+        private SeasonsParserRegex parser;
         Dictionary<string, object> parserResult;
 
         [SetUp]
         public void SetUp()
         {
-            parser = new SeasonsParser();
+            parser = SeasonsParserRegex.GetInstance();
         }
 
         [TestCase("June-December 2018-2020 Season")]
@@ -50,7 +51,6 @@ namespace PeriodParser
             AssertDictionaryValue("Month1", 6);
             AssertDictionaryValue("Month2", 12);
             AssertDictionaryValue("Year1", 2018);
-            AssertDictionaryValue("Year2", 2018);
         }
 
         void AssertDictionaryValue(string key, object value)

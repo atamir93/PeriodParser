@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace PeriodParser
+namespace PeriodParser.SimpleParser
 {
-    public class TotalParser : PeriodParser
+    public class SeasonsParser : PeriodParser
     {
-        public TotalParser(string text = "") : base(text) { }
-        private static TotalParser instance = null;
-        public static TotalParser GetInstance()
+        private SeasonsParser() : base() { }
+        private static SeasonsParser instance = null;
+        public static SeasonsParser GetInstance()
         {
             if (instance == null)
             {
-                instance = new TotalParser();
+                instance = new SeasonsParser();
             }
             return instance;
         }
@@ -19,29 +19,29 @@ namespace PeriodParser
         {
             PeriodText = PeriodText.ToLower().Trim();
             Result = new Dictionary<string, object>();
-            if (TotalDefinitions.Any(q => PeriodText.Contains(q)))
+            if (SeasonsDefinitions.Any(q => PeriodText.Contains(q)))
             {
-                foreach (var seasonText in TotalDefinitions)
+                foreach (var seasonText in SeasonsDefinitions)
                 {
                     PeriodText = PeriodText.ToLower().Replace(seasonText, "");
                 }
             }
-            else if (PeriodText.EndsWith(" t"))
+            else if (PeriodText.EndsWith(" s"))
             {
                 PeriodText = PeriodText.Remove(PeriodText.Length - 2);
             }
 
-            Result.Add(Period, ProfitAndLossPeriod.Single);
-
-            var dateRanges = PeriodText.Split("-");
-            if (dateRanges.Length == 2)
+            Result.Add(Period, ProfitAndLossPeriod.MonthRange);
+            PeriodText = ReplaceCharactersExceptPipeAndDashToEmptySpace(PeriodText.Trim());
+            var dateRanges = SplitByDash(PeriodText);
+            if (dateRanges.Length == 3)
             {
-                if (!TryParseWitDateRange(PeriodText))
+                if (!TryParseFullRange(PeriodText))
                     return false;
             }
-            else if (dateRanges.Length == 1)
+            else if (dateRanges.Length == 2)
             {
-                if (!TryParseWithoutRange(PeriodText))
+                if (!TryParseRangeWithSingleYear(PeriodText))
                     return false;
             }
             else
@@ -53,64 +53,70 @@ namespace PeriodParser
             return true;
         }
 
-        bool TryParseWithoutRange(string yearText)
+        bool TryParseRangeWithSingleYear(string monthMonthYearYearText)
         {
-            var year = GetYear(yearText);
-            if (string.IsNullOrEmpty(year))
+            var dateRanges = SplitByDash(monthMonthYearYearText);
+
+            var monthItem = dateRanges[0].Trim();
+            if (!TryParseRangeWithMonth(monthItem))
+                return false;
+
+            var monthAndYearItems = dateRanges[1].Trim();
+            if (TryParseRangeWithMonthAndYear(monthAndYearItems))
+            {
+                if (Result.ContainsKey(Year1))
+                {
+                    Result.Add(Year2, Result["Year1"]);
+                }
+                else
+                    return false;
+            }
+            else
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        bool TryParseFullRange(string monthMonthYearYearText)
+        {
+            var dateRanges = monthMonthYearYearText.Split("-");
+
+            var monthItem = dateRanges[0].Trim();
+            if (!TryParseRangeWithMonth(monthItem))
+                return false;
+
+            var monthAndYearItems = dateRanges[1].Trim();
+            if (!TryParseRangeWithMonthAndYear(monthAndYearItems))
+                return false;
+
+            var yearItem = dateRanges[2].Trim();
+            if (!TryParseRangeWithYear(yearItem))
+                return false;
+
+            return true;
+        }
+
+        bool TryParseRangeWithMonth(string monthText)
+        {
+            int monthNumber = GetMonthNumber(monthText);
+            if (monthNumber == 0)
             {
                 Result.Add(Error, "");
                 return false;
             }
             else
             {
-                Result.Add(Month1, FirstMonth);
-                Result.Add(Month2, LastMonth);
-                Result.Add(Year1, year);
-                Result.Add(Year2, year);
+                if (Result.ContainsKey(Month1))
+                {
+                    Result.Add(Month2, monthNumber);
+                }
+                else
+                {
+                    Result.Add(Month1, monthNumber);
+                }
             }
-
-            return true;
-        }
-
-        bool TryParseWitDateRange(string periodText)
-        {
-            var dateRanges = periodText.Split("-");
-            var rangeFirst = dateRanges[0].Trim();
-            var rangeSecond = dateRanges[1].Trim();
-
-            bool hasFirstRangeMonth = StartsWithMonth(rangeFirst);
-            bool hasSecondRangeMonth = StartsWithMonth(rangeSecond);
-
-            if (hasFirstRangeMonth && hasSecondRangeMonth)
-            {
-                if (!TryParseRangeWithMonthAndYear(rangeFirst))
-                    return false;
-                if (!TryParseRangeWithMonthAndYear(rangeSecond))
-                    return false;
-
-            }
-            else if (hasFirstRangeMonth)
-            {
-                if (!TryParseRangeWithMonthAndYear(rangeFirst))
-                    return false;
-                if (!TryParseRangeWithYear(rangeSecond))
-                    return false;
-            }
-            else if (hasSecondRangeMonth)
-            {
-                if (!TryParseRangeWithYear(rangeFirst))
-                    return false;
-                if (!TryParseRangeWithMonthAndYear(rangeSecond))
-                    return false;
-            }
-            else
-            {
-                if (!TryParseRangeWithYear(rangeFirst))
-                    return false;
-                if (!TryParseRangeWithYear(rangeSecond))
-                    return false;
-            }
-
             return true;
         }
 
@@ -152,18 +158,23 @@ namespace PeriodParser
                     else
                     {
                         if (Result.ContainsKey(Year1))
+                        {
                             Result.Add(Year2, year);
+                        }
                         else
+                        {
                             Result.Add(Year1, year);
+                        }
                     }
+
                 }
             }
             return true;
         }
+
         private bool TryParseRangeWithYear(string yearText)
         {
             //what if year is 2100 or >
-            yearText = yearText.Trim();
             string year = GetYear(yearText.Trim());
             if (string.IsNullOrEmpty(year))
             {
@@ -172,24 +183,8 @@ namespace PeriodParser
             }
             else
             {
-                if (Result.ContainsKey(Year1))
-                {
-                    Result.Add(Year2, year);
-                }
-                else
-                {
-                    Result.Add(Year1, year);
-                }
-                if (Result.ContainsKey(Month1))
-                {
-                    Result.Add(Month2, 12);
-                }
-                else
-                {
-                    Result.Add(Month1, 1);
-                }
+                Result.Add(Year2, year);
             }
-
             return true;
         }
     }

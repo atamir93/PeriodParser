@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace PeriodParser
+namespace PeriodParser.SimpleParser
 {
     public abstract class PeriodParser
     {
@@ -44,20 +44,22 @@ namespace PeriodParser
 
         public string CurrentPeriod { get; set; }
         public Dictionary<string, object> Result { get; set; }
-        public string PeriodText { get; set; }
+        private string periodText;
 
-        private static HashSet<object> registeredTypes = new HashSet<object>();
-
-        protected PeriodParser(string text = "", DateTime? dateTime = null)
+        public string PeriodText
         {
-            PeriodText = text.ToLower().Trim();
-            Result = new Dictionary<string, object>();
-            if (dateTime.HasValue)
-            {
-                CurrentYear = dateTime.Value.Year;
-                CurrentMonth = dateTime.Value.Month;
-                CurrentQuarter = (int)Math.Ceiling(CurrentMonth / 3.0);
-            }
+            get { return periodText; }
+            set { periodText = value.Trim().ToLower(); }
+        }
+
+        protected Regex GetRegexForMonthNameAndYear()
+        {
+            return new Regex(@"^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\W*\s*(\d*)");
+        }
+
+        protected Regex GetRegexForMonthNumberAndYear()
+        {
+            return new Regex(@"(\d*)\W+(\d*)");
         }
 
         public void SetPeriodText(string text)

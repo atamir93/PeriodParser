@@ -1,12 +1,13 @@
 ﻿using NUnit.Framework;
+using PeriodParser.RegexParser;
 using System.Collections.Generic;
 
-namespace PeriodParser
+namespace PeriodParser.Tests
 {
     [TestFixture]
     public class QuarterParserTest
     {
-        private QuarterParser parser;
+        private QuarterParserRegex parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentQuarter = 2;
@@ -14,7 +15,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = new QuarterParser();
+            parser = QuarterParserRegex.GetInstance();
         }
 
         [TestCase("This quarter for last 2 years")]

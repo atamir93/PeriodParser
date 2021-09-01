@@ -1,12 +1,13 @@
 ﻿using NUnit.Framework;
+using PeriodParser.RegexParser;
 using System.Collections.Generic;
 
-namespace PeriodParser
+namespace PeriodParser.Tests
 {
     [TestFixture]
     public class YearToDateParserTest
     {
-        private YearToDateParser parser;
+        private YearlyParserRegex parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;
@@ -14,7 +15,7 @@ namespace PeriodParser
         [SetUp]
         public void SetUp()
         {
-            parser = new YearToDateParser();
+            parser = YearlyParserRegex.GetInstance("YTD");
         }
 
         [Test]
@@ -26,7 +27,6 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
             AssertDictionaryValue("Type", "YTD");
-            AssertDictionaryValue("Month1", CurrentMonth);
             AssertDictionaryValue("Year1", CurrentYear-2);
             AssertDictionaryValue("Year2", CurrentYear);
         }
@@ -68,7 +68,6 @@ namespace PeriodParser
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
             AssertDictionaryValue("Type", "YTD");
-            AssertDictionaryValue("Month1", CurrentMonth);
             AssertDictionaryValue("Year1", 2018);
             AssertDictionaryValue("Year2", 2020);
         }

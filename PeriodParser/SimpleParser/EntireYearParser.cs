@@ -1,28 +1,31 @@
 ﻿using System.Collections.Generic;
 
-namespace PeriodParser
+namespace PeriodParser.SimpleParser
 {
-    public class YearToDateParser : PeriodParser
+    public class EntireYearParser : PeriodParser
     {
-        public YearToDateParser(string text = "") : base(text) { }
-        private static YearToDateParser instance = null;
-        public static YearToDateParser GetInstance()
+        private EntireYearParser() : base() { }
+        private static EntireYearParser instance = null;
+        public static EntireYearParser GetInstance()
         {
             if (instance == null)
             {
-                instance = new YearToDateParser();
+                instance = new EntireYearParser();
             }
             return instance;
         }
         public override bool Parse()
         {
             Result = new Dictionary<string, object>();
-            PeriodText = PeriodText.ToLower().Replace(YearToDateDefinition, "");
+            foreach (var yearText in YearDefinitions)
+            {
+                PeriodText = PeriodText.ToLower().Replace(yearText, "");
+            }
             Result.Add(Period, ProfitAndLossPeriod.Yearly);
-            Result.Add(Type, "YTD");
+            Result.Add(Type, "EntireYear");
             if (PeriodText.Contains(LastDefinition))
             {
-                if (!TryParseToYTDWithLastDefinition(PeriodText))
+                if (!TryParseToYearWithLastDefinition(PeriodText))
                     return false;
             }
             else
@@ -34,7 +37,7 @@ namespace PeriodParser
                 }
                 else if (dateRanges.Length == 2)
                 {
-                    if (!TryParseToYTDWithDateRange(PeriodText))
+                    if (!TryParseToYearWithDateRange(PeriodText))
                         return false;
                 }
                 else
@@ -46,7 +49,7 @@ namespace PeriodParser
             return true;
         }
 
-        bool TryParseToYTDWithLastDefinition(string periodText)
+        bool TryParseToYearWithLastDefinition(string periodText)
         {
             int yearDifference = GetFirstNumber(periodText);
             if (yearDifference == 0)
@@ -56,12 +59,12 @@ namespace PeriodParser
             }
             if (periodText.Contains(FiscalDefinition))
             {
-                //Result.Add("YearlyPeriod", "Fiscal");
+                //Result.Add(YearlyPeriod, "Fiscal");
                 // to-do for fiscal years
             }
             else
             {
-                //Result.Add("YearlyPeriod", "Calendar");
+                //Result.Add(YearlyPeriod, "Calendar");
                 if (Result.ContainsKey(Month1))
                     Result.Add(Month2, CurrentMonth);
                 else
@@ -72,7 +75,7 @@ namespace PeriodParser
             return true;
         }
 
-        bool TryParseToYTDWithDateRange(string periodText)
+        bool TryParseToYearWithDateRange(string periodText)
         {
             var dateRanges = SplitByDash(periodText);
             var rangeFirst = dateRanges[0];
@@ -115,10 +118,11 @@ namespace PeriodParser
                 else
                     Result.Add(Year1, year);
             }
+
             return true;
         }
 
-        private bool TryParseRangeWithMonthAndYear(string monthAndYearText)
+        bool TryParseRangeWithMonthAndYear(string monthAndYearText)
         {
             var withoutCharactersExceptPipe = ReplaceCharactersExceptPipeToEmptySpace(monthAndYearText);
             string[] items = SplitByEmptySpace(withoutCharactersExceptPipe);

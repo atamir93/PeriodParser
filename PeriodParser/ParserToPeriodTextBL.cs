@@ -4,10 +4,22 @@ namespace PeriodParser
 {
     public class ParserToPeriodTextBL
     {
-        public static string GetYearlyPeriodText(string month, string type, string beginYear, string endingYear)
+        public static string GetEntireYearYearlyPeriodText(string beginYear, string endingYear)
         {
             string years = beginYear == endingYear ? beginYear : $"{beginYear} - {endingYear}";
-            string periodText = $"{month} {years} {type}";
+            string periodText = $"{years} Yearly";
+            return periodText;
+        }
+
+        public static string GetYearToDateYearlyPeriodText(string month, string beginYear, string endingYear)
+        {
+            string type = "YTD";
+            string years = beginYear == endingYear ? beginYear : $"{beginYear} - {endingYear}";
+            string periodText;
+            if (string.IsNullOrEmpty(month))
+                periodText = $"{years} {type}";
+            else
+                periodText = $"{years} {month} {type}";
             return periodText;
         }
 
