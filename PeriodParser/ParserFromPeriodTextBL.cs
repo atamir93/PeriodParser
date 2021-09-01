@@ -344,7 +344,6 @@ namespace PeriodParser
                     view.BeginningYearSingle = year1;
                     break;
                 case DimensionCompareType.EntireYear:
-                    view.EndingMonth = month1;
                     view.EndingYear = year1;
                     break;
                 case DimensionCompareType.YearToDate:
