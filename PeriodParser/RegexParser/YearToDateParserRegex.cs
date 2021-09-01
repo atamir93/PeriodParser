@@ -15,63 +15,31 @@ namespace PeriodParser.RegexParser
             }
             return instance;
         }
-        public override bool Parse()
+        public override bool TryParse()
         {
-            Result = new Dictionary<string, object>();
-            Result.Add(Period, ProfitAndLossPeriod.Yearly);
-            Result.Add(Type, "YTD");
-
-            bool isValid = false;
-            if (TryParseToYearWithLastDefinition(PeriodText))
-                isValid = true;
-            else
+            Result = new Dictionary<string, object>
             {
-                var dateRanges = SplitByDash(PeriodText);
-                if (dateRanges.Length == 1)
-                {
-                    if (TryParse(PeriodText))
-                        isValid = true;
-                }
-                else if (dateRanges.Length == 2)
-                {
-                    if (TryParse(dateRanges[0]))
-                    {
-                        if (TryParse(dateRanges[1]))
-                            isValid = true;
-                    }
-                }
-            }
+                { Period, ProfitAndLossPeriod.Yearly },
+                { Type, "YTD" }
+            };
 
-            return isValid;
+            return TryParseToYearWithLastDefinition(PeriodText) || TryParseDateRanges();
         }
 
-        bool TryParse(string text)
+        internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            if (TryParseMonthAndYear(text))
-            {
-                return true;
-            }
-            else if (TryParseYear(text))
-            {
-                return true;
-            }
-            
-            return false;
+            return TryParseMonthAndYear(text) || TryParseYear(text);
         }
 
         bool TryParseToYearWithLastDefinition(string periodText)
         {
             Regex rgx = new Regex(@"last\s*(\d+)\s*year");
             Match match = rgx.Match(periodText);
-            if (match.Success)
+            if (match.Success && int.TryParse(match.Groups[1].Value, out int yearDifference))
             {
-                int yearDifference;
-                if (int.TryParse(match.Groups[1].Value, out yearDifference))
-                {
-                    Result.Add(Year1, CurrentYear - yearDifference);
-                    Result.Add(Year2, CurrentYear);
-                    return true;
-                }
+                Result.Add(Year1, CurrentYear - yearDifference);
+                Result.Add(Year2, CurrentYear);
+                return true;
             }
             return false;
         }

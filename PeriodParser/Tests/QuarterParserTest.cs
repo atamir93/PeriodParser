@@ -23,7 +23,7 @@ namespace PeriodParser.Tests
         public void QuartersEachYearType_LastDefitinion_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Quarterly);
@@ -42,7 +42,7 @@ namespace PeriodParser.Tests
         public void QuartersEachYearType_WithDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Quarterly);
@@ -62,7 +62,7 @@ namespace PeriodParser.Tests
         public void QuartersConsecutiveType_LastDefitinion_Parser(string text, int beginYear, int beginQuarter)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Quarterly);
@@ -82,7 +82,7 @@ namespace PeriodParser.Tests
         public void QuartersConsecutive_WithDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Quarterly);

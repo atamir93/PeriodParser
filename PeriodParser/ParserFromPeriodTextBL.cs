@@ -91,7 +91,7 @@ namespace PeriodParser
             }
             parser.SetCurrentDate(new DateTime(2020, 5, 1));
             parser.SetPeriodText(text);
-            var parseSucceeded = parser.Parse();
+            var parseSucceeded = parser.TryParse();
             parser.SetAllEndingFields();
             if (parseSucceeded && parser?.Result != null && !parser.Result.ContainsKey("Error") && parser.Result.ContainsKey("Period"))
                 return parser.Result;

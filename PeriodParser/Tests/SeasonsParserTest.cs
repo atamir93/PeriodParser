@@ -24,7 +24,7 @@ namespace PeriodParser.Tests
         public void Seasons_WithDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.MonthRange);
@@ -43,7 +43,7 @@ namespace PeriodParser.Tests
         public void Seasons_WithSingleYear_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.MonthRange);

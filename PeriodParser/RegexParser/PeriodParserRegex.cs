@@ -34,7 +34,6 @@ namespace PeriodParser.RegexParser
             get { return periodText; }
             set { periodText = value.Trim().ToLower(); }
         }
-        public abstract bool Parse();
 
         public void SetAllEndingFields()
         {
@@ -63,6 +62,33 @@ namespace PeriodParser.RegexParser
             CurrentYear = dateTime.Year;
             CurrentMonth = dateTime.Month;
             CurrentQuarter = (int)Math.Ceiling(CurrentMonth / 3.0);
+        }
+
+        public abstract bool TryParse();
+        internal abstract bool TryParseDateText(string text, bool isEndRange = false);
+        internal bool TryParseDateRanges(int maxRanges = 2)
+        {
+            bool isValid = false;
+            var dateRanges = GetDateRanges(PeriodText);
+            for (int i = 0; i < Math.Min(maxRanges, dateRanges.Length); i++)
+            {
+                isValid = TryParseDateText(dateRanges[i]);
+            }
+            return isValid;
+        }
+
+        internal bool TryParseDateRangesConsideringEndingRange(int maxRanges = 2)
+        {
+            bool isValid = false;
+            var dateRanges = GetDateRanges(PeriodText);
+            bool isEndingRange = false;
+            for (int i = 0; i < Math.Min(maxRanges, dateRanges.Length); i++)
+            {
+                if (i > 0)
+                    isEndingRange = true;
+                isValid = TryParseDateText(dateRanges[i], isEndingRange);
+            }
+            return isValid;
         }
 
         #region Regex patterns
@@ -250,7 +276,7 @@ namespace PeriodParser.RegexParser
             return monthNumber;
         }
 
-        internal string[] SplitByDash(string text) => text.Split("-");
+        internal string[] GetDateRanges(string text) => text.Split("-");
 
         string GetYearNumber(string text)
         {

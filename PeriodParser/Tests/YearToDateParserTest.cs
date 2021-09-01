@@ -22,7 +22,7 @@ namespace PeriodParser.Tests
         public void YTD_LastDefitinion_Parser()
         {
             parser.PeriodText = "Last 2 years YTD";
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
@@ -42,7 +42,7 @@ namespace PeriodParser.Tests
         public void YTD_WithFullDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
@@ -63,7 +63,7 @@ namespace PeriodParser.Tests
         public void YTD_WithlDateRangeWithoutMonth_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);

@@ -15,46 +15,19 @@ namespace PeriodParser.RegexParser
             }
             return instance;
         }
-        public override bool Parse()
+        public override bool TryParse()
         {
-            Result = new Dictionary<string, object>();
-            Result.Add(Period, ProfitAndLossPeriod.Yearly);
-            Result.Add(Type, "EntireYear");
-            bool isValid = false;
-            if (TryParseToYearWithLastDefinition(PeriodText))
-                isValid = true;
-            else
+            Result = new Dictionary<string, object>
             {
-                var dateRanges = SplitByDash(PeriodText);
-                if (dateRanges.Length == 1)
-                {
-                    if (TryParse(PeriodText))
-                        isValid = true;
-                }
-                else if (dateRanges.Length == 2)
-                {
-                    if (TryParse(dateRanges[0]))
-                    {
-                        if (TryParse(dateRanges[1]))
-                            isValid = true;
-                    }
-                }
-            }
-
-            return isValid;
+                { Period, ProfitAndLossPeriod.Yearly },
+                { Type, "EntireYear" }
+            };
+            return TryParseToYearWithLastDefinition(PeriodText) || TryParseDateRanges();
         }
 
-        bool TryParse(string text)
+        internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            if (TryParseMonthAndYear(text))
-            {
-                return true;
-            }
-            else if (TryParseYear(text))
-            {
-                return true;
-            }
-            return false;
+            return TryParseMonthAndYear(text) || TryParseYear(text);
         }
 
         bool TryParseToYearWithLastDefinition(string periodText)

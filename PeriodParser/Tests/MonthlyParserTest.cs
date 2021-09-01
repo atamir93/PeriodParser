@@ -24,7 +24,7 @@ namespace PeriodParser.Tests
         public void MonthsEachYearType_LastDefitinion_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
@@ -43,7 +43,7 @@ namespace PeriodParser.Tests
         public void MonthsEachYearType_WithDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
@@ -63,7 +63,7 @@ namespace PeriodParser.Tests
         public void MonthsConsecutiveType_LastDefitinion_Parser(string text, int beginYear, int beginMonth)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
@@ -82,7 +82,7 @@ namespace PeriodParser.Tests
         public void MonthsConsecutive_WithDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);

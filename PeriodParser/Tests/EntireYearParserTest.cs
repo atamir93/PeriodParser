@@ -22,7 +22,7 @@ namespace PeriodParser.Tests
         public void EntireYear_LastDefitinion_Parser()
         {
             parser.PeriodText = "Last 2 years";
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
@@ -42,7 +42,7 @@ namespace PeriodParser.Tests
         public void EntireYear_WithlDateRangeWithoutMonth_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
@@ -62,7 +62,7 @@ namespace PeriodParser.Tests
         public void EntireYear_WithFullDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
@@ -83,7 +83,7 @@ namespace PeriodParser.Tests
         public void EntireYear_WithMonthAndYear_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
@@ -100,7 +100,7 @@ namespace PeriodParser.Tests
         public void EntireYear_WithYear_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);

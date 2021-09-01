@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
@@ -19,16 +18,14 @@ namespace PeriodParser.RegexParser
             return instance;
         }
 
-        public override bool Parse()
+        public override bool TryParse()
         {
-            Result = new Dictionary<string, object>();
-            bool isValid = false;
-            Result.Add(Period, ProfitAndLossPeriod.Dimension);
+            Result = new Dictionary<string, object>
+            {
+                { Period, ProfitAndLossPeriod.Dimension }
+            };
 
-            if (TryParseDimension(PeriodText))
-                isValid = true;
-
-            return isValid;
+            return TryParseDimension(PeriodText);
         }
 
         protected bool TryParseDimension(string text)
@@ -41,58 +38,57 @@ namespace PeriodParser.RegexParser
                 var dateText = match.Groups[1].Value;
                 var dimensionName = match.Groups[2].Value;
                 Result.Add(DimensionName, dimensionName);
-
-                if (dateText.Contains("-") && TryParseRange(dateText))
-                {
-                    if (!Result.ContainsKey(Month1))
-                    {
-                        Result.Add(Month1, FirstMonth);
-                    }
-                    if (!Result.ContainsKey(Month2))
-                    {
-                        Result.Add(Month2, LastMonth);
-                    }
-                    Result.Add(DimensionPeriod, DimensionCompareType.Range);
-                    isValid = true;
-                }
-                else if (TryParseQuarterAndYear(dateText))
-                {
-                    Result.Add(DimensionPeriod, DimensionCompareType.Quarter);
-                    isValid = true;
-                }
-                else if (TryParseMonthAndYear(dateText))
-                {
-                    if (text.Contains(YearToDateDefinition))
-                        Result.Add(DimensionPeriod, DimensionCompareType.YearToDate);
-                    else
-                        Result.Add(DimensionPeriod, DimensionCompareType.Month);
-
-                    isValid = true;
-                }
-                else if (TryParseYear(dateText))
-                {
-                    Result.Add(DimensionPeriod, DimensionCompareType.EntireYear);
-                    isValid = true;
-                }
+                PeriodText = dateText;
+                isValid = TryParseDimensionPeriod(dateText);
             }
             return isValid;
         }
 
-        bool TryParseRange(string text)
+        bool TryParseDimensionPeriod(string dateText)
         {
             bool isValid = false;
-            var dateRanges = SplitByDash(text);
-            bool isEndingRange = false;
-            for (int i = 0; i < Math.Min(2, dateRanges.Length); i++)
+            if (dateText.Contains("-") && TryParseDateRangesConsideringEndingRange())
             {
-                if (i > 0)
-                    isEndingRange = true;
-                isValid = TryParse(dateRanges[i], isEndingRange);
+                AddFirstAndLastMonthes();
+                Result.Add(DimensionPeriod, DimensionCompareType.Range);
+                isValid = true;
             }
+            else if (TryParseQuarterAndYear(dateText))
+            {
+                Result.Add(DimensionPeriod, DimensionCompareType.Quarter);
+                isValid = true;
+            }
+            else if (TryParseMonthAndYear(dateText))
+            {
+                if (dateText.Contains(YearToDateDefinition))
+                    Result.Add(DimensionPeriod, DimensionCompareType.YearToDate);
+                else
+                    Result.Add(DimensionPeriod, DimensionCompareType.Month);
+
+                isValid = true;
+            }
+            else if (TryParseYear(dateText))
+            {
+                Result.Add(DimensionPeriod, DimensionCompareType.EntireYear);
+                isValid = true;
+            }
+
             return isValid;
         }
 
-        bool TryParse(string text, bool isEndRange = false)
+        void AddFirstAndLastMonthes()
+        {
+            if (!Result.ContainsKey(Month1))
+            {
+                Result.Add(Month1, FirstMonth);
+            }
+            if (!Result.ContainsKey(Month2))
+            {
+                Result.Add(Month2, LastMonth);
+            }
+        }
+
+        internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
             return TryParseMonthAndYear(text, isEndRange) || TryParseYear(text) || TryParseMonth(text, isEndRange);
         }

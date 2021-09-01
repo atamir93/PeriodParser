@@ -15,62 +15,35 @@ namespace PeriodParser.RegexParser
             return instance;
         }
 
-        public override bool Parse()
+        public override bool TryParse()
         {
             Result = new Dictionary<string, object>
             {
                 { Period, ProfitAndLossPeriod.Single }
             };
 
-            bool isValid = TryParseDateRanges();
+            bool isValid = TryParseDateRangesConsideringEndingRange();
             if (isValid)
-            {
-                if (!Result.ContainsKey(Month1))
-                {
-                    Result.Add(Month1, FirstMonth);
-                }
-                if (!Result.ContainsKey(Month2))
-                {
-                    Result.Add(Month2, LastMonth);
-                }
-            }
-            return isValid;
-        }
-
-        private bool TryParseDateRanges()
-        {
-            bool isValid = false;
-            var dateRanges = SplitByDash(PeriodText);
-            if (TryParse(dateRanges[0]))
-            {
-                if (dateRanges.Length > 1)
-                {
-                    if (TryParse(dateRanges[1], true))
-                        isValid = true;
-                }
-                else
-                    isValid = true;
-            }
+                AddFirstAndLastMonthes();
 
             return isValid;
         }
 
-        bool TryParse(string text, bool isEndRange = false)
+        void AddFirstAndLastMonthes()
         {
-            bool isParsed = false;
-            if (TryParseMonthAndYear(text, isEndRange))
+            if (!Result.ContainsKey(Month1))
             {
-                isParsed = true;
+                Result.Add(Month1, FirstMonth);
             }
-            else if (TryParseYear(text))
+            if (!Result.ContainsKey(Month2))
             {
-                isParsed = true;
+                Result.Add(Month2, LastMonth);
             }
-            else if (TryParseMonth(text, isEndRange))
-            {
-                isParsed = true;
-            }
-            return isParsed;
+        }
+
+        internal override bool TryParseDateText(string text, bool isEndRange = false)
+        {
+            return TryParseMonthAndYear(text, isEndRange) || TryParseYear(text) || TryParseMonth(text, isEndRange);
         }
     }
 }

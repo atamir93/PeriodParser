@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace PeriodParser.RegexParser
 {
@@ -16,32 +15,17 @@ namespace PeriodParser.RegexParser
             return instance;
         }
 
-        public override bool Parse()
+        public override bool TryParse()
         {
             Result = new Dictionary<string, object>
             {
                 { Period, ProfitAndLossPeriod.MonthRange }
             };
 
-            return TryParseDataRanges();
+            return TryParseDateRangesConsideringEndingRange(3);
         }
 
-        private bool TryParseDataRanges()
-        {
-            bool isValid = false;
-            var dateRanges = SplitByDash(PeriodText);
-            bool isEndingRange = false;
-            for (int i = 0; i < Math.Min(3, dateRanges.Length); i++)
-            {
-                if (i > 0)
-                    isEndingRange = true;
-                isValid = TryParse(dateRanges[i], isEndingRange);
-            }
-
-            return isValid;
-        }
-
-        bool TryParse(string text, bool isEndRange = false)
+        internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
             return TryParseMonthAndYear(text, isEndRange) || TryParseMonth(text, isEndRange) || TryParseYear(text);
         }

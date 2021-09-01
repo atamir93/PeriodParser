@@ -21,7 +21,7 @@ namespace PeriodParser.Tests
         public void DimensionParser_EntireYear_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);
@@ -38,7 +38,7 @@ namespace PeriodParser.Tests
         public void DimensionParser_YearToDate_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);
@@ -56,7 +56,7 @@ namespace PeriodParser.Tests
         public void DimensionParser_Month_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);
@@ -72,7 +72,7 @@ namespace PeriodParser.Tests
         public void DimensionParser_Quarter_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);
@@ -90,7 +90,7 @@ namespace PeriodParser.Tests
         public void DimensionParser_Range_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Dimension);

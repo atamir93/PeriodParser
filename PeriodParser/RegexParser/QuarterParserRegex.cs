@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
@@ -16,7 +15,7 @@ namespace PeriodParser.RegexParser
             }
             return instance;
         }
-        public override bool Parse()
+        public override bool TryParse()
         {
             Result = new Dictionary<string, object>
             {
@@ -30,29 +29,21 @@ namespace PeriodParser.RegexParser
             {
                 isValid = TryParseDateRanges();
                 if (isValid)
-                {
-                    if (Result.ContainsKey(Quarter2))
-                        Result.Add(Type, "Consecutive");
-                    else
-                        Result.Add(Type, "EachYear");
-                }
+                    AddQuarterlyType();
             }
 
             return isValid;
         }
 
-        private bool TryParseDateRanges()
+        private void AddQuarterlyType()
         {
-            bool isValid = false;
-            var dateRanges = SplitByDash(PeriodText);
-            for (int i = 0; i < Math.Min(2, dateRanges.Length); i++)
-            {
-                isValid = TryParse(dateRanges[i]);
-            }
-            return isValid;
+            if (Result.ContainsKey(Quarter2))
+                Result.Add(Type, "Consecutive");
+            else
+                Result.Add(Type, "EachYear");
         }
 
-        bool TryParse(string text)
+        internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
             return TryParseQuarterAndYear(text) || TryParseYear(text) || TryParseQuarter(text);
         }
