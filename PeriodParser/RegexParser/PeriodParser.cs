@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
 {
-    public abstract class PeriodParserRegex
+    public abstract class PeriodParser
     {
         public const string Period = "Period";
         public const string Type = "Type";
@@ -21,6 +21,7 @@ namespace PeriodParser.RegexParser
 
         public int CurrentYear = 2020;
         public int CurrentMonth = 5;
+        public int EndingMonth = 5;
         public int CurrentQuarter = 2;
         public readonly int FirstMonth = 1;
         public readonly int LastMonth = 12;

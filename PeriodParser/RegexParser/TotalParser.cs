@@ -2,15 +2,15 @@
 
 namespace PeriodParser.RegexParser
 {
-    public class TotalParserRegex : PeriodParserRegex
+    public class TotalParser : PeriodParser
     {
-        private TotalParserRegex() : base() { }
-        private static TotalParserRegex instance = null;
-        public static TotalParserRegex GetInstance()
+        private TotalParser() : base() { }
+        private static TotalParser instance = null;
+        public static TotalParser GetInstance()
         {
             if (instance == null)
             {
-                instance = new TotalParserRegex();
+                instance = new TotalParser();
             }
             return instance;
         }

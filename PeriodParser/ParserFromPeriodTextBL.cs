@@ -23,67 +23,67 @@ namespace PeriodParser
             text = text.ToLower().Trim();
             var lastPeriod = view.Period;
             view.FiltersFromParser.Clear();
-            PeriodParserRegex parser = null;
+            RegexParser.PeriodParser parser = null;
             if (text.Contains(DimensionDefinition))
             {
-                parser = DimensionParserRegex.GetInstance();
+                parser = DimensionParser.GetInstance();
             }
             else if (text.Contains(YearToDateDefinition))
             {
-                parser = YearlyParserRegex.GetInstance("YTD");
+                parser = YearlyParser.GetInstance("YTD");
             }
             else if (ContainsAny(QuarterDefinitions, text) || ContainsAny(QuarterNumbers, text))
             {
-                parser = QuarterParserRegex.GetInstance();
+                parser = QuarterParser.GetInstance();
             }
             else if (EndsWithAny(SeasonsDefinitions, text))
             {
-                parser = SeasonsParserRegex.GetInstance();
+                parser = SeasonsParser.GetInstance();
             }
             else if (EndsWithAny(TotalDefinitions, text))
             {
-                parser = TotalParserRegex.GetInstance();
+                parser = TotalParser.GetInstance();
             }
             else if (ContainsAny(MonthDefinitions, text) || text.EndsWith(" m") || text.Contains("for last"))
             {
-                parser = MonthlyParserRegex.GetInstance();
+                parser = MonthlyParser.GetInstance();
             }
             else if (ContainsAny(YearDefinitions, text))
             {
-                parser = YearlyParserRegex.GetInstance("EntireYear");
+                parser = YearlyParser.GetInstance("EntireYear");
             }
             else if (text.EndsWith(" t"))
             {
-                parser = TotalParserRegex.GetInstance();
+                parser = TotalParser.GetInstance();
             }
             else if (text.EndsWith(" s"))
             {
-                parser = SeasonsParserRegex.GetInstance();
+                parser = SeasonsParser.GetInstance();
             }
             else
             {
                 switch (lastPeriod)
                 {
                     case ProfitAndLossPeriod.Single:
-                        parser = TotalParserRegex.GetInstance();
+                        parser = TotalParser.GetInstance();
                         break;
                     case ProfitAndLossPeriod.Yearly:
                         if (view.YearlyType == YearlySwitch.EntireYear)
-                            parser = YearlyParserRegex.GetInstance("EntireYear");
+                            parser = YearlyParser.GetInstance("EntireYear");
                         else
-                            parser = YearlyParserRegex.GetInstance("YTD");
+                            parser = YearlyParser.GetInstance("YTD");
                         break;
                     case ProfitAndLossPeriod.MonthRange:
-                        parser = SeasonsParserRegex.GetInstance();
+                        parser = SeasonsParser.GetInstance();
                         break;
                     case ProfitAndLossPeriod.Quarterly:
-                        parser = QuarterParserRegex.GetInstance();
+                        parser = QuarterParser.GetInstance();
                         break;
                     case ProfitAndLossPeriod.Dimension:
-                        parser = DimensionParserRegex.GetInstance();
+                        parser = DimensionParser.GetInstance();
                         break;
                     case ProfitAndLossPeriod.Monthly:
-                        parser = MonthlyParserRegex.GetInstance();
+                        parser = MonthlyParser.GetInstance();
                         break;
                     default:
                         break;

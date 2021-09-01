@@ -3,17 +3,17 @@ using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
 {
-    public class DimensionParserRegex : PeriodParserRegex
+    public class DimensionParser : PeriodParser
     {
         public const string YearToDateDefinition = "ytd";
-        private DimensionParserRegex() : base() { }
+        private DimensionParser() : base() { }
 
-        private static DimensionParserRegex instance = null;
-        public static DimensionParserRegex GetInstance()
+        private static DimensionParser instance = null;
+        public static DimensionParser GetInstance()
         {
             if (instance == null)
             {
-                instance = new DimensionParserRegex();
+                instance = new DimensionParser();
             }
             return instance;
         }

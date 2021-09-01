@@ -7,13 +7,13 @@ namespace PeriodParser.Tests
     [TestFixture]
     public class SeasonsParserTest
     {
-        private SeasonsParserRegex parser;
+        private SeasonsParser parser;
         Dictionary<string, object> parserResult;
 
         [SetUp]
         public void SetUp()
         {
-            parser = SeasonsParserRegex.GetInstance();
+            parser = SeasonsParser.GetInstance();
         }
 
         [TestCase("June-December 2018-2020 Season")]

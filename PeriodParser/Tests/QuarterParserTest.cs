@@ -7,7 +7,7 @@ namespace PeriodParser.Tests
     [TestFixture]
     public class QuarterParserTest
     {
-        private QuarterParserRegex parser;
+        private QuarterParser parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentQuarter = 2;
@@ -15,7 +15,7 @@ namespace PeriodParser.Tests
         [SetUp]
         public void SetUp()
         {
-            parser = QuarterParserRegex.GetInstance();
+            parser = QuarterParser.GetInstance();
         }
 
         [TestCase("This quarter for last 2 years")]

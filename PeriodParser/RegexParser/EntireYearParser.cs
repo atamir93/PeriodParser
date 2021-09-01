@@ -3,15 +3,15 @@ using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
 {
-    public class YearToDateParserRegex : PeriodParserRegex
+    public class EntireYearParser : PeriodParser
     {
-        private YearToDateParserRegex() : base() { }
-        private static YearToDateParserRegex instance = null;
-        public static YearToDateParserRegex GetInstance()
+        private EntireYearParser() : base() { }
+        private static EntireYearParser instance = null;
+        public static EntireYearParser GetInstance()
         {
             if (instance == null)
             {
-                instance = new YearToDateParserRegex();
+                instance = new EntireYearParser();
             }
             return instance;
         }
@@ -20,9 +20,8 @@ namespace PeriodParser.RegexParser
             Result = new Dictionary<string, object>
             {
                 { Period, ProfitAndLossPeriod.Yearly },
-                { Type, "YTD" }
+                { Type, "EntireYear" }
             };
-
             return TryParseToYearWithLastDefinition(PeriodText) || TryParseDateRanges();
         }
 
@@ -35,11 +34,15 @@ namespace PeriodParser.RegexParser
         {
             Regex rgx = new Regex(@"last\s*(\d+)\s*year");
             Match match = rgx.Match(periodText);
-            if (match.Success && int.TryParse(match.Groups[1].Value, out int yearDifference))
+            if (match.Success)
             {
-                Result.Add(Year1, CurrentYear - yearDifference);
-                Result.Add(Year2, CurrentYear);
-                return true;
+                int yearDifference;
+                if (int.TryParse(match.Groups[1].Value, out yearDifference))
+                {
+                    Result.Add(Year1, CurrentYear - yearDifference);
+                    Result.Add(Year2, CurrentYear);
+                    return true;
+                }
             }
             return false;
         }

@@ -3,25 +3,29 @@ using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
 {
-    public class EntireYearParserRegex : PeriodParserRegex
+    public class YearlyParser : PeriodParser
     {
-        private EntireYearParserRegex() : base() { }
-        private static EntireYearParserRegex instance = null;
-        public static EntireYearParserRegex GetInstance()
+        private YearlyParser() : base() { }
+        public string YearlyType;
+        private static YearlyParser instance = null;
+        public static YearlyParser GetInstance(string yearlyType)
         {
             if (instance == null)
             {
-                instance = new EntireYearParserRegex();
+                instance = new YearlyParser();
             }
+            instance.YearlyType = yearlyType;
             return instance;
         }
+
         public override bool TryParse()
         {
             Result = new Dictionary<string, object>
             {
                 { Period, ProfitAndLossPeriod.Yearly },
-                { Type, "EntireYear" }
+                { Type, YearlyType }
             };
+
             return TryParseToYearWithLastDefinition(PeriodText) || TryParseDateRanges();
         }
 
@@ -32,19 +36,16 @@ namespace PeriodParser.RegexParser
 
         bool TryParseToYearWithLastDefinition(string periodText)
         {
+            bool isParsed = false;
             Regex rgx = new Regex(@"last\s*(\d+)\s*year");
             Match match = rgx.Match(periodText);
-            if (match.Success)
+            if (match.Success && int.TryParse(match.Groups[1].Value, out int yearDifference))
             {
-                int yearDifference;
-                if (int.TryParse(match.Groups[1].Value, out yearDifference))
-                {
-                    Result.Add(Year1, CurrentYear - yearDifference);
-                    Result.Add(Year2, CurrentYear);
-                    return true;
-                }
+                Result.Add(Year1, CurrentYear - yearDifference);
+                Result.Add(Year2, CurrentYear);
+                isParsed = true;
             }
-            return false;
+            return isParsed;
         }
     }
 }

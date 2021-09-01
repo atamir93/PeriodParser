@@ -2,15 +2,15 @@
 
 namespace PeriodParser.RegexParser
 {
-    public class SeasonsParserRegex : PeriodParserRegex
+    public class SeasonsParser : PeriodParser
     {
-        private SeasonsParserRegex() : base() { }
-        private static SeasonsParserRegex instance = null;
-        public static SeasonsParserRegex GetInstance()
+        private SeasonsParser() : base() { }
+        private static SeasonsParser instance = null;
+        public static SeasonsParser GetInstance()
         {
             if (instance == null)
             {
-                instance = new SeasonsParserRegex();
+                instance = new SeasonsParser();
             }
             return instance;
         }

@@ -7,13 +7,13 @@ namespace PeriodParser.Tests
     [TestFixture]
     public class DimensionParserTest
     {
-        private DimensionParserRegex parser;
+        private DimensionParser parser;
         Dictionary<string, object> parserResult;
 
         [SetUp]
         public void SetUp()
         {
-            parser = DimensionParserRegex.GetInstance();
+            parser = DimensionParser.GetInstance();
         }
 
         [TestCase("2018 by location")]

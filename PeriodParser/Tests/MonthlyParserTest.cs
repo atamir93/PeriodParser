@@ -7,7 +7,7 @@ namespace PeriodParser.Tests
     [TestFixture]
     public class MonthlyParserTest
     {
-        private MonthlyParserRegex parser;
+        private MonthlyParser parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;
@@ -15,7 +15,7 @@ namespace PeriodParser.Tests
         [SetUp]
         public void SetUp()
         {
-            parser = MonthlyParserRegex.GetInstance();
+            parser = MonthlyParser.GetInstance();
         }
 
         [TestCase("This month for last 2 years")]
