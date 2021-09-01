@@ -27,7 +27,7 @@ namespace PeriodParser.Tests
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
             AssertDictionaryValue("Type", "EntireYear");
-            AssertDictionaryValue("Year1", CurrentYear - 2);
+            AssertDictionaryValue("Year1", CurrentYear - 1);
             AssertDictionaryValue("Year2", CurrentYear);
         }
 

@@ -73,7 +73,7 @@ namespace PeriodParser.RegexParser
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            return TryParseQuarterAndYear(text) || TryParseQuarter(text) || TryParseYear(text);
+            return TryParseQuarterAndYear(text) || TryParseYearAndQuarter(text) || TryParseQuarter(text) || TryParseYear(text);
         }
 
         bool TryParseLastDefinition(string text)
@@ -94,8 +94,9 @@ namespace PeriodParser.RegexParser
                     var quarterNumber = GetQuarterNumber(quarterText);
                     if (quarterNumber == 0)
                         quarterNumber = CurrentQuarter;
+
                     Result.Add(Quarter1, quarterNumber);
-                    Result.Add(Year1, CurrentYear - yearlyDifference);
+                    Result.Add(Year1, CurrentYear - yearlyDifference + 1);
                     Result.Add(Year2, CurrentYear);
                     Result.Add(Type, "EachYear");
                     return true;

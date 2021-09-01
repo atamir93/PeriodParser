@@ -31,7 +31,7 @@ namespace PeriodParser.Tests
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
             AssertDictionaryValue("Month1", CurrentMonth);
-            AssertDictionaryValue("Year1", CurrentYear - 2);
+            AssertDictionaryValue("Year1", CurrentYear - 1);
             AssertDictionaryValue("Year2", CurrentYear);
         }
 

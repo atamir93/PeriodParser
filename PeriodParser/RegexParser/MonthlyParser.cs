@@ -75,7 +75,7 @@ namespace PeriodParser.RegexParser
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            return TryParseMonthAndYear(text) || TryParseYear(text) || TryParseMonth(text);
+            return TryParseMonthAndYear(text) || TryParseYearAndMonthName(text) || TryParseYear(text) || TryParseMonth(text);
         }
 
         bool TryParseLastDefinition(string text)
@@ -97,7 +97,7 @@ namespace PeriodParser.RegexParser
                     if (monthNumber == 0)
                         monthNumber = CurrentMonth;
                     Result.Add(Month1, monthNumber);
-                    Result.Add(Year1, CurrentYear - yearlyDifference);
+                    Result.Add(Year1, CurrentYear - yearlyDifference + 1);
                     Result.Add(Year2, CurrentYear);
                     Result.Add(Type, "EachYear");
                     return true;

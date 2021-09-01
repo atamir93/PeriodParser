@@ -101,8 +101,10 @@ namespace PeriodParser.RegexParser
         Regex GetRegexForMonthName() => new Regex(@"\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)");
         Regex GetRegexForQuarterNumber() => new Regex(@"\s*q([1-4])");
         Regex GetRegexForMonthNameAndYear() => new Regex(@"\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\D*(\d+)");
+        Regex GetRegexForYearAndMonthName() => new Regex(@"\s*(\d+)\W+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)");
         Regex GetRegexForMonthNumberAndYear() => new Regex(@"(\d+)\D+(\d+)");
         Regex GetRegexForQuarterNumberAndYear() => new Regex(@"\s*q([1-4])\D*(\d+)");
+        Regex GetRegexForYearAndQuarterNumber() => new Regex(@"\s*(\d+)\W+q([1-4])");
 
         #endregion
 
@@ -132,6 +134,19 @@ namespace PeriodParser.RegexParser
             return TryAddMonthToResult(monthText, isEndRange) && TryAddYearToResult(yearText);
         }
 
+        internal bool TryParseYearAndMonthName(string text, bool isEndRange = false)
+        {
+            Regex rgx = GetRegexForYearAndMonthName();
+            Match match = rgx.Match(text);
+            if (match.Success)
+            {
+                var yearText = match.Groups[1].Value;
+                var monthText = match.Groups[2].Value;
+                return TryAddMonthToResult(monthText, isEndRange) && TryAddYearToResult(yearText);
+            }
+            return false;
+        }
+
         internal bool TryParseQuarterAndYear(string text, bool isEndRange = false)
         {
             Regex rgx = GetRegexForQuarterNumberAndYear();
@@ -140,6 +155,19 @@ namespace PeriodParser.RegexParser
             {
                 var quarterNumberText = match.Groups[1].Value;
                 var yearText = match.Groups[2].Value;
+                return TryAddQuarterToResult(quarterNumberText, isEndRange) && TryAddYearToResult(yearText);
+            }
+            return false;
+        }
+
+        internal bool TryParseYearAndQuarter(string text, bool isEndRange = false)
+        {
+            Regex rgx = GetRegexForYearAndQuarterNumber();
+            Match match = rgx.Match(text);
+            if (match.Success)
+            {
+                var yearText = match.Groups[1].Value;
+                var quarterNumberText = match.Groups[2].Value;
                 return TryAddQuarterToResult(quarterNumberText, isEndRange) && TryAddYearToResult(yearText);
             }
             return false;

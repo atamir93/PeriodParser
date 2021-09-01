@@ -29,7 +29,7 @@ namespace PeriodParser.RegexParser
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            return TryParseMonthAndYear(text, isEndRange) || TryParseMonth(text, isEndRange) || TryParseYear(text);
+            return TryParseMonthAndYear(text, isEndRange) || TryParseYearAndMonthName(text, isEndRange) || TryParseMonth(text, isEndRange) || TryParseYear(text);
         }
 
         void AddMissedDates()

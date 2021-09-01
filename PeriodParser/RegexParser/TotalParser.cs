@@ -54,7 +54,7 @@ namespace PeriodParser.RegexParser
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            return TryParseMonthAndYear(text, isEndRange) || TryParseYear(text) || TryParseMonth(text, isEndRange);
+            return TryParseMonthAndYear(text, isEndRange) || TryParseYearAndMonthName(text, isEndRange) || TryParseYear(text) || TryParseMonth(text, isEndRange);
         }
     }
 }
