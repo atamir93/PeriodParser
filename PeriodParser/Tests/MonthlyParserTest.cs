@@ -94,6 +94,54 @@ namespace PeriodParser.Tests
             AssertDictionaryValue("Year2", 2020);
         }
 
+        [TestCase("Apr - Nov monthly", 4, 11, CurrentYear, CurrentYear)]
+        [TestCase("nov-apr monthly", 11, 4, CurrentYear - 1, CurrentYear)]
+        public void MonthsConsecutive_BeginAndEndingMonthesOnly_Parser(string text, int beginMonth, int endingMonth, int beginYear, int endingYear)
+        {
+            parser.PeriodText = text;
+            parser.TryParse();
+            parserResult = parser.Result;
+
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
+            AssertDictionaryValue("Type", "Consecutive");
+            //AssertDictionaryValue("YearlyPeriod", "Calendar");
+            AssertDictionaryValue("Month1", beginMonth);
+            AssertDictionaryValue("Month2", endingMonth);
+            AssertDictionaryValue("Year1", beginYear);
+            AssertDictionaryValue("Year2", endingYear);
+        }
+
+        public void MonthsConsecutive_OnlyOneMonth_Parser()
+        {
+            parser.PeriodText = "november";
+            parser.TryParse();
+            parserResult = parser.Result;
+
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
+            AssertDictionaryValue("Type", "EachYear");
+            //AssertDictionaryValue("YearlyPeriod", "Calendar");
+            AssertDictionaryValue("Month1", 11);
+            AssertDictionaryValue("Year1", CurrentYear);
+            AssertDictionaryValue("Year2", CurrentYear);
+        }
+
+        [TestCase("18-20 monthly", 2018, 2020)]
+        [TestCase("2020 monthly", 2020, 2020)]
+        public void MonthsConsecutive_YearsOnly_Parser(string text, int beginYear, int endingYear)
+        {
+            parser.PeriodText = text;
+            parser.TryParse();
+            parserResult = parser.Result;
+
+            AssertDictionaryValue("Period", ProfitAndLossPeriod.Monthly);
+            AssertDictionaryValue("Type", "Consecutive");
+            //AssertDictionaryValue("YearlyPeriod", "Calendar");
+            AssertDictionaryValue("Month1", 1);
+            AssertDictionaryValue("Month2", 12);
+            AssertDictionaryValue("Year1", beginYear);
+            AssertDictionaryValue("Year2", endingYear);
+        }
+
         void AssertDictionaryValue(string key, object value)
         {
             Assert.IsTrue(parserResult.ContainsKey(key) && parserResult[key].ToString() == value.ToString());

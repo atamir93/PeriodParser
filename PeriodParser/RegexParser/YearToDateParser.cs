@@ -10,9 +10,7 @@ namespace PeriodParser.RegexParser
         public static YearToDateParser GetInstance()
         {
             if (instance == null)
-            {
                 instance = new YearToDateParser();
-            }
             return instance;
         }
         public override bool TryParse()
@@ -23,12 +21,26 @@ namespace PeriodParser.RegexParser
                 { Type, "YTD" }
             };
 
-            return TryParseToYearWithLastDefinition(PeriodText) || TryParseDateRanges();
+            bool isValid = TryParseToYearWithLastDefinition(PeriodText) || TryParseDateRanges();
+            if (isValid)
+                AddMissedDates();
+            return isValid;
         }
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            return TryParseMonthAndYear(text) || TryParseYear(text);
+            return TryParseOnlyYTDText(text) || TryParseMonthAndYear(text) || TryParseYear(text) || TryParseMonth(text);
+        }
+
+        bool TryParseOnlyYTDText(string text)
+        {
+            if (text == YearToDateDefinition)
+            {
+                Result.Add(Month1, EndingMonth);
+                Result.Add(Year1, CurrentYear);
+                return true;
+            }
+            return false;
         }
 
         bool TryParseToYearWithLastDefinition(string periodText)
@@ -42,6 +54,18 @@ namespace PeriodParser.RegexParser
                 return true;
             }
             return false;
+        }
+
+        void AddMissedDates()
+        {
+            if (!Result.ContainsKey(Year1))
+            {
+                Result.Add(Year1, CurrentYear);
+            }
+            if (!Result.ContainsKey(Year2))
+            {
+                Result.Add(Year2, Result[Year1]);
+            }
         }
     }
 }

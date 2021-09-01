@@ -99,7 +99,11 @@ namespace PeriodParser
         {
             ChangeToMonthShortName(ref beginMonth);
             ChangeToMonthShortName(ref endingMonth);
-            string periodText = $"{beginMonth}, {beginYear} - {endingMonth}, {endingYear} Total";
+            string periodText;
+            if (beginYear == endingYear)
+                periodText = $"{beginMonth} - {endingMonth} {beginYear} Total";
+            else
+                periodText = $"{beginMonth}, {beginYear} - {endingMonth}, {endingYear} Total";
             return periodText;
         }
 

@@ -7,6 +7,7 @@ namespace PeriodParser.RegexParser
 {
     public abstract class PeriodParser
     {
+        public const string YearToDateDefinition = "ytd";
         public const string Period = "Period";
         public const string Type = "Type";
         public const string Error = "Error";
@@ -21,10 +22,12 @@ namespace PeriodParser.RegexParser
 
         public int CurrentYear = 2020;
         public int CurrentMonth = 5;
-        public int EndingMonth = 5;
+        public int EndingMonth = 10;
         public int CurrentQuarter = 2;
         public readonly int FirstMonth = 1;
         public readonly int LastMonth = 12;
+        public readonly int FirstQuarter = 1;
+        public readonly int LastQuarter = 4;
 
         public string CurrentPeriod { get; set; }
         public Dictionary<string, object> Result { get; set; }
@@ -58,11 +61,12 @@ namespace PeriodParser.RegexParser
             Result = new Dictionary<string, object>();
             PeriodText = text.ToLower().Trim();
         }
-        public void SetCurrentDate(DateTime dateTime)
+        public void SetDates(DateTime currentDate, int endingMonth)
         {
-            CurrentYear = dateTime.Year;
-            CurrentMonth = dateTime.Month;
+            CurrentYear = currentDate.Year;
+            CurrentMonth = currentDate.Month;
             CurrentQuarter = (int)Math.Ceiling(CurrentMonth / 3.0);
+            EndingMonth = endingMonth;
         }
 
         public abstract bool TryParse();
@@ -97,11 +101,15 @@ namespace PeriodParser.RegexParser
         Regex GetRegexForYear() => new Regex(@"(\d+)");
         Regex GetRegexForMonthNumber() => new Regex(@"\s*(0?[1-9]|1[012])$");
         Regex GetRegexForMonthName() => new Regex(@"\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)");
-        Regex GetRegexForQuarterNumber() => new Regex(@"\s*q([1-4])$");
+        Regex GetRegexForQuarterNumber() => new Regex(@"\s*q([1-4])");
         Regex GetRegexForMonthNameAndYear() => new Regex(@"\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\D*(\d+)");
         Regex GetRegexForMonthNumberAndYear() => new Regex(@"(\d+)\D+(\d+)");
         Regex GetRegexForQuarterNumberAndYear() => new Regex(@"\s*q([1-4])\D*(\d+)");
 
+        public static bool IsMatch(string text)
+        {
+            return false;
+        }
         #endregion
 
         #region Parsers to year, month and quarter
@@ -158,7 +166,7 @@ namespace PeriodParser.RegexParser
         internal bool TryParseMonth(string text, bool isEndRange = false)
         {
             Regex rgx = GetRegexForMonthName();
-            Match match = rgx.Match(text);
+            Match match = rgx.Match(text.Trim());
             string monthText = "";
             if (match.Success)
             {
@@ -167,7 +175,7 @@ namespace PeriodParser.RegexParser
             else
             {
                 rgx = GetRegexForMonthNumber();
-                match = rgx.Match(text);
+                match = rgx.Match(text.Trim());
                 if (match.Success)
                     monthText = match.Groups[1].Value;
             }
@@ -178,7 +186,7 @@ namespace PeriodParser.RegexParser
         internal bool TryParseQuarter(string text, bool isEndRange = false)
         {
             Regex rgx = GetRegexForQuarterNumber();
-            Match match = rgx.Match(text);
+            Match match = rgx.Match(text.Trim());
             if (match.Success)
             {
                 var quarterNumberText = match.Groups[1].Value;

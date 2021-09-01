@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PeriodParser
 {
@@ -21,7 +22,6 @@ namespace PeriodParser
         public static Dictionary<string, object> Parse(string text, ProfitAndLossView view)
         {
             text = text.ToLower().Trim();
-            var lastPeriod = view.Period;
             view.FiltersFromParser.Clear();
             RegexParser.PeriodParser parser = null;
             if (text.Contains(DimensionDefinition))
@@ -30,7 +30,7 @@ namespace PeriodParser
             }
             else if (text.Contains(YearToDateDefinition))
             {
-                parser = YearlyParser.GetInstance("YTD");
+                parser = YearToDateParser.GetInstance();
             }
             else if (ContainsAny(QuarterDefinitions, text) || ContainsAny(QuarterNumbers, text))
             {
@@ -50,7 +50,7 @@ namespace PeriodParser
             }
             else if (ContainsAny(YearDefinitions, text))
             {
-                parser = YearlyParser.GetInstance("EntireYear");
+                parser = EntireYearParser.GetInstance();
             }
             else if (text.EndsWith(" t"))
             {
@@ -62,16 +62,17 @@ namespace PeriodParser
             }
             else
             {
-                switch (lastPeriod)
+                var period = GetMatchedPeriod(text, view.Period);
+                switch (period)
                 {
                     case ProfitAndLossPeriod.Single:
                         parser = TotalParser.GetInstance();
                         break;
                     case ProfitAndLossPeriod.Yearly:
-                        if (view.YearlyType == YearlySwitch.EntireYear)
-                            parser = YearlyParser.GetInstance("EntireYear");
+                        if (view.Period == ProfitAndLossPeriod.Yearly && view.YearlyType == YearlySwitch.YearToDate)
+                            parser = YearToDateParser.GetInstance();
                         else
-                            parser = YearlyParser.GetInstance("YTD");
+                            parser = EntireYearParser.GetInstance();
                         break;
                     case ProfitAndLossPeriod.MonthRange:
                         parser = SeasonsParser.GetInstance();
@@ -89,7 +90,7 @@ namespace PeriodParser
                         break;
                 }
             }
-            parser.SetCurrentDate(new DateTime(2020, 5, 1));
+            parser.SetDates(new DateTime(2020, 5, 1), view.EndingMonth);
             parser.SetPeriodText(text);
             var parseSucceeded = parser.TryParse();
             parser.SetAllEndingFields();
@@ -97,6 +98,47 @@ namespace PeriodParser
                 return parser.Result;
 
             return null;
+        }
+
+        static Regex GetRegexForYearRanges() => new Regex(@"^(\d+)\s*-\s*(\d+)\s*$");
+        static Regex GetRegexForSingleMonthName() => new Regex(@"^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s*$");
+        static Regex GetRegexForMonthRanges() => new Regex(@"^(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s*-\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\w*\s*$");
+
+        static ProfitAndLossPeriod GetMatchedPeriod(string text, ProfitAndLossPeriod currentPeriod)
+        {
+            ProfitAndLossPeriod period = currentPeriod;
+            if (ContainsOnlyMonthName(text))
+            {
+                period = ProfitAndLossPeriod.Monthly;
+            }
+            else if (currentPeriod != ProfitAndLossPeriod.Single)
+            {
+                if (ContainsOnlyMonthRanges(text))
+                {
+                    period = ProfitAndLossPeriod.Monthly;
+                }
+                else if (ContainsOnlyYearRanges(text))
+                {
+                    period = ProfitAndLossPeriod.Yearly;
+                }
+            }
+            return period;
+        }
+
+        static bool ContainsOnlyMonthName(string text)
+        {
+            Regex rgx = GetRegexForSingleMonthName();
+            return rgx.IsMatch(text);
+        }
+        static bool ContainsOnlyMonthRanges(string text)
+        {
+            Regex rgx = GetRegexForMonthRanges();
+            return rgx.IsMatch(text);
+        }
+        static bool ContainsOnlyYearRanges(string text)
+        {
+            Regex rgx = GetRegexForYearRanges();
+            return rgx.IsMatch(text);
         }
 
         public static string AutocorrectParseResult(Dictionary<string, object> parserResult)

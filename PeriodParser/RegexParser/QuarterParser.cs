@@ -10,9 +10,7 @@ namespace PeriodParser.RegexParser
         public static QuarterParser GetInstance()
         {
             if (instance == null)
-            {
                 instance = new QuarterParser();
-            }
             return instance;
         }
         public override bool TryParse()
@@ -29,10 +27,40 @@ namespace PeriodParser.RegexParser
             {
                 isValid = TryParseDateRanges();
                 if (isValid)
+                {
+                    AddMissedDates();
                     AddQuarterlyType();
+                }
             }
 
             return isValid;
+        }
+
+        void AddMissedDates()
+        {
+            if (!Result.ContainsKey(Quarter1) && !Result.ContainsKey(Quarter2))
+            {
+                Result.Add(Quarter1, FirstQuarter);
+                Result.Add(Quarter2, LastQuarter);
+            }
+            if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                var beginYear = CurrentYear;
+                if (ContainsBothQuarters() && (int)Result[Quarter1] > (int)Result[Quarter2])
+                    beginYear = CurrentYear - 1;
+
+                Result.Add(Year1, beginYear);
+                Result.Add(Year2, CurrentYear);
+            }
+            else if (Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                Result.Add(Year2, Result[Year1]);
+            }
+        }
+
+        bool ContainsBothQuarters()
+        {
+            return Result.ContainsKey(Quarter1) && Result.ContainsKey(Quarter2);
         }
 
         private void AddQuarterlyType()
@@ -45,7 +73,7 @@ namespace PeriodParser.RegexParser
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            return TryParseQuarterAndYear(text) || TryParseYear(text) || TryParseQuarter(text);
+            return TryParseQuarterAndYear(text) || TryParseQuarter(text) || TryParseYear(text);
         }
 
         bool TryParseLastDefinition(string text)

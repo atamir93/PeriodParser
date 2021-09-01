@@ -11,13 +11,13 @@ namespace PeriodParser.Tests
         ProfitAndLossViewParser parser;
         ProfitAndLossView TestEntity;
         const int CurrentYear = 2020;
-        const int CurrentMonth = 5;
+        const int EndingMonth = 10;
 
         [SetUp]
         public void SetUp()
         {
             parser = new ProfitAndLossViewParser();
-            TestEntity = new ProfitAndLossView() { EndingMonth = CurrentMonth, EndingYear = CurrentYear };
+            TestEntity = new ProfitAndLossView() { EndingMonth = EndingMonth, EndingYear = CurrentYear };
         }
 
         [Test]
@@ -26,12 +26,12 @@ namespace PeriodParser.Tests
             TestEntity.PeriodText = "18-20 yearly";
             parser.Autocorrect(TestEntity);
             Assert.That(TestEntity.PeriodText, Is.EqualTo("2018 - 2020 Yearly"));
-            AssertEntireYearPeriod(5, 2018, 2020);
+            AssertEntireYearPeriod(EndingMonth, 2018, 2020);
 
             TestEntity.PeriodText = "last 3 years";
             parser.Autocorrect(TestEntity);
             Assert.That(TestEntity.PeriodText, Is.EqualTo("2017 - 2020 Yearly"));
-            AssertEntireYearPeriod(5, 2017, 2020);
+            AssertEntireYearPeriod(EndingMonth, 2017, 2020);
 
             TestEntity.PeriodText = "June, 2016-2021";
             parser.Autocorrect(TestEntity);
@@ -54,24 +54,30 @@ namespace PeriodParser.Tests
             TestEntity.PeriodText = "18-20 ytd";
             parser.Autocorrect(TestEntity);
             Assert.That(TestEntity.PeriodText, Is.EqualTo("2018 - 2020 YTD"));
-            AssertYearToDatePeriod(5, 2018, 2020);
+            AssertYearToDatePeriod(EndingMonth, 2018, 2020);
 
             TestEntity.PeriodText = "last 3 years YTD";
             parser.Autocorrect(TestEntity);
             Assert.That(TestEntity.PeriodText, Is.EqualTo("2017 - 2020 YTD"));
-            AssertYearToDatePeriod(5, 2017, 2020);
+            AssertYearToDatePeriod(EndingMonth, 2017, 2020);
 
             TestEntity.PeriodText = "06, 2016-2021";
             parser.Autocorrect(TestEntity);
             Assert.That(TestEntity.PeriodText, Is.EqualTo("2016 - 2021 Jun YTD"));
             AssertYearToDatePeriod(6, 2016, 2021);
+
+            var endingMonth = TestEntity.EndingMonth;
+            TestEntity.PeriodText = "ytd";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2020 Jun YTD"));
+            AssertYearToDatePeriod(endingMonth, 2020, 2020);
         }
 
-        void AssertYearToDatePeriod(int endingMonth, int beginYear, int endingYear)
+        void AssertYearToDatePeriod(int endMonth, int beginYear, int endingYear)
         {
             Assert.AreEqual(TestEntity.Period, ProfitAndLossPeriod.Yearly);
             Assert.AreEqual(TestEntity.YearlyType, YearlySwitch.YearToDate);
-            Assert.AreEqual(TestEntity.EndingMonth, endingMonth);
+            Assert.AreEqual(TestEntity.EndingMonth, endMonth);
             Assert.AreEqual(TestEntity.BeginningYearYtd, beginYear);
             Assert.AreEqual(TestEntity.EndingYear, endingYear);
         }
@@ -325,7 +331,6 @@ namespace PeriodParser.Tests
             Assert.AreEqual(TestEntity.EndingYear, endingYear);
         }
 
-
         [Test]
         public void ProfitAndLossView_PeriodText_DifferentPeriodsTest()
         {
@@ -384,6 +389,83 @@ namespace PeriodParser.Tests
             parser.Autocorrect(TestEntity);
             Assert.That(TestEntity.PeriodText, Is.EqualTo("Q3 2017 - 2020"));
             AssertQuarterlyEachYearPeriod(Quarter.Q3, 2017, 2020);
+        }
+
+        [Test]
+        public void ProfitAndLossView_PeriodIsNotDefinedAndPreviousIsNotTotal_Test()
+        {
+            //Make sure that current period is not Total
+            TestEntity.Period = ProfitAndLossPeriod.Quarterly;
+
+            //For month ranges when Total is not selected, assume Monthly for this year
+            TestEntity.PeriodText = "Feb - September";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Feb - Sep 2020 Monthly"));
+            AssertMonthlyConsecutivePeriod(2, 9, 2020, 2020);
+
+            //For year ranges when Total is not selected, assume Yearly period
+            var endingMonthBefore = TestEntity.EndingMonth;
+            TestEntity.PeriodText = "2017 - 2019";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2017 - 2019 Yearly"));
+            AssertEntireYearPeriod(endingMonthBefore, 2017, 2019);
+
+            //For single month assume Monthly for this year
+            TestEntity.PeriodText = "November ";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Nov 2020 Monthly"));
+            AssertMonthlyEachYearPeriod(11, 2020, 2020);
+
+            //For single quarter assume Quarterly of this year
+            TestEntity.PeriodText = "Q2";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Q2 2020"));
+            AssertQuarterlyEachYearPeriod(Quarter.Q2, 2020, 2020);
+
+            //For month ranges when Total is not selected, assume Monthly for November of last year to February of this year
+            TestEntity.PeriodText = "November - February";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Nov, 2019 - Feb, 2020 Monthly"));
+            AssertMonthlyConsecutivePeriod(11, 2, 2019, 2020);
+        }
+
+        [Test]
+        public void ProfitAndLossView_PeriodIsNotDefinedAndPreviousIsTotal_Test()
+        {
+            //Select Total
+            TestEntity.Period = ProfitAndLossPeriod.Single;
+
+            //Assume Total for this month since Total is already selected
+            TestEntity.PeriodText = "Feb - September";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Feb - Sep 2020 Total"));
+            AssertTotalPeriod(2, 9, 2020, 2020);
+
+            //Assume Total for Jan 2017 - Dec 2019 since Total is already selected
+            TestEntity.PeriodText = "2017 - 2019";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Jan, 2017 - Dec, 2019 Total"));
+            AssertTotalPeriod(1, 12, 2017, 2019);
+
+            //Assume Total for November of last year to February of this year since Total is already selected
+            TestEntity.PeriodText = "November - February";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Nov, 2019 - Feb, 2020 Total"));
+            AssertTotalPeriod(11, 2, 2019, 2020);
+
+            //For single quarter assume Quarterly of this year
+            TestEntity.PeriodText = "Q2";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Q2 2020"));
+            AssertQuarterlyEachYearPeriod(Quarter.Q2, 2020, 2020);
+
+            //Select Total
+            TestEntity.Period = ProfitAndLossPeriod.Single;
+            //For single month assume Monthly for this year
+            TestEntity.PeriodText = "November ";
+            parser.Autocorrect(TestEntity);
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Nov 2020 Monthly"));
+            AssertMonthlyEachYearPeriod(11, 2020, 2020);
         }
 
         static int GetQuarterlyPeriodDifference(int beginQ, int endingQ, int beginY, int endingY)

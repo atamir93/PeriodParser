@@ -10,9 +10,7 @@ namespace PeriodParser.RegexParser
         public static EntireYearParser GetInstance()
         {
             if (instance == null)
-            {
                 instance = new EntireYearParser();
-            }
             return instance;
         }
         public override bool TryParse()
@@ -22,7 +20,10 @@ namespace PeriodParser.RegexParser
                 { Period, ProfitAndLossPeriod.Yearly },
                 { Type, "EntireYear" }
             };
-            return TryParseToYearWithLastDefinition(PeriodText) || TryParseDateRanges();
+            bool isValid = TryParseToYearWithLastDefinition(PeriodText) || TryParseDateRanges();
+            if (isValid)
+                AddMissedDates();
+            return isValid;
         }
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
@@ -45,6 +46,18 @@ namespace PeriodParser.RegexParser
                 }
             }
             return false;
+        }
+
+        void AddMissedDates()
+        {
+            if (!Result.ContainsKey(Year1))
+            {
+                Result.Add(Year1, CurrentYear);
+            }
+            if (!Result.ContainsKey(Year2))
+            {
+                Result.Add(Year2, Result[Year1]);
+            }
         }
     }
 }

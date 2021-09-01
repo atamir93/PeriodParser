@@ -5,16 +5,13 @@ namespace PeriodParser.RegexParser
 {
     public class DimensionParser : PeriodParser
     {
-        public const string YearToDateDefinition = "ytd";
         private DimensionParser() : base() { }
 
         private static DimensionParser instance = null;
         public static DimensionParser GetInstance()
         {
             if (instance == null)
-            {
                 instance = new DimensionParser();
-            }
             return instance;
         }
 
@@ -49,7 +46,7 @@ namespace PeriodParser.RegexParser
             bool isValid = false;
             if (dateText.Contains("-") && TryParseDateRangesConsideringEndingRange())
             {
-                AddFirstAndLastMonthes();
+                AddMissedMonthes();
                 Result.Add(DimensionPeriod, DimensionCompareType.Range);
                 isValid = true;
             }
@@ -76,7 +73,7 @@ namespace PeriodParser.RegexParser
             return isValid;
         }
 
-        void AddFirstAndLastMonthes()
+        void AddMissedMonthes()
         {
             if (!Result.ContainsKey(Month1))
             {

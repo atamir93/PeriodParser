@@ -9,9 +9,7 @@ namespace PeriodParser.RegexParser
         public static TotalParser GetInstance()
         {
             if (instance == null)
-            {
                 instance = new TotalParser();
-            }
             return instance;
         }
 
@@ -24,12 +22,12 @@ namespace PeriodParser.RegexParser
 
             bool isValid = TryParseDateRangesConsideringEndingRange();
             if (isValid)
-                AddFirstAndLastMonthes();
+                AddMissedMonthes();
 
             return isValid;
         }
 
-        void AddFirstAndLastMonthes()
+        void AddMissedMonthes()
         {
             if (!Result.ContainsKey(Month1))
             {
@@ -38,6 +36,19 @@ namespace PeriodParser.RegexParser
             if (!Result.ContainsKey(Month2))
             {
                 Result.Add(Month2, LastMonth);
+            }
+            if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                var beginYear = CurrentYear;
+                if ((int)Result[Month1] > (int)Result[Month2])
+                    beginYear = CurrentYear - 1;
+
+                Result.Add(Year1, beginYear);
+                Result.Add(Year2, CurrentYear);
+            }
+            else if (Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                Result.Add(Year2, Result[Year1]);
             }
         }
 

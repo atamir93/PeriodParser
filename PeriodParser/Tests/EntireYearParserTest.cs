@@ -7,7 +7,7 @@ namespace PeriodParser.Tests
     [TestFixture]
     public class EntireYearParserTest
     {
-        private YearlyParser parser;
+        private EntireYearParser parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;
@@ -15,7 +15,7 @@ namespace PeriodParser.Tests
         [SetUp]
         public void SetUp()
         {
-            parser = YearlyParser.GetInstance("EntireYear");
+            parser = EntireYearParser.GetInstance();
         }
 
         [Test]

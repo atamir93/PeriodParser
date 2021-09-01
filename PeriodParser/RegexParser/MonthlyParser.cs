@@ -10,9 +10,7 @@ namespace PeriodParser.RegexParser
         public static MonthlyParser GetInstance()
         {
             if (instance == null)
-            {
                 instance = new MonthlyParser();
-            }
             return instance;
         }
 
@@ -30,10 +28,41 @@ namespace PeriodParser.RegexParser
             {
                 isValid = TryParseDateRanges();
                 if (isValid)
+                {
+                    AddMissedMonthes();
                     AddMonthlyType();
+                }
             }
 
             return isValid;
+        }
+
+        void AddMissedMonthes()
+        {
+            if (!Result.ContainsKey(Month1) && !Result.ContainsKey(Month2))
+            {
+                Result.Add(Month1, FirstMonth);
+                Result.Add(Month2, LastMonth);
+            }
+
+            if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                var beginYear = CurrentYear;
+                if (ContainsBothMonthes() && (int)Result[Month1] > (int)Result[Month2])
+                    beginYear = CurrentYear - 1;
+
+                Result.Add(Year1, beginYear);
+                Result.Add(Year2, CurrentYear);
+            }
+            else if (Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                Result.Add(Year2, Result[Year1]);
+            }
+        }
+
+        bool ContainsBothMonthes()
+        {
+            return Result.ContainsKey(Month1) && Result.ContainsKey(Month2);
         }
 
         void AddMonthlyType()
