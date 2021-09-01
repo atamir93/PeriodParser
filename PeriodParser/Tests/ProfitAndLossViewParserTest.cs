@@ -63,7 +63,7 @@ namespace PeriodParser.Tests
 
             TestEntity.PeriodText = "06, 2016-2021";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("2016 - 2021 June YTD"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2016 - 2021 Jun YTD"));
             AssertYearToDatePeriod(6, 2016, 2021);
         }
 
@@ -132,12 +132,12 @@ namespace PeriodParser.Tests
         {
             TestEntity.PeriodText = "April 2018-2020 m";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April 2018 - 2020 Monthly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr 2018 - 2020 Monthly"));
             AssertMonthlyEachYearPeriod(4, 2018, 2020);
 
             TestEntity.PeriodText = "10 2017-21";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("October 2017 - 2021 Monthly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Oct 2017 - 2021 Monthly"));
             AssertMonthlyEachYearPeriod(10, 2017, 2021);
 
             TestEntity.PeriodText = "This month for last 3 years";
@@ -147,7 +147,7 @@ namespace PeriodParser.Tests
 
             TestEntity.PeriodText = "September for last 2 years";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("September 2018 - 2020 Monthly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Sep 2018 - 2020 Monthly"));
             AssertMonthlyEachYearPeriod(9, 2018, 2020);
         }
 
@@ -165,22 +165,22 @@ namespace PeriodParser.Tests
         {
             TestEntity.PeriodText = "June, 2018 - August, 2020 Monthly";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("June, 2018 - August, 2020 Monthly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Jun, 2018 - Aug, 2020 Monthly"));
             AssertMonthlyConsecutivePeriod(6, 8, 2018, 2020);
 
             TestEntity.PeriodText = "Apr 17 - Nov 19";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April, 2017 - November, 2019 Monthly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr, 2017 - Nov, 2019 Monthly"));
             AssertMonthlyConsecutivePeriod(4, 11, 2017, 2019);
 
             TestEntity.PeriodText = "Last 14 months";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April, 2019 - May, 2020 Monthly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr, 2019 - May, 2020 Monthly"));
             AssertMonthlyConsecutivePeriod(4, 5, 2019, 2020);
 
             TestEntity.PeriodText = "Last 2 months";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April - May 2020 Monthly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr - May 2020 Monthly"));
             AssertMonthlyConsecutivePeriod(4, 5, 2020, 2020);
         }
 
@@ -198,17 +198,17 @@ namespace PeriodParser.Tests
         {
             TestEntity.PeriodText = "04-05 2018-2020 seasons";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April - May 2018 - 2020 Seasons"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr - May 2018 - 2020 Seasons"));
             AssertSeasonsPeriod(4, 5, 2018, 2020);
 
             TestEntity.PeriodText = "Sep-Nov 2019";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("September - November 2019 Seasons"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Sep - Nov 2019 Seasons"));
             AssertSeasonsPeriod(9, 11, 2019, 2019);
 
             TestEntity.PeriodText = "04-05 2018-2020 s";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April - May 2018 - 2020 Seasons"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr - May 2018 - 2020 Seasons"));
             AssertSeasonsPeriod(4, 5, 2018, 2020);
         }
 
@@ -226,17 +226,17 @@ namespace PeriodParser.Tests
         {
             TestEntity.PeriodText = "04,2018-05,2020 total";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April, 2018 - May, 2020 Total"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr, 2018 - May, 2020 Total"));
             AssertTotalPeriod(4, 5, 2018, 2020);
 
             TestEntity.PeriodText = "2017-2020";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("January, 2017 - December, 2020 Total"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Jan, 2017 - Dec, 2020 Total"));
             AssertTotalPeriod(1, 12, 2017, 2020);
 
             TestEntity.PeriodText = "04,2018-05,2020 t";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April, 2018 - May, 2020 Total"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr, 2018 - May, 2020 Total"));
             AssertTotalPeriod(4, 5, 2018, 2020);
         }
 
@@ -266,7 +266,7 @@ namespace PeriodParser.Tests
 
             TestEntity.PeriodText = $"June 2019 ytd by {dimensionName.ToLower()}";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo($"June 2019 YTD by {dimensionName}"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo($"Jun 2019 YTD by {dimensionName}"));
             AssertDimensionPeriod(6, 2019, dimensionName, DimensionCompareType.YearToDate);
 
             TestEntity.PeriodText = $"Q3 2018 by {dimensionName.ToUpper()}";
@@ -279,12 +279,12 @@ namespace PeriodParser.Tests
 
             TestEntity.PeriodText = $"09/19 by {dimensionName.ToLower()}";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo($"September 2019 by {dimensionName}"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo($"Sep 2019 by {dimensionName}"));
             AssertDimensionPeriod(9, 2019, dimensionName, DimensionCompareType.Month);
 
             TestEntity.PeriodText = $"11/17-03/20 by {dimensionName.ToLower()}";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo($"November 2017 - March 2020 by {dimensionName}"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo($"Nov 2017 - Mar 2020 by {dimensionName}"));
             AssertDimensionRangePeriod(11, 3, 2017, 2020, dimensionName);
 
             void AssertYearlyEntireYearPeriod(int endingYear, string name)
@@ -332,7 +332,7 @@ namespace PeriodParser.Tests
             //Total
             TestEntity.PeriodText = "04/2018-05/2020 totals";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April, 2018 - May, 2020 Total"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr, 2018 - May, 2020 Total"));
             AssertTotalPeriod(4, 5, 2018, 2020);
 
             //Dimension quarterly
@@ -345,19 +345,19 @@ namespace PeriodParser.Tests
             //Monthly - Consecutive
             TestEntity.PeriodText = "Last 2 months";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April - May 2020 Monthly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr - May 2020 Monthly"));
             AssertMonthlyConsecutivePeriod(4, 5, 2020, 2020);
 
             //Yearly - Year to date
             TestEntity.PeriodText = "Jun 16-21 ytd";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("2016 - 2021 June YTD"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("2016 - 2021 Jun YTD"));
             AssertYearToDatePeriod(6, 2016, 2021);
 
             //Season
             TestEntity.PeriodText = "09-11 2019 seasons";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("September - November 2019 Seasons"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Sep - Nov 2019 Seasons"));
             AssertSeasonsPeriod(9, 11, 2019, 2019);
 
             //Quarterly - Consecutive
@@ -369,7 +369,7 @@ namespace PeriodParser.Tests
             //Monthly - Each year
             TestEntity.PeriodText = "April 2018-2020 m";
             parser.Autocorrect(TestEntity);
-            Assert.That(TestEntity.PeriodText, Is.EqualTo("April 2018 - 2020 Monthly"));
+            Assert.That(TestEntity.PeriodText, Is.EqualTo("Apr 2018 - 2020 Monthly"));
             AssertMonthlyEachYearPeriod(4, 2018, 2020);
 
             //Yearly - Entire year
