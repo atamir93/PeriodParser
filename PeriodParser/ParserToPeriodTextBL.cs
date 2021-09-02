@@ -4,11 +4,6 @@ namespace PeriodParser
 {
     public class ParserToPeriodTextBL
     {
-        static void ChangeToMonthShortName(ref string monthName)
-        {
-            if (monthName.Length > 3)
-                monthName = monthName.Substring(0, 3);
-        }
         public static string GetEntireYearYearlyPeriodText(string beginYear, string endingYear)
         {
             string years = beginYear == endingYear ? beginYear : $"{beginYear} - {endingYear}";
@@ -129,6 +124,11 @@ namespace PeriodParser
             ChangeToMonthShortName(ref beginMonth);
             ChangeToMonthShortName(ref endingMonth);
             return $"{beginMonth} {beginYear} - {endingMonth} {endingYear} by {dimensionName}";
+        }
+        static void ChangeToMonthShortName(ref string monthName)
+        {
+            if (monthName.Length > 3)
+                monthName = monthName.Substring(0, 3);
         }
     }
 }
