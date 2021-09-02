@@ -94,8 +94,10 @@ namespace PeriodParser.Tests
             AssertDictionaryValue("Year2", 2020);
         }
 
+        [TestCase("Apr - Nov 2020 monthly", 4, 11, CurrentYear, CurrentYear)]
         [TestCase("Apr - Nov monthly", 4, 11, CurrentYear, CurrentYear)]
         [TestCase("nov-apr monthly", 11, 4, CurrentYear - 1, CurrentYear)]
+        [TestCase("nov-apr 2020 monthly", 11, 4, CurrentYear - 1, CurrentYear)]
         public void MonthsConsecutive_BeginAndEndingMonthesOnly_Parser(string text, int beginMonth, int endingMonth, int beginYear, int endingYear)
         {
             parser.PeriodText = text;
