@@ -44,19 +44,21 @@ namespace PeriodParser.RegexParser
                 Result.Add(Month1, FirstMonth);
                 Result.Add(Month2, LastMonth);
             }
-
-            if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            if (!Result.ContainsKey(Year1))
             {
-                var beginYear = CurrentYear;
-                if (ContainsBothMonthes() && (int)Result[Month1] > (int)Result[Month2])
-                    beginYear = CurrentYear - 1;
-
-                Result.Add(Year1, beginYear);
-                Result.Add(Year2, CurrentYear);
+                Result.Add(Year1, CurrentYear);
             }
-            else if (Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            if (!Result.ContainsKey(Year2))
             {
-                Result.Add(Year2, Result[Year1]);
+                int beginYear = int.Parse(Result[Year1].ToString());
+                if (ContainsBothMonthes())
+                {
+                    if ((int)Result[Month1] > (int)Result[Month2])
+                    {
+                        Result[Year1] = beginYear - 1;
+                    }
+                }
+                Result.Add(Year2, beginYear);
             }
         }
 

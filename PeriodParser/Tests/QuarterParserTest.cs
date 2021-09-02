@@ -94,8 +94,10 @@ namespace PeriodParser.Tests
             AssertDictionaryValue("Year2", 2020);
         }
 
-        [TestCase("Q1 - Q3 quarterly", 1, 3, CurrentYear, CurrentYear)]
+        [TestCase("Q3 - Q1 2020", 3, 1, CurrentYear - 1, CurrentYear)]
         [TestCase("Q3 - Q1 ", 3, 1, CurrentYear - 1, CurrentYear)]
+        [TestCase("Q1 - Q3 quarterly", 1, 3, CurrentYear, CurrentYear)]
+        [TestCase("Q1 - Q3 2020", 1, 3, CurrentYear, CurrentYear)]
         public void QuartersConsecutive_BeginAndEndingQuartersOnly_Parser(string text, int beginQuarter, int endingQuarter, int beginYear, int endingYear)
         {
             parser.PeriodText = text;

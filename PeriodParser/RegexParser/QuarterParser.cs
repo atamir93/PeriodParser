@@ -43,18 +43,21 @@ namespace PeriodParser.RegexParser
                 Result.Add(Quarter1, FirstQuarter);
                 Result.Add(Quarter2, LastQuarter);
             }
-            if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            if (!Result.ContainsKey(Year1))
             {
-                var beginYear = CurrentYear;
-                if (ContainsBothQuarters() && (int)Result[Quarter1] > (int)Result[Quarter2])
-                    beginYear = CurrentYear - 1;
-
-                Result.Add(Year1, beginYear);
-                Result.Add(Year2, CurrentYear);
+                Result.Add(Year1, CurrentYear);
             }
-            else if (Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            if (!Result.ContainsKey(Year2))
             {
-                Result.Add(Year2, Result[Year1]);
+                int beginYear = int.Parse(Result[Year1].ToString());
+                if (ContainsBothQuarters())
+                {
+                    if ((int)Result[Quarter1] > (int)Result[Quarter2])
+                    {
+                        Result[Year1] = beginYear - 1;
+                    }
+                }
+                Result.Add(Year2, beginYear);
             }
         }
 
