@@ -5,11 +5,11 @@ using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
 {
-    public abstract class PeriodParserRegex
+    public abstract class PeriodParser
     {
+        public const string YearToDateDefinition = "ytd";
         public const string Period = "Period";
         public const string Type = "Type";
-        public const string Error = "Error";
         public const string DimensionName = "DimensionName";
         public const string DimensionPeriod = "DimensionCompareType";
         public const string Month1 = "Month1";
@@ -21,9 +21,12 @@ namespace PeriodParser.RegexParser
 
         public int CurrentYear = 2020;
         public int CurrentMonth = 5;
+        public int EndingMonth = 10;
         public int CurrentQuarter = 2;
-        public readonly int FirstMonth = 1;
-        public readonly int LastMonth = 12;
+        public readonly int FirstMonthOfYear = 1;
+        public readonly int LastMonthOfYear = 12;
+        public readonly int FirstQuarterOfYear = 1;
+        public readonly int LastQuarterOfYear = 4;
 
         public string CurrentPeriod { get; set; }
         public Dictionary<string, object> Result { get; set; }
@@ -34,7 +37,6 @@ namespace PeriodParser.RegexParser
             get { return periodText; }
             set { periodText = value.Trim().ToLower(); }
         }
-        public abstract bool Parse();
 
         public void SetAllEndingFields()
         {
@@ -58,11 +60,38 @@ namespace PeriodParser.RegexParser
             Result = new Dictionary<string, object>();
             PeriodText = text.ToLower().Trim();
         }
-        public void SetCurrentDate(DateTime dateTime)
+        public void SetDates(DateTime currentDate, int endingMonth)
         {
-            CurrentYear = dateTime.Year;
-            CurrentMonth = dateTime.Month;
+            CurrentYear = currentDate.Year;
+            CurrentMonth = currentDate.Month;
             CurrentQuarter = (int)Math.Ceiling(CurrentMonth / 3.0);
+            EndingMonth = endingMonth;
+        }
+
+        public abstract bool TryParse();
+        internal abstract bool TryParseDateText(string text, bool isEndRange = false);
+        internal bool TryParseDateRanges(int maxRanges = 2)
+        {
+            bool isValid = false;
+            var dateRanges = GetDateRanges(PeriodText);
+            for (int i = 0; i < Math.Min(maxRanges, dateRanges.Length); i++)
+            {
+                isValid = TryParseDateText(dateRanges[i]);
+            }
+            return isValid;
+        }
+        internal bool TryParseDateRangesConsideringEndingRange(int maxRanges = 2)
+        {
+            bool isValid = false;
+            var dateRanges = GetDateRanges(PeriodText);
+            bool isEndingRange = false;
+            for (int i = 0; i < Math.Min(maxRanges, dateRanges.Length); i++)
+            {
+                if (i > 0)
+                    isEndingRange = true;
+                isValid = TryParseDateText(dateRanges[i], isEndingRange);
+            }
+            return isValid;
         }
 
         #region Regex patterns
@@ -70,10 +99,12 @@ namespace PeriodParser.RegexParser
         Regex GetRegexForYear() => new Regex(@"(\d+)");
         Regex GetRegexForMonthNumber() => new Regex(@"\s*(0?[1-9]|1[012])$");
         Regex GetRegexForMonthName() => new Regex(@"\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)");
-        Regex GetRegexForQuarterNumber() => new Regex(@"\s*q([1-4])$");
+        Regex GetRegexForQuarterNumber() => new Regex(@"\s*q([1-4])");
         Regex GetRegexForMonthNameAndYear() => new Regex(@"\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\D*(\d+)");
+        Regex GetRegexForYearAndMonthName() => new Regex(@"\s*(\d+)\W+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)");
         Regex GetRegexForMonthNumberAndYear() => new Regex(@"(\d+)\D+(\d+)");
         Regex GetRegexForQuarterNumberAndYear() => new Regex(@"\s*q([1-4])\D*(\d+)");
+        Regex GetRegexForYearAndQuarterNumber() => new Regex(@"\s*(\d+)\W+q([1-4])");
 
         #endregion
 
@@ -103,6 +134,19 @@ namespace PeriodParser.RegexParser
             return TryAddMonthToResult(monthText, isEndRange) && TryAddYearToResult(yearText);
         }
 
+        internal bool TryParseYearAndMonthName(string text, bool isEndRange = false)
+        {
+            Regex rgx = GetRegexForYearAndMonthName();
+            Match match = rgx.Match(text);
+            if (match.Success)
+            {
+                var yearText = match.Groups[1].Value;
+                var monthText = match.Groups[2].Value;
+                return TryAddMonthToResult(monthText, isEndRange) && TryAddYearToResult(yearText);
+            }
+            return false;
+        }
+
         internal bool TryParseQuarterAndYear(string text, bool isEndRange = false)
         {
             Regex rgx = GetRegexForQuarterNumberAndYear();
@@ -111,6 +155,19 @@ namespace PeriodParser.RegexParser
             {
                 var quarterNumberText = match.Groups[1].Value;
                 var yearText = match.Groups[2].Value;
+                return TryAddQuarterToResult(quarterNumberText, isEndRange) && TryAddYearToResult(yearText);
+            }
+            return false;
+        }
+
+        internal bool TryParseYearAndQuarter(string text, bool isEndRange = false)
+        {
+            Regex rgx = GetRegexForYearAndQuarterNumber();
+            Match match = rgx.Match(text);
+            if (match.Success)
+            {
+                var yearText = match.Groups[1].Value;
+                var quarterNumberText = match.Groups[2].Value;
                 return TryAddQuarterToResult(quarterNumberText, isEndRange) && TryAddYearToResult(yearText);
             }
             return false;
@@ -131,7 +188,7 @@ namespace PeriodParser.RegexParser
         internal bool TryParseMonth(string text, bool isEndRange = false)
         {
             Regex rgx = GetRegexForMonthName();
-            Match match = rgx.Match(text);
+            Match match = rgx.Match(text.Trim());
             string monthText = "";
             if (match.Success)
             {
@@ -140,7 +197,7 @@ namespace PeriodParser.RegexParser
             else
             {
                 rgx = GetRegexForMonthNumber();
-                match = rgx.Match(text);
+                match = rgx.Match(text.Trim());
                 if (match.Success)
                     monthText = match.Groups[1].Value;
             }
@@ -151,7 +208,7 @@ namespace PeriodParser.RegexParser
         internal bool TryParseQuarter(string text, bool isEndRange = false)
         {
             Regex rgx = GetRegexForQuarterNumber();
-            Match match = rgx.Match(text);
+            Match match = rgx.Match(text.Trim());
             if (match.Success)
             {
                 var quarterNumberText = match.Groups[1].Value;
@@ -215,42 +272,36 @@ namespace PeriodParser.RegexParser
         internal int GetQuarterNumber(string text)
         {
             text = text.Replace("q", "");
-            int quarterNumber = 0;
-            if (int.TryParse(text, out quarterNumber))
-            {
-                if (quarterNumber < 1 || quarterNumber > 4)
-                {
-                    Result.Add(Error, "");
-                    return 0;
-                }
-            }
-            return quarterNumber;
+            if (!string.IsNullOrEmpty(text) && int.TryParse(text, out int quarterNumber) && isValidQuarterNumber(quarterNumber))
+                return quarterNumber;
+            return 0;
         }
 
-        internal int GetMonthNumber(string text)
+        internal int GetMonthNumber(string monthText)
         {
-            if (string.IsNullOrEmpty(text)) return 0;
-
             int monthNumber = 0;
-            if (int.TryParse(text, out monthNumber))
+            if (!string.IsNullOrEmpty(monthText) && (!int.TryParse(monthText, out monthNumber) || !isValidMonthNumber(monthNumber)))
             {
-                if (monthNumber < 1 || monthNumber > 12)
-                {
-                    Result.Add(Error, "");
-                    return 0;
-                }
-            }
-            else
-            {
-                var shortName = text.Substring(0, 3);
-                DateTime result;
-                if (DateTime.TryParseExact(shortName, "MMM", CultureInfo.CurrentCulture, DateTimeStyles.None, out result))
-                    monthNumber = result.Month;
+                monthNumber = ParseFromMonthName(monthText);
             }
             return monthNumber;
         }
 
-        internal string[] SplitByDash(string text) => text.Split("-");
+        int ParseFromMonthNumber(string monthText)
+        {
+            if (int.TryParse(monthText, out int monthNumber) && isValidMonthNumber(monthNumber))
+                return monthNumber;
+            return 0;
+        }
+        int ParseFromMonthName(string monthText)
+        {
+            var shortName = monthText.Substring(0, 3);
+            if (DateTime.TryParseExact(shortName, "MMM", CultureInfo.CurrentCulture, DateTimeStyles.None, out DateTime result))
+                return result.Month;
+            return 0;
+        }
+
+        internal string[] GetDateRanges(string text) => text.Split("-");
 
         string GetYearNumber(string text)
         {
@@ -261,6 +312,15 @@ namespace PeriodParser.RegexParser
                 year = year2000.Remove(year2000.Length - text.Length) + text;
             }
             return year;
+        }
+
+        internal (int month, int quarter, int year) GetLastMonthQuarterYear()
+        {
+            var currentDate = new DateTime(CurrentYear, CurrentMonth, 1);
+            var lastMonth = currentDate.AddMonths(-1);
+            var lastQuarter = (int)Math.Ceiling(CurrentMonth / 3.0);
+
+            return (lastMonth.Month, lastQuarter, lastMonth.Year);
         }
 
         internal (int year, int month) GetBeginMonthAndYearFromDifference(int endingMonth, int endingYear, int monthlyPeriodDifference)
@@ -290,6 +350,9 @@ namespace PeriodParser.RegexParser
 
             return (endingYear - yearDiff, beginQuarter);
         }
+
+        bool isValidMonthNumber(int monthNumber) => monthNumber >= 1 && monthNumber <= 12;
+        bool isValidQuarterNumber(int quarterNumber) => quarterNumber >= 1 && quarterNumber <= 4;
 
         #endregion
     }

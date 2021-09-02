@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
 {
-    public class QuarterParserRegex : PeriodParserRegex
+    public class QuarterParser : PeriodParser
     {
-        private QuarterParserRegex() : base() { }
-        private static QuarterParserRegex instance = null;
-        public static QuarterParserRegex GetInstance()
+        private QuarterParser() : base() { }
+        private static QuarterParser instance = null;
+        public static QuarterParser GetInstance()
         {
             if (instance == null)
-            {
-                instance = new QuarterParserRegex();
-            }
+                instance = new QuarterParser();
             return instance;
         }
-        public override bool Parse()
+        public override bool TryParse()
         {
             Result = new Dictionary<string, object>
             {
@@ -31,30 +28,52 @@ namespace PeriodParser.RegexParser
                 isValid = TryParseDateRanges();
                 if (isValid)
                 {
-                    if (Result.ContainsKey(Quarter2))
-                        Result.Add(Type, "Consecutive");
-                    else
-                        Result.Add(Type, "EachYear");
+                    AddMissedDates();
+                    AddQuarterlyType();
                 }
             }
 
             return isValid;
         }
 
-        private bool TryParseDateRanges()
+        void AddMissedDates()
         {
-            bool isValid = false;
-            var dateRanges = SplitByDash(PeriodText);
-            for (int i = 0; i < Math.Min(2, dateRanges.Length); i++)
+            if (!Result.ContainsKey(Quarter1) && !Result.ContainsKey(Quarter2))
             {
-                isValid = TryParse(dateRanges[i]);
+                Result.Add(Quarter1, FirstQuarterOfYear);
+                Result.Add(Quarter2, LastQuarterOfYear);
             }
-            return isValid;
+            if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                var beginYear = CurrentYear;
+                if (ContainsBothQuarters() && (int)Result[Quarter1] > (int)Result[Quarter2])
+                    beginYear = CurrentYear - 1;
+
+                Result.Add(Year1, beginYear);
+                Result.Add(Year2, CurrentYear);
+            }
+            else if (Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                Result.Add(Year2, Result[Year1]);
+            }
         }
 
-        bool TryParse(string text)
+        bool ContainsBothQuarters()
         {
-            return TryParseQuarterAndYear(text) || TryParseYear(text) || TryParseQuarter(text);
+            return Result.ContainsKey(Quarter1) && Result.ContainsKey(Quarter2);
+        }
+
+        private void AddQuarterlyType()
+        {
+            if (Result.ContainsKey(Quarter2))
+                Result.Add(Type, "Consecutive");
+            else
+                Result.Add(Type, "EachYear");
+        }
+
+        internal override bool TryParseDateText(string text, bool isEndRange = false)
+        {
+            return TryParseQuarterAndYear(text) || TryParseYearAndQuarter(text) || TryParseQuarter(text) || TryParseYear(text);
         }
 
         bool TryParseLastDefinition(string text)
@@ -75,9 +94,11 @@ namespace PeriodParser.RegexParser
                     var quarterNumber = GetQuarterNumber(quarterText);
                     if (quarterNumber == 0)
                         quarterNumber = CurrentQuarter;
+
                     Result.Add(Quarter1, quarterNumber);
-                    Result.Add(Year1, CurrentYear - yearlyDifference);
-                    Result.Add(Year2, CurrentYear);
+                    var lastYear = GetLastMonthQuarterYear().year;
+                    Result.Add(Year1, lastYear - yearlyDifference + 1);
+                    Result.Add(Year2, lastYear);
                     Result.Add(Type, "EachYear");
                     return true;
                 }
@@ -94,11 +115,14 @@ namespace PeriodParser.RegexParser
                 int quarterlyDifference;
                 if (int.TryParse(match.Groups[1].Value, out quarterlyDifference))
                 {
-                    var beginQuarterAndYear = GetBeginQuarterAndYearFromDifference(CurrentQuarter, CurrentYear, quarterlyDifference);
+                    var lastQuarterAndYear = GetLastMonthQuarterYear();
+                    var lastQuarter = lastQuarterAndYear.quarter;
+                    var lastYear = lastQuarterAndYear.year;
+                    var beginQuarterAndYear = GetBeginQuarterAndYearFromDifference(lastQuarter, lastYear, quarterlyDifference);
                     Result.Add(Quarter1, beginQuarterAndYear.quarter);
                     Result.Add(Year1, beginQuarterAndYear.year);
-                    Result.Add(Quarter2, CurrentQuarter);
-                    Result.Add(Year2, CurrentYear);
+                    Result.Add(Quarter2, lastQuarter);
+                    Result.Add(Year2, lastYear);
                     Result.Add(Type, "Consecutive");
                     return true;
                 }

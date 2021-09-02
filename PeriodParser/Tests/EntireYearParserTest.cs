@@ -7,7 +7,7 @@ namespace PeriodParser.Tests
     [TestFixture]
     public class EntireYearParserTest
     {
-        private YearlyParserRegex parser;
+        private EntireYearParser parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;
@@ -15,19 +15,19 @@ namespace PeriodParser.Tests
         [SetUp]
         public void SetUp()
         {
-            parser = YearlyParserRegex.GetInstance("EntireYear");
+            parser = EntireYearParser.GetInstance();
         }
 
         [Test]
         public void EntireYear_LastDefitinion_Parser()
         {
             parser.PeriodText = "Last 2 years";
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
             AssertDictionaryValue("Type", "EntireYear");
-            AssertDictionaryValue("Year1", CurrentYear - 2);
+            AssertDictionaryValue("Year1", CurrentYear - 1);
             AssertDictionaryValue("Year2", CurrentYear);
         }
 
@@ -42,7 +42,7 @@ namespace PeriodParser.Tests
         public void EntireYear_WithlDateRangeWithoutMonth_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
@@ -62,7 +62,7 @@ namespace PeriodParser.Tests
         public void EntireYear_WithFullDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
@@ -83,7 +83,7 @@ namespace PeriodParser.Tests
         public void EntireYear_WithMonthAndYear_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
@@ -100,7 +100,7 @@ namespace PeriodParser.Tests
         public void EntireYear_WithYear_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);

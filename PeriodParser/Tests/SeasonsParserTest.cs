@@ -7,13 +7,13 @@ namespace PeriodParser.Tests
     [TestFixture]
     public class SeasonsParserTest
     {
-        private SeasonsParserRegex parser;
+        private SeasonsParser parser;
         Dictionary<string, object> parserResult;
 
         [SetUp]
         public void SetUp()
         {
-            parser = SeasonsParserRegex.GetInstance();
+            parser = SeasonsParser.GetInstance();
         }
 
         [TestCase("June-December 2018-2020 Season")]
@@ -24,7 +24,7 @@ namespace PeriodParser.Tests
         public void Seasons_WithDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.MonthRange);
@@ -43,7 +43,7 @@ namespace PeriodParser.Tests
         public void Seasons_WithSingleYear_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.MonthRange);

@@ -1,22 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace PeriodParser.RegexParser
 {
-    public class MonthlyParserRegex : PeriodParserRegex
+    public class MonthlyParser : PeriodParser
     {
-        private MonthlyParserRegex() : base() { }
-        private static MonthlyParserRegex instance = null;
-        public static MonthlyParserRegex GetInstance()
+        private MonthlyParser() : base() { }
+        private static MonthlyParser instance = null;
+        public static MonthlyParser GetInstance()
         {
             if (instance == null)
-            {
-                instance = new MonthlyParserRegex();
-            }
+                instance = new MonthlyParser();
             return instance;
         }
-        public override bool Parse()
+
+        public override bool TryParse()
         {
             Result = new Dictionary<string, object>
             {
@@ -31,30 +29,53 @@ namespace PeriodParser.RegexParser
                 isValid = TryParseDateRanges();
                 if (isValid)
                 {
-                    if (Result.ContainsKey(Month2))
-                        Result.Add(Type, "Consecutive");
-                    else
-                        Result.Add(Type, "EachYear");
+                    AddMissedMonthes();
+                    AddMonthlyType();
                 }
             }
 
             return isValid;
         }
 
-        private bool TryParseDateRanges()
+        void AddMissedMonthes()
         {
-            bool isValid = false;
-            var dateRanges = SplitByDash(PeriodText);
-            for (int i = 0; i < Math.Min(2, dateRanges.Length); i++)
+            if (!Result.ContainsKey(Month1) && !Result.ContainsKey(Month2))
             {
-                isValid = TryParse(dateRanges[i]);
+                Result.Add(Month1, FirstMonthOfYear);
+                Result.Add(Month2, LastMonthOfYear);
             }
-            return isValid;
+
+            if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                var beginYear = CurrentYear;
+                if (ContainsBothMonthes() && (int)Result[Month1] > (int)Result[Month2])
+                    beginYear = CurrentYear - 1;
+
+                Result.Add(Year1, beginYear);
+                Result.Add(Year2, CurrentYear);
+            }
+            else if (Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
+            {
+                Result.Add(Year2, Result[Year1]);
+            }
         }
 
-        bool TryParse(string text)
+        bool ContainsBothMonthes()
         {
-            return TryParseMonthAndYear(text) || TryParseYear(text) || TryParseMonth(text);
+            return Result.ContainsKey(Month1) && Result.ContainsKey(Month2);
+        }
+
+        void AddMonthlyType()
+        {
+            if (Result.ContainsKey(Month2))
+                Result.Add(Type, "Consecutive");
+            else
+                Result.Add(Type, "EachYear");
+        }
+
+        internal override bool TryParseDateText(string text, bool isEndRange = false)
+        {
+            return TryParseMonthAndYear(text) || TryParseYearAndMonthName(text) || TryParseYear(text) || TryParseMonth(text);
         }
 
         bool TryParseLastDefinition(string text)
@@ -76,8 +97,9 @@ namespace PeriodParser.RegexParser
                     if (monthNumber == 0)
                         monthNumber = CurrentMonth;
                     Result.Add(Month1, monthNumber);
-                    Result.Add(Year1, CurrentYear - yearlyDifference);
-                    Result.Add(Year2, CurrentYear);
+                    var lastYear = GetLastMonthQuarterYear().year;
+                    Result.Add(Year1, lastYear - yearlyDifference + 1);
+                    Result.Add(Year2, lastYear);
                     Result.Add(Type, "EachYear");
                     return true;
                 }
@@ -94,11 +116,14 @@ namespace PeriodParser.RegexParser
                 int monthlyDifference;
                 if (int.TryParse(match.Groups[1].Value, out monthlyDifference))
                 {
-                    var beginMonthAndYear = GetBeginMonthAndYearFromDifference(CurrentMonth, CurrentYear, monthlyDifference);
+                    var lastMonthAndYear = GetLastMonthQuarterYear();
+                    var lastMonth = lastMonthAndYear.month;
+                    var lastYear = lastMonthAndYear.year;
+                    var beginMonthAndYear = GetBeginMonthAndYearFromDifference(lastMonth, lastYear, monthlyDifference);
                     Result.Add(Month1, beginMonthAndYear.month);
                     Result.Add(Year1, beginMonthAndYear.year);
-                    Result.Add(Month2, CurrentMonth);
-                    Result.Add(Year2, CurrentYear);
+                    Result.Add(Month2, lastMonth);
+                    Result.Add(Year2, lastYear);
                     Result.Add(Type, "Consecutive");
                     return true;
                 }

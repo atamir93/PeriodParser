@@ -8,7 +8,7 @@ namespace PeriodParser.Tests
 {
     public class TotalParserTest
     {
-        private TotalParserRegex parser;
+        private TotalParser parser;
         Dictionary<string, object> parserResult;
         const int CurrentYear = 2020;
         const int CurrentMonth = 5;
@@ -18,7 +18,7 @@ namespace PeriodParser.Tests
         [SetUp]
         public void SetUp()
         {
-            parser = TotalParserRegex.GetInstance();
+            parser = TotalParser.GetInstance();
         }
 
         [TestCase("April 2018 - November 2020 totals")]
@@ -29,7 +29,7 @@ namespace PeriodParser.Tests
         public void Total_WithFullDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Single);
@@ -48,7 +48,7 @@ namespace PeriodParser.Tests
         public void Total_WithBeginMonthDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Single);
@@ -67,7 +67,7 @@ namespace PeriodParser.Tests
         public void Total_WithEndingMonthFullDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Single);
@@ -85,7 +85,7 @@ namespace PeriodParser.Tests
         public void Total_WithoutMonthsFullDateRange_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Single);
@@ -100,7 +100,7 @@ namespace PeriodParser.Tests
         public void Total_SingleYear_Parser(string text)
         {
             parser.PeriodText = text;
-            parser.Parse();
+            parser.TryParse();
             parserResult = parser.Result;
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Single);
