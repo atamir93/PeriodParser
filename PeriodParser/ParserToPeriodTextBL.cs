@@ -13,7 +13,6 @@ namespace PeriodParser
 
         public static string GetYearToDateYearlyPeriodText(string month, string beginYear, string endingYear)
         {
-            ChangeToMonthShortName(ref month);
             string type = "YTD";
             string years = beginYear == endingYear ? beginYear : $"{beginYear} - {endingYear}";
             string periodText;
@@ -59,8 +58,6 @@ namespace PeriodParser
 
         public static string GetConsecutiveMonthlyPeriodText(string beginMonth, string endingMonth, string beginYear, string endingYear)
         {
-            ChangeToMonthShortName(ref beginMonth);
-            ChangeToMonthShortName(ref endingMonth);
             string periodText;
             if (beginYear == endingYear)
                 periodText = $"{beginMonth} - {endingMonth} {beginYear}";
@@ -71,7 +68,6 @@ namespace PeriodParser
 
         public static string GetEachYearMonthlyPeriodText(string beginMonth, string beginYear, string endingYear)
         {
-            ChangeToMonthShortName(ref beginMonth);
             string periodText;
             if (beginYear == endingYear)
                 periodText = $"{beginMonth} {beginYear}";
@@ -82,8 +78,6 @@ namespace PeriodParser
 
         public static string GetMonthRangePeriodText(string beginMonth, string endingMonth, string beginYear, string endingYear)
         {
-            ChangeToMonthShortName(ref beginMonth);
-            ChangeToMonthShortName(ref endingMonth);
             string months = beginMonth == endingMonth ? endingMonth : $"{beginMonth} - {endingMonth}";
             string years = beginYear == endingYear ? beginYear : $"{beginYear} - {endingYear}";
 
@@ -92,8 +86,6 @@ namespace PeriodParser
 
         public static string GetSinglePeriodText(string beginMonth, string endingMonth, string beginYear, string endingYear)
         {
-            ChangeToMonthShortName(ref beginMonth);
-            ChangeToMonthShortName(ref endingMonth);
             string periodText;
             if (beginYear == endingYear)
                 periodText = $"{beginMonth} - {endingMonth} {beginYear} Total";
@@ -105,7 +97,6 @@ namespace PeriodParser
         public static string GetEntireYearDimensionPeriodText(string year, string dimensionName) => $"{year} by {dimensionName}";
         public static string GetYearToDateDimensionPeriodText(string month, string year, string dimensionName)
         {
-            ChangeToMonthShortName(ref month);
             return $"{month} {year} YTD by {dimensionName}";
         }
         public static string GetQuarterDimensionPeriodText(string quarter, string year, string dimensionName)
@@ -116,19 +107,11 @@ namespace PeriodParser
         }
         public static string GetMonthDimensionPeriodText(string month, string year, string dimensionName)
         {
-            ChangeToMonthShortName(ref month);
             return $"{month} {year} by {dimensionName}";
         }
         public static string GetRangeDimensionPeriodText(string beginMonth, string endingMonth, string beginYear, string endingYear, string dimensionName)
         {
-            ChangeToMonthShortName(ref beginMonth);
-            ChangeToMonthShortName(ref endingMonth);
             return $"{beginMonth} {beginYear} - {endingMonth} {endingYear} by {dimensionName}";
-        }
-        static void ChangeToMonthShortName(ref string monthName)
-        {
-            if (monthName.Length > 3)
-                monthName = monthName.Substring(0, 3);
         }
     }
 }

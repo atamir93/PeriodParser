@@ -447,7 +447,7 @@ namespace PeriodParser
         {
             var monthNumber = GetIntValue(parserResult, monthKey);
             if (IsValidMonthNumber(monthNumber))
-                return CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(monthNumber);
+                return CultureInfo.CurrentCulture.DateTimeFormat.GetAbbreviatedMonthName(monthNumber);
             return string.Empty;
         }
         static bool IsValidMonthNumber(int monthNumber)
