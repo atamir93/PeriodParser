@@ -23,10 +23,10 @@ namespace PeriodParser.RegexParser
         public int CurrentMonth = 5;
         public int EndingMonth = 10;
         public int CurrentQuarter = 2;
-        public readonly int FirstMonth = 1;
-        public readonly int LastMonth = 12;
-        public readonly int FirstQuarter = 1;
-        public readonly int LastQuarter = 4;
+        public readonly int FirstMonthOfYear = 1;
+        public readonly int LastMonthOfYear = 12;
+        public readonly int FirstQuarterOfYear = 1;
+        public readonly int LastQuarterOfYear = 4;
 
         public string CurrentPeriod { get; set; }
         public Dictionary<string, object> Result { get; set; }
@@ -101,8 +101,10 @@ namespace PeriodParser.RegexParser
         Regex GetRegexForMonthName() => new Regex(@"\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)");
         Regex GetRegexForQuarterNumber() => new Regex(@"\s*q([1-4])");
         Regex GetRegexForMonthNameAndYear() => new Regex(@"\s*(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\D*(\d+)");
+        Regex GetRegexForYearAndMonthName() => new Regex(@"\s*(\d+)\W+(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)");
         Regex GetRegexForMonthNumberAndYear() => new Regex(@"(\d+)\D+(\d+)");
         Regex GetRegexForQuarterNumberAndYear() => new Regex(@"\s*q([1-4])\D*(\d+)");
+        Regex GetRegexForYearAndQuarterNumber() => new Regex(@"\s*(\d+)\W+q([1-4])");
 
         #endregion
 
@@ -132,6 +134,19 @@ namespace PeriodParser.RegexParser
             return TryAddMonthToResult(monthText, isEndRange) && TryAddYearToResult(yearText);
         }
 
+        internal bool TryParseYearAndMonthName(string text, bool isEndRange = false)
+        {
+            Regex rgx = GetRegexForYearAndMonthName();
+            Match match = rgx.Match(text);
+            if (match.Success)
+            {
+                var yearText = match.Groups[1].Value;
+                var monthText = match.Groups[2].Value;
+                return TryAddMonthToResult(monthText, isEndRange) && TryAddYearToResult(yearText);
+            }
+            return false;
+        }
+
         internal bool TryParseQuarterAndYear(string text, bool isEndRange = false)
         {
             Regex rgx = GetRegexForQuarterNumberAndYear();
@@ -140,6 +155,19 @@ namespace PeriodParser.RegexParser
             {
                 var quarterNumberText = match.Groups[1].Value;
                 var yearText = match.Groups[2].Value;
+                return TryAddQuarterToResult(quarterNumberText, isEndRange) && TryAddYearToResult(yearText);
+            }
+            return false;
+        }
+
+        internal bool TryParseYearAndQuarter(string text, bool isEndRange = false)
+        {
+            Regex rgx = GetRegexForYearAndQuarterNumber();
+            Match match = rgx.Match(text);
+            if (match.Success)
+            {
+                var yearText = match.Groups[1].Value;
+                var quarterNumberText = match.Groups[2].Value;
                 return TryAddQuarterToResult(quarterNumberText, isEndRange) && TryAddYearToResult(yearText);
             }
             return false;
@@ -284,6 +312,15 @@ namespace PeriodParser.RegexParser
                 year = year2000.Remove(year2000.Length - text.Length) + text;
             }
             return year;
+        }
+
+        internal (int month, int quarter, int year) GetLastMonthQuarterYear()
+        {
+            var currentDate = new DateTime(CurrentYear, CurrentMonth, 1);
+            var lastMonth = currentDate.AddMonths(-1);
+            var lastQuarter = (int)Math.Ceiling(CurrentMonth / 3.0);
+
+            return (lastMonth.Month, lastQuarter, lastMonth.Year);
         }
 
         internal (int year, int month) GetBeginMonthAndYearFromDifference(int endingMonth, int endingYear, int monthlyPeriodDifference)

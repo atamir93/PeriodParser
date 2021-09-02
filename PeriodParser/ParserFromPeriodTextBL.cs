@@ -344,7 +344,6 @@ namespace PeriodParser
                     view.BeginningYearSingle = year1;
                     break;
                 case DimensionCompareType.EntireYear:
-                    view.EndingMonth = month1;
                     view.EndingYear = year1;
                     break;
                 case DimensionCompareType.YearToDate:
@@ -425,13 +424,13 @@ namespace PeriodParser
         {
             return (monthNumber > 0 && monthNumber <= 12);
         }
-        static int GetQuarterlyPeriodDifference(int beginQ, int endingQ, int beginY, int endingY)
+        public static int GetQuarterlyPeriodDifference(int beginQ, int endingQ, int beginY, int endingY)
         {
-            return ((endingY - beginY) * 4) + (endingQ - beginQ);
+            return ((endingY - beginY) * 4) + (endingQ - beginQ) + 1;
         }
-        static int GetMonthlyPeriodDifference(int beginM, int endingM, int beginY, int endingY)
+        public static int GetMonthlyPeriodDifference(int beginM, int endingM, int beginY, int endingY)
         {
-            return ((endingY - beginY) * 12) + (endingM - beginM);
+            return ((endingY - beginY) * 12) + (endingM - beginM) + 1;
         }
 
         static bool ContainsOnlyMonthName(string text)

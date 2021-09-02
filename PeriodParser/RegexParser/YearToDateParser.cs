@@ -29,7 +29,7 @@ namespace PeriodParser.RegexParser
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            return TryParseOnlyYTDText(text) || TryParseMonthAndYear(text) || TryParseYear(text) || TryParseMonth(text);
+            return TryParseOnlyYTDText(text) || TryParseMonthAndYear(text) || TryParseYearAndMonthName(text, isEndRange) || TryParseYear(text) || TryParseMonth(text);
         }
 
         bool TryParseOnlyYTDText(string text)
@@ -49,8 +49,9 @@ namespace PeriodParser.RegexParser
             Match match = rgx.Match(periodText);
             if (match.Success && int.TryParse(match.Groups[1].Value, out int yearDifference))
             {
-                Result.Add(Year1, CurrentYear - yearDifference);
-                Result.Add(Year2, CurrentYear);
+                var lastYear = GetLastMonthQuarterYear().year;
+                Result.Add(Year1, lastYear - yearDifference + 1);
+                Result.Add(Year2, lastYear);
                 return true;
             }
             return false;

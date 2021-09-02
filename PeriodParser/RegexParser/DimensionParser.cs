@@ -50,12 +50,12 @@ namespace PeriodParser.RegexParser
                 Result.Add(DimensionPeriod, DimensionCompareType.Range);
                 isValid = true;
             }
-            else if (TryParseQuarterAndYear(dateText))
+            else if (TryParseQuarterAndYear(dateText) || TryParseYearAndQuarter(dateText))
             {
                 Result.Add(DimensionPeriod, DimensionCompareType.Quarter);
                 isValid = true;
             }
-            else if (TryParseMonthAndYear(dateText))
+            else if (TryParseMonthAndYear(dateText) || TryParseYearAndMonthName(dateText))
             {
                 if (dateText.Contains(YearToDateDefinition))
                     Result.Add(DimensionPeriod, DimensionCompareType.YearToDate);
@@ -77,17 +77,17 @@ namespace PeriodParser.RegexParser
         {
             if (!Result.ContainsKey(Month1))
             {
-                Result.Add(Month1, FirstMonth);
+                Result.Add(Month1, FirstMonthOfYear);
             }
             if (!Result.ContainsKey(Month2))
             {
-                Result.Add(Month2, LastMonth);
+                Result.Add(Month2, LastMonthOfYear);
             }
         }
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            return TryParseMonthAndYear(text, isEndRange) || TryParseYear(text) || TryParseMonth(text, isEndRange);
+            return TryParseMonthAndYear(text, isEndRange) || TryParseYearAndMonthName(text, isEndRange) || TryParseYear(text) || TryParseMonth(text, isEndRange);
         }
     }
 }

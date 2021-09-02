@@ -30,12 +30,13 @@ namespace PeriodParser.Tests
             AssertDictionaryValue("Type", "EachYear");
             //AssertDictionaryValue("YearlyPeriod", "Calendar");
             AssertDictionaryValue("Quarter1", CurrentQuarter);
-            AssertDictionaryValue("Year1", CurrentYear - 2);
+            AssertDictionaryValue("Year1", CurrentYear - 1);
             AssertDictionaryValue("Year2", CurrentYear);
         }
 
         [TestCase("Q2 2018 - 2020")]
         [TestCase("q2 18-20")]
+        [TestCase("18-20 q2")]
         [TestCase("Q2,2018 -2020")]
         [TestCase("Q2.18- 20")]
         [TestCase("Q2/2018 - 2020")]

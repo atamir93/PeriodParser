@@ -31,11 +31,11 @@ namespace PeriodParser.RegexParser
         {
             if (!Result.ContainsKey(Month1))
             {
-                Result.Add(Month1, FirstMonth);
+                Result.Add(Month1, FirstMonthOfYear);
             }
             if (!Result.ContainsKey(Month2))
             {
-                Result.Add(Month2, LastMonth);
+                Result.Add(Month2, LastMonthOfYear);
             }
             if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
             {
@@ -54,7 +54,7 @@ namespace PeriodParser.RegexParser
 
         internal override bool TryParseDateText(string text, bool isEndRange = false)
         {
-            return TryParseMonthAndYear(text, isEndRange) || TryParseYear(text) || TryParseMonth(text, isEndRange);
+            return TryParseMonthAndYear(text, isEndRange) || TryParseYearAndMonthName(text, isEndRange) || TryParseYear(text) || TryParseMonth(text, isEndRange);
         }
     }
 }

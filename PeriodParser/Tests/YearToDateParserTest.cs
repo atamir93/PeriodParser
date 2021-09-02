@@ -31,13 +31,12 @@ namespace PeriodParser.Tests
 
             AssertDictionaryValue("Period", ProfitAndLossPeriod.Yearly);
             AssertDictionaryValue("Type", "YTD");
-            AssertDictionaryValue("Year1", currentYear - 2);
+            AssertDictionaryValue("Year1", currentYear - 1);
             AssertDictionaryValue("Year2", currentYear);
         }
 
         [TestCase("April 2018 - 2020 YTD")]
-        [TestCase("Apr 18 - 20 YTD")]
-        [TestCase("04 2018-2020 ytd")]
+        [TestCase("18 - 20 Apr YTD")]
         [TestCase("4 18-20 YTD")]
         [TestCase("April,2018 - 2020 YTD")]
         [TestCase("Apr.18 - 20 YTD")]
