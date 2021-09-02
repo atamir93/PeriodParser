@@ -40,42 +40,7 @@ namespace PeriodParser
             object period;
             if (parserResult.TryGetValue("Period", out period) && period is ProfitAndLossPeriod plPeriod)
             {
-                var monthName1 = GetMonthName(parserResult, "Month1");
-                var monthName2 = GetMonthName(parserResult, "Month2");
-                var year1 = GetStringValue(parserResult, "Year1");
-                var year2 = GetStringValue(parserResult, "Year2");
-                var type = GetStringValue(parserResult, "Type");
-
-                switch (plPeriod)
-                {
-                    case ProfitAndLossPeriod.Single:
-                        return ParserToPeriodTextBL.GetSinglePeriodText(monthName1, monthName2, year1, year2);
-                    case ProfitAndLossPeriod.Yearly:
-                        if (type == "EntireYear")
-                            return ParserToPeriodTextBL.GetEntireYearYearlyPeriodText(year1, year2);
-                        else
-                            return ParserToPeriodTextBL.GetYearToDateYearlyPeriodText(monthName1, year1, year2);
-                    case ProfitAndLossPeriod.MonthRange:
-                        return ParserToPeriodTextBL.GetMonthRangePeriodText(monthName1, monthName2, year1, year2);
-                    case ProfitAndLossPeriod.Quarterly:
-                        var quarter1 = GetStringValue(parserResult, "Quarter1");
-                        if (type == "EachYear")
-                        {
-                            return ParserToPeriodTextBL.GetEachYearQuarterlyPeriodText(quarter1, year1, year2);
-                        }
-                        else
-                        {
-                            var quarter2 = GetStringValue(parserResult, "Quarter2");
-                            return ParserToPeriodTextBL.GetConsecutiveQuarterlyPeriodText(quarter1, quarter2, year1, year2);
-                        }
-                    case ProfitAndLossPeriod.Monthly:
-                        if (type == "EachYear")
-                            return ParserToPeriodTextBL.GetEachYearMonthlyPeriodText(monthName1, year1, year2);
-                        else
-                            return ParserToPeriodTextBL.GetConsecutiveMonthlyPeriodText(monthName1, monthName2, year1, year2);
-                    case ProfitAndLossPeriod.Dimension:
-                        return GetDimensionPeriodText(parserResult);
-                }
+                return GetCorrectPeriodText(parserResult, plPeriod);
             }
             return string.Empty;
         }
@@ -88,7 +53,6 @@ namespace PeriodParser
                 view.FiltersFromParser.Add($"{item.Key}={item.Value}");
             }
         }
-
         public static void DistributeToProfitAndLossPeriod(ProfitAndLossView view)
         {
             if (view.FiltersFromParser != null && view.FiltersFromParser.Any())
@@ -101,7 +65,48 @@ namespace PeriodParser
             }
         }
 
-        private static void SetPeriodFields(ProfitAndLossView view, Dictionary<string, object> parserResult, ProfitAndLossPeriod period)
+        static string GetCorrectPeriodText(Dictionary<string, object> parserResult, ProfitAndLossPeriod plPeriod)
+        {
+            var monthName1 = GetMonthName(parserResult, "Month1");
+            var monthName2 = GetMonthName(parserResult, "Month2");
+            var year1 = GetStringValue(parserResult, "Year1");
+            var year2 = GetStringValue(parserResult, "Year2");
+            var type = GetStringValue(parserResult, "Type");
+
+            switch (plPeriod)
+            {
+                case ProfitAndLossPeriod.Single:
+                    return ParserToPeriodTextBL.GetSinglePeriodText(monthName1, monthName2, year1, year2);
+                case ProfitAndLossPeriod.Yearly:
+                    if (type == "EntireYear")
+                        return ParserToPeriodTextBL.GetEntireYearYearlyPeriodText(year1, year2);
+                    else
+                        return ParserToPeriodTextBL.GetYearToDateYearlyPeriodText(monthName1, year1, year2);
+                case ProfitAndLossPeriod.MonthRange:
+                    return ParserToPeriodTextBL.GetMonthRangePeriodText(monthName1, monthName2, year1, year2);
+                case ProfitAndLossPeriod.Quarterly:
+                    var quarter1 = GetStringValue(parserResult, "Quarter1");
+                    if (type == "EachYear")
+                    {
+                        return ParserToPeriodTextBL.GetEachYearQuarterlyPeriodText(quarter1, year1, year2);
+                    }
+                    else
+                    {
+                        var quarter2 = GetStringValue(parserResult, "Quarter2");
+                        return ParserToPeriodTextBL.GetConsecutiveQuarterlyPeriodText(quarter1, quarter2, year1, year2);
+                    }
+                case ProfitAndLossPeriod.Monthly:
+                    if (type == "EachYear")
+                        return ParserToPeriodTextBL.GetEachYearMonthlyPeriodText(monthName1, year1, year2);
+                    else
+                        return ParserToPeriodTextBL.GetConsecutiveMonthlyPeriodText(monthName1, monthName2, year1, year2);
+                case ProfitAndLossPeriod.Dimension:
+                    return GetDimensionPeriodText(parserResult);
+            }
+            return string.Empty;
+        }
+
+        static void SetPeriodFields(ProfitAndLossView view, Dictionary<string, object> parserResult, ProfitAndLossPeriod period)
         {
             var month1 = GetIntValue(parserResult, "Month1");
             if (month1 == 0)
@@ -115,67 +120,21 @@ namespace PeriodParser
             switch (period)
             {
                 case ProfitAndLossPeriod.Single:
-                    view.BeginningMonthSingle = month1;
-                    view.EndingMonth = month2;
-                    view.BeginningYearSingle = year1;
-                    view.EndingYear = year2;
+                    SetSinglePeriodFields(view, month1, month2, year1, year2);
                     break;
 
                 case ProfitAndLossPeriod.Yearly:
-                    if (type == "YTD")
-                    {
-                        view.YearlyType = YearlySwitch.YearToDate;
-                        view.BeginningYearYtd = year1;
-                    }
-                    else
-                    {
-                        view.YearlyType = YearlySwitch.EntireYear;
-                        view.BeginningYearYearly = year1;
-                    }
-                    view.EndingYear = year2;
-                    view.EndingMonth = month1;
+                    SetYearlyPeriodFields(view, month1, year1, year2, type);
                     break;
                 case ProfitAndLossPeriod.MonthRange:
-                    view.BeginningMonthRange = month1;
-                    view.EndingMonth = month2;
-                    view.BeginningYearMonthRange = year1;
-                    view.EndingYear = year2;
+                    SetMonthRangePeriodFields(view, month1, month2, year1, year2);
                     break;
 
                 case ProfitAndLossPeriod.Quarterly:
-                    var quarter1 = GetIntValue(parserResult, "Quarter1");
-                    if (type == "EachYear")
-                    {
-                        view.YearlyOrConsecutive = EachYearOrConsecutive.EachYear;
-                        view.BeginningYearQuarterly = year1;
-                        view.EndingYear = year2;
-                        view.Quarter = (Quarter)quarter1;
-                    }
-                    else if (type == "Consecutive")
-                    {
-                        var quarter2 = GetIntValue(parserResult, "Quarter2");
-                        view.YearlyOrConsecutive = EachYearOrConsecutive.Consecutive;
-                        view.EndingYear = year2;
-                        view.Quarter = (Quarter)quarter2;
-                        //view.BeginningYearQuarterly = year1;
-                        view.QuarterlyPeriodDifference = GetQuarterlyPeriodDifference(quarter1, quarter2, year1, year2);
-                    }
+                    SetQuarterlyPeriodFields(view, parserResult, year1, year2, type);
                     break;
                 case ProfitAndLossPeriod.Monthly:
-                    if (type == "EachYear")
-                    {
-                        view.YearlyOrConsecutive = EachYearOrConsecutive.EachYear;
-                        view.BeginningYearMonthly = year1;
-                        view.EndingYear = year2;
-                        view.EndingMonth = month1;
-                    }
-                    else if (type == "Consecutive")
-                    {
-                        view.YearlyOrConsecutive = EachYearOrConsecutive.Consecutive;
-                        view.EndingYear = year2;
-                        view.EndingMonth = month2;
-                        view.MonthlyPeriodDifference = GetMonthlyPeriodDifference(month1, month2, year1, year2);
-                    }
+                    SetMonthlyPeriodFields(view, month1, month2, year1, year2, type);
                     break;
                 case ProfitAndLossPeriod.Dimension:
                     SetDimensionPeriod(parserResult, view);
@@ -183,35 +142,6 @@ namespace PeriodParser
                 default:
                     break;
             }
-        }
-
-        static Dictionary<string, object> ConvertToDictionary(ProfitAndLossView view)
-        {
-            var parserResult = new Dictionary<string, object>();
-            foreach (var item in view.FiltersFromParser)
-            {
-                var keyAndValue = item.Split("=");
-                var key = keyAndValue[0];
-                var value = keyAndValue[1];
-                if (key == "Period")
-                {
-                    object periodValue;
-                    if (Enum.TryParse(typeof(ProfitAndLossPeriod), value, out periodValue))
-                        parserResult.Add(key, periodValue);
-                }
-                else if (key == "DimensionCompareType")
-                {
-                    object dimensionPeriodValue;
-                    if (Enum.TryParse(typeof(DimensionCompareType), value, out dimensionPeriodValue))
-                        parserResult.Add(key, dimensionPeriodValue);
-                }
-                else
-                {
-                    parserResult.Add(key, value);
-                }
-            }
-
-            return parserResult;
         }
 
         #region Get Parser
@@ -301,7 +231,76 @@ namespace PeriodParser
 
         #endregion
 
-        #region Parsing Dimension period
+        #region Set period fields
+
+        static void SetMonthlyPeriodFields(ProfitAndLossView view, int month1, int month2, int year1, int year2, string type)
+        {
+            if (type == "EachYear")
+            {
+                view.YearlyOrConsecutive = EachYearOrConsecutive.EachYear;
+                view.BeginningYearMonthly = year1;
+                view.EndingYear = year2;
+                view.EndingMonth = month1;
+            }
+            else if (type == "Consecutive")
+            {
+                view.YearlyOrConsecutive = EachYearOrConsecutive.Consecutive;
+                view.EndingYear = year2;
+                view.EndingMonth = month2;
+                view.MonthlyPeriodDifference = GetMonthlyPeriodDifference(month1, month2, year1, year2);
+            }
+        }
+
+        static void SetQuarterlyPeriodFields(ProfitAndLossView view, Dictionary<string, object> parserResult, int year1, int year2, string type)
+        {
+            var quarter1 = GetIntValue(parserResult, "Quarter1");
+            if (type == "EachYear")
+            {
+                view.YearlyOrConsecutive = EachYearOrConsecutive.EachYear;
+                view.BeginningYearQuarterly = year1;
+                view.EndingYear = year2;
+                view.Quarter = (Quarter)quarter1;
+            }
+            else if (type == "Consecutive")
+            {
+                var quarter2 = GetIntValue(parserResult, "Quarter2");
+                view.YearlyOrConsecutive = EachYearOrConsecutive.Consecutive;
+                view.EndingYear = year2;
+                view.Quarter = (Quarter)quarter2;
+                view.QuarterlyPeriodDifference = GetQuarterlyPeriodDifference(quarter1, quarter2, year1, year2);
+            }
+        }
+        static void SetMonthRangePeriodFields(ProfitAndLossView view, int month1, int month2, int year1, int year2)
+        {
+            view.BeginningMonthRange = month1;
+            view.EndingMonth = month2;
+            view.BeginningYearMonthRange = year1;
+            view.EndingYear = year2;
+        }
+
+        static void SetYearlyPeriodFields(ProfitAndLossView view, int month1, int year1, int year2, string type)
+        {
+            if (type == "YTD")
+            {
+                view.YearlyType = YearlySwitch.YearToDate;
+                view.BeginningYearYtd = year1;
+            }
+            else
+            {
+                view.YearlyType = YearlySwitch.EntireYear;
+                view.BeginningYearYearly = year1;
+            }
+            view.EndingYear = year2;
+            view.EndingMonth = month1;
+        }
+
+        static void SetSinglePeriodFields(ProfitAndLossView view, int month1, int month2, int year1, int year2)
+        {
+            view.BeginningMonthSingle = month1;
+            view.EndingMonth = month2;
+            view.BeginningYearSingle = year1;
+            view.EndingYear = year2;
+        }
 
         static void SetDimensionPeriod(Dictionary<string, object> parserResult, ProfitAndLossView view)
         {
@@ -315,12 +314,12 @@ namespace PeriodParser
                     view.Period = ProfitAndLossPeriod.Dimension;
                     view.DimensionToCompare = dimensionName;
                     view.DimensionCompareType = type;
-                    SetDimensionDates(parserResult, view, type);
+                    SetDimensionDateFields(parserResult, view, type);
                 }
             }
         }
 
-        static void SetDimensionDates(Dictionary<string, object> parserResult, ProfitAndLossView view, DimensionCompareType type)
+        static void SetDimensionDateFields(Dictionary<string, object> parserResult, ProfitAndLossView view, DimensionCompareType type)
         {
             var month1 = GetIntValue(parserResult, "Month1");
             var month2 = GetIntValue(parserResult, "Month2");
@@ -355,6 +354,10 @@ namespace PeriodParser
             }
         }
 
+        #endregion
+
+        #region Get correct Dimension period text
+
         static string GetDimensionPeriodText(Dictionary<string, object> parserResult)
         {
             var dimensionName = GetStringValue(parserResult, "DimensionName");
@@ -369,7 +372,7 @@ namespace PeriodParser
             return string.Empty;
         }
 
-        private static string GetDimensionTextFromType(Dictionary<string, object> parserResult, string dimensionName, DimensionCompareType type)
+        static string GetDimensionTextFromType(Dictionary<string, object> parserResult, string dimensionName, DimensionCompareType type)
         {
             var year1 = GetStringValue(parserResult, "Year1");
             var monthName1 = GetMonthName(parserResult, "Month1");
@@ -397,6 +400,33 @@ namespace PeriodParser
 
         #region Helper functions
 
+        static Dictionary<string, object> ConvertToDictionary(ProfitAndLossView view)
+        {
+            var parserResult = new Dictionary<string, object>();
+            foreach (var item in view.FiltersFromParser)
+            {
+                var keyAndValue = item.Split("=");
+                var key = keyAndValue[0];
+                var value = keyAndValue[1];
+                if (key == "Period")
+                {
+                    if (Enum.TryParse(typeof(ProfitAndLossPeriod), value, out object periodValue))
+                        parserResult.Add(key, periodValue);
+                }
+                else if (key == "DimensionCompareType")
+                {
+                    if (Enum.TryParse(typeof(DimensionCompareType), value, out object dimensionPeriodValue))
+                        parserResult.Add(key, dimensionPeriodValue);
+                }
+                else
+                {
+                    parserResult.Add(key, value);
+                }
+            }
+
+            return parserResult;
+        }
+
         static string GetStringValue(Dictionary<string, object> parserResult, string key)
         {
             return parserResult.ContainsKey(key) ? parserResult[key].ToString() : string.Empty;
@@ -413,7 +443,7 @@ namespace PeriodParser
         static bool EndsWithAny(string[] items, string text) => items.Any(i => text.EndsWith(i));
         static bool ContainsAny(string[] items, string text) => items.Any(text.Contains);
 
-        private static string GetMonthName(Dictionary<string, object> parserResult, string monthKey)
+        static string GetMonthName(Dictionary<string, object> parserResult, string monthKey)
         {
             var monthNumber = GetIntValue(parserResult, monthKey);
             if (IsValidMonthNumber(monthNumber))
