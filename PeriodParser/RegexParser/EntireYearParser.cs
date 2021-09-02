@@ -40,8 +40,9 @@ namespace PeriodParser.RegexParser
                 int yearDifference;
                 if (int.TryParse(match.Groups[1].Value, out yearDifference))
                 {
-                    Result.Add(Year1, CurrentYear - yearDifference + 1);
-                    Result.Add(Year2, CurrentYear);
+                    var lastYear = GetLastMonthQuarterYear().year;
+                    Result.Add(Year1, lastYear - yearDifference + 1);
+                    Result.Add(Year2, lastYear);
                     return true;
                 }
             }

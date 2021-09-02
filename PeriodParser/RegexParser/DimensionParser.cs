@@ -77,11 +77,11 @@ namespace PeriodParser.RegexParser
         {
             if (!Result.ContainsKey(Month1))
             {
-                Result.Add(Month1, FirstMonth);
+                Result.Add(Month1, FirstMonthOfYear);
             }
             if (!Result.ContainsKey(Month2))
             {
-                Result.Add(Month2, LastMonth);
+                Result.Add(Month2, LastMonthOfYear);
             }
         }
 

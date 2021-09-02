@@ -40,8 +40,8 @@ namespace PeriodParser.RegexParser
         {
             if (!Result.ContainsKey(Quarter1) && !Result.ContainsKey(Quarter2))
             {
-                Result.Add(Quarter1, FirstQuarter);
-                Result.Add(Quarter2, LastQuarter);
+                Result.Add(Quarter1, FirstQuarterOfYear);
+                Result.Add(Quarter2, LastQuarterOfYear);
             }
             if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
             {
@@ -96,8 +96,9 @@ namespace PeriodParser.RegexParser
                         quarterNumber = CurrentQuarter;
 
                     Result.Add(Quarter1, quarterNumber);
-                    Result.Add(Year1, CurrentYear - yearlyDifference + 1);
-                    Result.Add(Year2, CurrentYear);
+                    var lastYear = GetLastMonthQuarterYear().year;
+                    Result.Add(Year1, lastYear - yearlyDifference + 1);
+                    Result.Add(Year2, lastYear);
                     Result.Add(Type, "EachYear");
                     return true;
                 }
@@ -114,11 +115,14 @@ namespace PeriodParser.RegexParser
                 int quarterlyDifference;
                 if (int.TryParse(match.Groups[1].Value, out quarterlyDifference))
                 {
-                    var beginQuarterAndYear = GetBeginQuarterAndYearFromDifference(CurrentQuarter, CurrentYear, quarterlyDifference);
+                    var lastQuarterAndYear = GetLastMonthQuarterYear();
+                    var lastQuarter = lastQuarterAndYear.quarter;
+                    var lastYear = lastQuarterAndYear.year;
+                    var beginQuarterAndYear = GetBeginQuarterAndYearFromDifference(lastQuarter, lastYear, quarterlyDifference);
                     Result.Add(Quarter1, beginQuarterAndYear.quarter);
                     Result.Add(Year1, beginQuarterAndYear.year);
-                    Result.Add(Quarter2, CurrentQuarter);
-                    Result.Add(Year2, CurrentYear);
+                    Result.Add(Quarter2, lastQuarter);
+                    Result.Add(Year2, lastYear);
                     Result.Add(Type, "Consecutive");
                     return true;
                 }

@@ -41,8 +41,8 @@ namespace PeriodParser.RegexParser
         {
             if (!Result.ContainsKey(Month1) && !Result.ContainsKey(Month2))
             {
-                Result.Add(Month1, FirstMonth);
-                Result.Add(Month2, LastMonth);
+                Result.Add(Month1, FirstMonthOfYear);
+                Result.Add(Month2, LastMonthOfYear);
             }
 
             if (!Result.ContainsKey(Year1) && !Result.ContainsKey(Year2))
@@ -97,8 +97,9 @@ namespace PeriodParser.RegexParser
                     if (monthNumber == 0)
                         monthNumber = CurrentMonth;
                     Result.Add(Month1, monthNumber);
-                    Result.Add(Year1, CurrentYear - yearlyDifference + 1);
-                    Result.Add(Year2, CurrentYear);
+                    var lastYear = GetLastMonthQuarterYear().year;
+                    Result.Add(Year1, lastYear - yearlyDifference + 1);
+                    Result.Add(Year2, lastYear);
                     Result.Add(Type, "EachYear");
                     return true;
                 }
@@ -115,11 +116,14 @@ namespace PeriodParser.RegexParser
                 int monthlyDifference;
                 if (int.TryParse(match.Groups[1].Value, out monthlyDifference))
                 {
-                    var beginMonthAndYear = GetBeginMonthAndYearFromDifference(CurrentMonth, CurrentYear, monthlyDifference);
+                    var lastMonthAndYear = GetLastMonthQuarterYear();
+                    var lastMonth = lastMonthAndYear.month;
+                    var lastYear = lastMonthAndYear.year;
+                    var beginMonthAndYear = GetBeginMonthAndYearFromDifference(lastMonth, lastYear, monthlyDifference);
                     Result.Add(Month1, beginMonthAndYear.month);
                     Result.Add(Year1, beginMonthAndYear.year);
-                    Result.Add(Month2, CurrentMonth);
-                    Result.Add(Year2, CurrentYear);
+                    Result.Add(Month2, lastMonth);
+                    Result.Add(Year2, lastYear);
                     Result.Add(Type, "Consecutive");
                     return true;
                 }

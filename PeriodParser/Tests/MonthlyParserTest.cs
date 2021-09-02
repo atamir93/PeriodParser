@@ -53,13 +53,13 @@ namespace PeriodParser.Tests
             AssertDictionaryValue("Year2", 2020);
         }
 
-        [TestCase("Last 2 months", CurrentYear, 4)]
-        [TestCase("Last 7 months", CurrentYear - 1, 11)]
-        [TestCase("Last 8 months", CurrentYear - 1, 10)]
-        [TestCase("Last 16 months", CurrentYear - 1, 2)]
-        [TestCase("Last 20 months", CurrentYear - 2, 10)]
-        [TestCase("Last 25 months", CurrentYear - 2, 5)]
-        [TestCase("Last 36 months", CurrentYear - 3, 6)]
+        [TestCase("Last 2 months", CurrentYear, 3)]
+        [TestCase("Last 7 months", CurrentYear - 1, 10)]
+        [TestCase("Last 8 months", CurrentYear - 1, 9)]
+        [TestCase("Last 16 months", CurrentYear - 1, 1)]
+        [TestCase("Last 20 months", CurrentYear - 2, 9)]
+        [TestCase("Last 25 months", CurrentYear - 2, 4)]
+        [TestCase("Last 36 months", CurrentYear - 3, 5)]
         public void MonthsConsecutiveType_LastDefitinion_Parser(string text, int beginYear, int beginMonth)
         {
             parser.PeriodText = text;
@@ -70,7 +70,7 @@ namespace PeriodParser.Tests
             AssertDictionaryValue("Type", "Consecutive");
             AssertDictionaryValue("Month1", beginMonth);
             AssertDictionaryValue("Year1", beginYear);
-            AssertDictionaryValue("Month2", CurrentMonth);
+            AssertDictionaryValue("Month2", CurrentMonth - 1);
             AssertDictionaryValue("Year2", CurrentYear);
         }
 

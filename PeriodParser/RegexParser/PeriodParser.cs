@@ -23,10 +23,10 @@ namespace PeriodParser.RegexParser
         public int CurrentMonth = 5;
         public int EndingMonth = 10;
         public int CurrentQuarter = 2;
-        public readonly int FirstMonth = 1;
-        public readonly int LastMonth = 12;
-        public readonly int FirstQuarter = 1;
-        public readonly int LastQuarter = 4;
+        public readonly int FirstMonthOfYear = 1;
+        public readonly int LastMonthOfYear = 12;
+        public readonly int FirstQuarterOfYear = 1;
+        public readonly int LastQuarterOfYear = 4;
 
         public string CurrentPeriod { get; set; }
         public Dictionary<string, object> Result { get; set; }
@@ -312,6 +312,15 @@ namespace PeriodParser.RegexParser
                 year = year2000.Remove(year2000.Length - text.Length) + text;
             }
             return year;
+        }
+
+        internal (int month, int quarter, int year) GetLastMonthQuarterYear()
+        {
+            var currentDate = new DateTime(CurrentYear, CurrentMonth, 1);
+            var lastMonth = currentDate.AddMonths(-1);
+            var lastQuarter = (int)Math.Ceiling(CurrentMonth / 3.0);
+
+            return (lastMonth.Month, lastQuarter, lastMonth.Year);
         }
 
         internal (int year, int month) GetBeginMonthAndYearFromDifference(int endingMonth, int endingYear, int monthlyPeriodDifference)
