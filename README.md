@@ -1,2 +1,2 @@
 # Period Parser.
-Simple project to test Regex functionalities on parsing different kind fo date formats to an Period instance.
+Simple project to test Regex on parsing different kind of date formats to an Period instance.
